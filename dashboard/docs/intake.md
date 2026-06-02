@@ -181,11 +181,19 @@ pixel-level interaction, or start from CSV summaries plus PNG fallback maps.
 
 ## Stack
 
-UNKNOWN: Final stack is not selected.
+DECIDED: Use Next.js with React and TypeScript, hosted on Vercel.
 
-ASSUMPTION: A modern TypeScript web app is preferred, likely React/Next.js or
-Vite React, with D3/Observable Plot/Recharts for charts and MapLibre/deck.gl or
-SVG/Canvas map layers depending on artifact format.
+Stack direction:
+
+- Next.js + React + TypeScript for the app.
+- Tailwind CSS plus small design-token conventions for styling.
+- shadcn/ui only where useful for accessible controls and panels.
+- Observable Plot or D3 for analytical charts.
+- MapLibre GL JS for interactive map surfaces, with static image/SVG fallback
+  if true browser-safe geospatial layers are not ready for MVP.
+- Static artifact ingestion from parent-repo CSV/JSON into typed dashboard data.
+- URL search params for shareable tab/layer/filter state.
+- No backend, database, auth, or external API for MVP.
 
 ## Out Of Scope
 
@@ -225,7 +233,7 @@ For the first build milestone:
 
 - UNKNOWN: Should `dashboard/` be an independent nested git repo or tracked as a
   folder in the parent GeoCrop repository?
-- UNKNOWN: Should the first implementation use Next.js, Vite, or another stack?
+- DECIDED: First implementation should use Next.js + TypeScript on Vercel.
 - UNKNOWN: Should v1 build true interactive geospatial layers or use static map
   images with summary-level interactions?
 - UNKNOWN: What deployment target should be used?

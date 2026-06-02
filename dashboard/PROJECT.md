@@ -5,14 +5,14 @@
 - **Name:** GeoCrop Interactive Dashboard
 - **Owner / Client:** Sardor Sobirov / GeoCrop project
 - **Repo:** `dashboard/` workspace inside `GeoCrop-Spatiotemporal-Modeling`
-- **Primary stack:** UNKNOWN - to be selected during scope
+- **Primary stack:** Next.js, React, TypeScript, Vercel
 - **Primary user:** Agricultural analysts and data science reviewers
 
 ## Phase
 
 <!-- 0-Intake | 1-Scope | 2-Setup | 3-Development | 4-QA | 5-Delivery | 6-Maintenance -->
 
-**Current:** 0-Intake
+**Current:** 1-Scope
 
 ## Source Docs
 
@@ -28,8 +28,8 @@
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Intake capture | in-progress | Dashboard plan imported into `docs/intake.md`; ready for `intake-to-scope` |
-| Scope generation | pending | Run after intake review |
+| Intake capture | done | Dashboard plan imported into `docs/intake.md` |
+| Scope generation | done | `SCOPE.md` and `memory/stack-guidance.md` populated from intake |
 | Task generation | pending | Run after scope approval |
 | Dashboard build | pending | Builder/QA loop only after tasks exist |
 
@@ -39,17 +39,18 @@
 
 - 2026-06-02: Use the dev agentic workflow kit for the dashboard workspace: intake -> scope -> tasks -> Builder/QA -> handover.
 - 2026-06-02: Treat Map Command Center with guided analytical tabs as the primary design direction until scope review changes it.
+- 2026-06-02: Use Next.js + React + TypeScript hosted on Vercel for the dashboard stack.
 
 ## Last Session
 
 - **Date:** 2026-06-02
-- **What was done:** Created dashboard workflow shell from `dev-agentic-workflow-kit/templates/project` and imported the dashboard plan into `docs/intake.md`.
-- **What's next:** Run the `intake-to-scope` workflow to produce `SCOPE.md` and `memory/stack-guidance.md`.
-- **Blockers:** Stack choice, map implementation fidelity, deployment target, and nested repo vs parent-tracked folder are unresolved.
+- **What was done:** Created dashboard workflow shell, imported the dashboard plan into `docs/intake.md`, selected Next.js/Vercel stack, and populated `SCOPE.md` plus `memory/stack-guidance.md`.
+- **What's next:** Review scope, then run `scope-to-tasks` to generate executable task blocks.
+- **Blockers:** Map implementation fidelity, browser-ready geography inputs, Vercel project settings, and design concept asset handling are unresolved.
 
 ## Environment
 
-- **Local setup:** UNKNOWN until stack selection
+- **Local setup:** Next.js app scaffold not created yet; expected stack is Node.js + Next.js + TypeScript.
 - **Secrets:** No secrets expected for MVP; use `.env.example` if any future services require configuration.
 - **External services:** None expected for MVP.
 
