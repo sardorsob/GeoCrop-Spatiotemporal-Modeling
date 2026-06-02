@@ -62,3 +62,7 @@ Thumbs.db
 dist/
 build/
 *.egg-info/
+
+# Local workflow / brainstorming tooling
+.superpowers/
+dashboard/dev-agentic-workflow-kit/
