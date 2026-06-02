@@ -47,3 +47,29 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 **AI tools used:**
 
 - Codex
+
+---
+
+## 2026-06-02 (0.15 hrs) - Codex Orchestrator/QA
+
+**Work performed:**
+
+- Generated `TASKS.md` from the approved dashboard scope.
+- Created 11 task blocks covering scaffold, data contracts, normalization, shell, URL state, map, four task panels, and integration/handover.
+- Added dependencies and file ownership boundaries to support safe parallel Builder assignment after shared contracts exist.
+- Updated `PROJECT.md` to phase `2-Setup`.
+
+**Verification:**
+
+- `python scripts\validate-task-statuses.py` passed.
+- `python scripts\check-required-artifacts.py` passed.
+- `python scripts\update-task-counts.py` confirmed 11 pending tasks.
+
+**Blockers / cuts:**
+
+- No code implementation started yet.
+- First executable Builder task is `TASK-000`.
+
+**AI tools used:**
+
+- Codex

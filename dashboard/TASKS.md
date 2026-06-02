@@ -9,40 +9,607 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| 11 | 0 | 0 | 0 | 0 | 0 | 11 |
 
 ---
 
 ## TASK-000
 
 - Feature group: Scaffold
-- Title: Initialize project scaffold
+- Title: Initialize Next.js dashboard scaffold
 - Depends on: none
-- Assigned agent: orchestrator
+- Assigned agent: Builder
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-000
   - Integration status: not-started
-- Design source: none
-- User value: N/A
+- Design source:
+  - `SCOPE.md` sections 2-4
+  - `memory/stack-guidance.md`
+- User value: Establishes the runnable dashboard workspace that all later tasks build on.
 - User flow:
-  - N/A
+  - User opens the local dashboard app.
+  - User sees a minimal GeoCrop shell confirming the app is installed and runnable.
 - Functional notes:
-  - Replace this template after `scope-to-tasks` runs.
+  - Scaffold a Next.js + React + TypeScript app in `dashboard/`.
+  - Configure Tailwind CSS.
+  - Configure Vitest if scaffold tooling supports it cleanly.
+  - Keep existing workflow artifacts (`PROJECT.md`, `SCOPE.md`, `TASKS.md`, `memory/`, `logs/`, `scripts/`) intact.
+  - Do not add MapLibre, D3, Observable Plot, or shadcn/ui unless required by the scaffold task itself.
 - Edge cases:
-  - N/A
+  - Existing workflow files must not be overwritten by app scaffold commands.
+  - `dashboard/dev-agentic-workflow-kit/` must remain ignored.
+  - No secrets or Vercel tokens should be added.
 - Test cases:
-  1. Project installs.
-  2. Typecheck passes.
+  1. `npm install` or equivalent package install completes.
+  2. `npm run typecheck` passes if configured.
+  3. `npm run lint` passes or lint absence is documented.
+  4. Local dev server renders the scaffold page.
 - Files to create/modify:
-  - TBD
+  - `package.json`
+  - `package-lock.json` or selected lockfile
+  - `next.config.*`
+  - `tsconfig.json`
+  - `postcss.config.*`
+  - `tailwind.config.*`
+  - `app/**` or `src/app/**`
+  - `styles/**` or `src/app/globals.css`
+  - `.env.example`
+  - `README.md`
 - Acceptance criteria:
-  - [ ] Project installs and starts.
-  - [ ] Typecheck passes.
-  - [ ] Lint passes or lint absence is documented.
+  - [ ] Next.js TypeScript app exists under `dashboard/`.
+  - [ ] App starts locally and renders a minimal GeoCrop page.
+  - [ ] Tailwind CSS is configured and visibly applied.
+  - [ ] Typecheck passes or the absence of a typecheck script is documented for QA.
+  - [ ] Lint passes or lint absence is documented for QA.
+  - [ ] No workflow artifacts are overwritten or removed.
+  - [ ] No secrets or local absolute paths are introduced.
 - QA notes:
 - Attempts: 0
 - Max attempts: 3
 - Attempt log:
 - Status: pending
 
+---
+
+## TASK-001
+
+- Feature group: Data Contracts
+- Title: Define artifact source registry and dashboard data types
+- Depends on: TASK-000
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-001
+  - Integration status: not-started
+- Design source:
+  - `SCOPE.md` feature "Artifact Data Registry And Normalization"
+  - `docs/intake.md` data section
+  - `memory/stack-guidance.md` data guidance
+- User value: Gives every dashboard view typed, traceable source inputs before visual work begins.
+- User flow:
+  - User sees source-backed panels that can report where values came from.
+  - User can trust caveats, denominators, and date stamps displayed by later components.
+- Functional notes:
+  - Create typed source registry entries for the Task 1-4 artifacts listed in scope.
+  - Define dashboard-facing TypeScript models for phenology, rotation, anomaly, prediction, map, source notes, and filters.
+  - Include source path, task id, date stamp when known, expected columns, and caveat text.
+  - Do not parse or transform all data in this task; this task defines contracts and registry only.
+- Edge cases:
+  - Date-stamped files may change; keep ids stable and paths explicit.
+  - Source files may be missing during deployment; contracts should make missing-source states possible.
+  - Do not use local absolute paths.
+- Test cases:
+  1. TypeScript compile catches invalid source ids.
+  2. Registry can be imported without reading files.
+  3. Source metadata includes user-facing caveat/source text.
+- Files to create/modify:
+  - `src/lib/data/sources.ts`
+  - `src/lib/data/types.ts`
+  - `src/lib/data/source-notes.ts`
+  - `src/lib/data/__tests__/sources.test.ts`
+- Acceptance criteria:
+  - [ ] Source registry covers all scoped Task 1-4 CSV/JSON inputs.
+  - [ ] Core dashboard data types are exported without `any`.
+  - [ ] Source notes include path, task id, label, and caveat/status text.
+  - [ ] Tests verify at least registry completeness and stable ids.
+  - [ ] Typecheck passes.
+  - [ ] No source file is parsed or copied in this task beyond registry tests.
+- QA notes:
+- Attempts: 0
+- Max attempts: 3
+- Attempt log:
+- Status: pending
+
+---
+
+## TASK-002
+
+- Feature group: Data Normalization
+- Title: Implement static artifact loaders and normalized dashboard data
+- Depends on: TASK-001
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-002
+  - Integration status: not-started
+- Design source:
+  - `SCOPE.md` feature "Artifact Data Registry And Normalization"
+  - `memory/stack-guidance.md` data guidance
+- User value: Turns existing GeoCrop results into reliable dashboard-ready data without notebook reruns.
+- User flow:
+  - User opens the dashboard and sees actual GeoCrop metrics, not placeholders.
+  - Missing artifacts produce visible source/error states instead of blank panels.
+- Functional notes:
+  - Implement CSV/JSON loading for scoped tables.
+  - Normalize values into typed structures consumed by charts and panels.
+  - Add formatting helpers only if needed by data transformation.
+  - Keep normalization deterministic and testable.
+  - Do not ship large Parquet/GeoTIFF files to the browser.
+- Edge cases:
+  - Missing source file.
+  - Missing or renamed column.
+  - Numeric strings, percentages, and NaN-like values.
+  - Empty rows or unknown crop/regime labels.
+- Test cases:
+  1. Task 1 model evaluation loads and normalizes.
+  2. Task 2 class summary loads and preserves percentages/areas.
+  3. Task 3 event files load into event-specific state/crop summaries.
+  4. Task 4 ablation, SHAP, regime, and test metrics load.
+  5. Missing required source produces a typed error state.
+- Files to create/modify:
+  - `src/lib/data/loaders.ts`
+  - `src/lib/data/normalize.ts`
+  - `src/lib/data/dashboard-data.ts`
+  - `src/lib/data/__tests__/normalize.test.ts`
+  - `src/lib/format/number.ts`
+- Acceptance criteria:
+  - [ ] All scoped CSV/JSON artifact groups have loader/normalizer coverage.
+  - [ ] Normalizers return typed success/error states.
+  - [ ] Tests cover representative rows for Tasks 1-4.
+  - [ ] Source path/date/caveat metadata is preserved in normalized outputs.
+  - [ ] Typecheck passes.
+  - [ ] No browser bundle includes raw Parquet/GeoTIFF files.
+- QA notes:
+- Attempts: 0
+- Max attempts: 3
+- Attempt log:
+- Status: pending
+
+---
+
+## TASK-003
+
+- Feature group: Shell / UX
+- Title: Build responsive dashboard shell and design system foundation
+- Depends on: TASK-000
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-003
+  - Integration status: not-started
+- Design source:
+  - `SCOPE.md` design direction
+  - `memory/stack-guidance.md` UI guidance
+- User value: Provides the Map Command Center structure users will navigate throughout the dashboard.
+- User flow:
+  - User lands on the dashboard.
+  - User sees title, source status, task tabs, filter area, main map region, side detail region, and bottom analytical band.
+  - On mobile, user sees insight summary and main map before secondary controls.
+- Functional notes:
+  - Build layout components with stable responsive regions.
+  - Use semantic landmarks and accessible tab structure.
+  - Create placeholder slots for map and task panels.
+  - Do not implement real data visualizations in this task.
+- Edge cases:
+  - Mobile portrait at 360-430 px width.
+  - Long tab/filter labels.
+  - Reduced viewport height.
+  - Missing data placeholder states.
+- Test cases:
+  1. Desktop layout renders map, right rail, and bottom panel slots.
+  2. Mobile layout keeps main evidence area visible before filters.
+  3. Keyboard focus can move through top navigation and tabs.
+- Files to create/modify:
+  - `src/app/page.tsx` or `app/page.tsx`
+  - `src/app/globals.css` or `app/globals.css`
+  - `src/components/layout/DashboardShell.tsx`
+  - `src/components/layout/CommandBar.tsx`
+  - `src/components/layout/TaskTabs.tsx`
+  - `src/components/layout/SourceStatus.tsx`
+  - `src/components/ui/*` if needed for local primitives
+- Acceptance criteria:
+  - [ ] Dashboard shell reflects Map Command Center reading path.
+  - [ ] Four task tabs are present: Phenology, Rotation, Extremes, Prediction.
+  - [ ] Responsive mobile portrait layout keeps the main evidence slot visible before secondary controls.
+  - [ ] Placeholder source/caveat status is visible.
+  - [ ] Keyboard navigation works for tabs/major controls.
+  - [ ] Typecheck passes.
+- QA notes:
+- Attempts: 0
+- Max attempts: 3
+- Attempt log:
+- Status: pending
+
+---
+
+## TASK-004
+
+- Feature group: State
+- Title: Implement URL-backed dashboard filter and selection state
+- Depends on: TASK-001
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-004
+  - Integration status: not-started
+- Design source:
+  - `SCOPE.md` data flow and shareability requirements
+  - `memory/stack-guidance.md` state guidance
+- User value: Enables users to share and restore meaningful dashboard views.
+- User flow:
+  - User selects a task tab, map layer, state, crop, event, or regime.
+  - URL updates with compact state.
+  - Reloading or sharing the URL restores the same view where possible.
+- Functional notes:
+  - Define stable URL param schema.
+  - Validate incoming params and fall back visibly to defaults.
+  - Omit defaults from URL when possible.
+  - Do not encode transient hover or private/local state.
+- Edge cases:
+  - Unknown tab/layer id.
+  - Unknown crop/event/regime.
+  - Conflicting params.
+  - Empty query string.
+- Test cases:
+  1. Default state serializes to minimal URL.
+  2. Valid params parse into dashboard state.
+  3. Invalid params normalize to defaults with warning/status.
+  4. State updates preserve unrelated valid params.
+- Files to create/modify:
+  - `src/lib/state/url-state.ts`
+  - `src/lib/state/dashboard-state.ts`
+  - `src/lib/state/__tests__/url-state.test.ts`
+  - `src/components/filters/FilterBar.tsx`
+  - `src/components/filters/ActiveFilterChips.tsx`
+- Acceptance criteria:
+  - [ ] URL state covers active tab, map layer, state, crop, event, rotation regime, and selected entity.
+  - [ ] Invalid params are validated and normalized.
+  - [ ] Active filters are visible as chips or equivalent UI.
+  - [ ] Tests cover parse/serialize/default/invalid cases.
+  - [ ] Typecheck passes.
+  - [ ] No analytical state is stored only in localStorage.
+- QA notes:
+- Attempts: 0
+- Max attempts: 3
+- Attempt log:
+- Status: pending
+
+---
+
+## TASK-005
+
+- Feature group: Map
+- Title: Build Corn Belt map surface with layer controls and fallback strategy
+- Depends on: TASK-002, TASK-003, TASK-004
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-005
+  - Integration status: not-started
+- Design source:
+  - `SCOPE.md` feature "Corn Belt Map Surface"
+  - `memory/stack-guidance.md` map guidance
+- User value: Gives the dashboard its primary geographic evidence view.
+- User flow:
+  - User switches map layers for rotation, anomalies, prediction, or agreement.
+  - User selects a geography or fallback map view.
+  - Side/detail panels receive the selected context.
+- Functional notes:
+  - Use MapLibre if browser-ready boundaries/layers are available.
+  - If boundaries/layers are not ready, implement a source-backed static map fallback using existing figures and clearly label it as a non-pixel-interactive fallback.
+  - Include legends, source/caveat notes, and layer status.
+  - Do not imply pixel-level precision when using summary/static layers.
+- Edge cases:
+  - No browser-ready GeoJSON.
+  - Missing static map asset.
+  - Layer unavailable for selected task.
+  - Mobile touch selection.
+- Test cases:
+  1. Map region renders on desktop and mobile.
+  2. Layer controls show available/unavailable status.
+  3. Fallback map displays source/caveat note.
+  4. Selection state updates without breaking URL state.
+- Files to create/modify:
+  - `src/components/map/CornBeltMap.tsx`
+  - `src/components/map/MapLayerControl.tsx`
+  - `src/components/map/MapLegend.tsx`
+  - `src/features/map/map-layers.ts`
+  - `src/features/map/map-selection.ts`
+  - `public/maps/**` if static map assets are copied
+- Acceptance criteria:
+  - [ ] Main map surface renders with at least one source-backed layer or explicit fallback.
+  - [ ] Layer control covers rotation, extremes, prediction/agreement statuses.
+  - [ ] Legend and source/caveat text are visible without hover.
+  - [ ] Mobile touch/tap path works or fallback limitation is documented.
+  - [ ] Typecheck passes.
+  - [ ] Implementation does not ship raw Parquet/GeoTIFF files.
+- QA notes:
+- Attempts: 0
+- Max attempts: 3
+- Attempt log:
+- Status: pending
+
+---
+
+## TASK-006
+
+- Feature group: Phenology
+- Title: Implement Task 1 phenology panel and NDVI curve visualization
+- Depends on: TASK-002, TASK-003, TASK-004
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-006
+  - Integration status: not-started
+- Design source:
+  - `SCOPE.md` feature "Phenology Panel"
+  - `../artifacts/reports/neurips_2024.tex` Task 1 results
+- User value: Lets users understand how corn, soybean, and winter wheat phenology differ and how reliable the HSGP model is.
+- User flow:
+  - User opens Phenology tab.
+  - User compares crop NDVI curves and model metrics.
+  - User sees uncertainty and source caveats.
+- Functional notes:
+  - Render source-backed NDVI curve chart where data supports it.
+  - Show model evaluation metrics: RMSE, MAE, coverage, CRPS.
+  - Include direct labels and uncertainty/caveat note.
+  - Use static figure fallback if curve data is insufficient.
+- Edge cases:
+  - Missing phenology series.
+  - Unknown crop filter.
+  - Long metric labels on mobile.
+- Test cases:
+  1. Phenology tab renders Task 1 metrics.
+  2. Crop filter affects visible curves or selected summary.
+  3. Missing data produces explicit fallback/error state.
+- Files to create/modify:
+  - `src/features/phenology/PhenologyPanel.tsx`
+  - `src/features/phenology/NdviCurveChart.tsx`
+  - `src/features/phenology/PhenologyMetrics.tsx`
+  - `src/features/phenology/phenology-copy.ts`
+  - `src/features/phenology/__tests__/phenology-panel.test.tsx`
+- Acceptance criteria:
+  - [ ] Phenology tab renders with source-backed Task 1 values.
+  - [ ] NDVI curve or documented static fallback appears.
+  - [ ] HSGP uncertainty/caveat text is visible.
+  - [ ] Essential values are not hover-only.
+  - [ ] Mobile layout remains legible.
+  - [ ] Typecheck passes.
+- QA notes:
+- Attempts: 0
+- Max attempts: 3
+- Attempt log:
+- Status: pending
+
+---
+
+## TASK-007
+
+- Feature group: Rotation
+- Title: Implement Task 2 rotation panel and class summaries
+- Depends on: TASK-002, TASK-003, TASK-004, TASK-005
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-007
+  - Integration status: not-started
+- Design source:
+  - `SCOPE.md` feature "Rotation Panel"
+  - `../artifacts/reports/neurips_2024.tex` Task 2 results
+- User value: Lets users inspect regular rotation, monoculture, and irregular cropping patterns with uncertainty caveats.
+- User flow:
+  - User opens Rotation tab or selects rotation map layer.
+  - User compares class proportions and geography-specific summaries.
+  - User sees Markov/threshold caveats.
+- Functional notes:
+  - Render class proportion chart from source summaries.
+  - Render state/county ranking if normalized data supports it.
+  - Coordinate selected state/county with map state where available.
+  - Show Bayesian/threshold sensitivity caveat.
+- Edge cases:
+  - County stats unavailable.
+  - Unknown rotation class.
+  - Static map fallback selected.
+- Test cases:
+  1. Rotation class summary totals render.
+  2. State/county ranking handles selected/empty states.
+  3. Caveat/source note remains visible.
+- Files to create/modify:
+  - `src/features/rotation/RotationPanel.tsx`
+  - `src/features/rotation/RotationClassChart.tsx`
+  - `src/features/rotation/RotationGeoRanking.tsx`
+  - `src/features/rotation/rotation-copy.ts`
+  - `src/features/rotation/__tests__/rotation-panel.test.tsx`
+- Acceptance criteria:
+  - [ ] Rotation tab renders regular, monoculture, and irregular summaries.
+  - [ ] Geographic summaries render or unavailable state is explicit.
+  - [ ] Map selection/filter state is consumed where available.
+  - [ ] Bayesian/threshold caveat is visible.
+  - [ ] Mobile layout remains legible.
+  - [ ] Typecheck passes.
+- QA notes:
+- Attempts: 0
+- Max attempts: 3
+- Attempt log:
+- Status: pending
+
+---
+
+## TASK-008
+
+- Feature group: Extremes
+- Title: Implement Task 3 soil moisture extremes panel
+- Depends on: TASK-002, TASK-003, TASK-004, TASK-005
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-008
+  - Integration status: not-started
+- Design source:
+  - `SCOPE.md` feature "Extremes Panel"
+  - `../artifacts/reports/neurips_2024.tex` Task 3 results
+- User value: Lets users compare the 2019 flood and 2022 drought by state and crop with Bayesian anomaly context.
+- User flow:
+  - User opens Extremes tab.
+  - User switches between 2019 flood and 2022 drought.
+  - User filters by state/crop and sees z-score plus NIG P(drought) context.
+- Functional notes:
+  - Render event selector.
+  - Render state x crop anomaly chart/table.
+  - Include NIG P(drought) explanation and z-score caveat.
+  - Coordinate event/layer with map state where available.
+- Edge cases:
+  - Event file missing.
+  - Crop has very small `n_pixel_weeks`.
+  - Wet event uses P(drought) near 1; dry event uses P(drought) near 0.
+- Test cases:
+  1. Flood and drought event summaries render separately.
+  2. Crop/state filters update summary.
+  3. Small-denominator rows show caveat or remain interpretable.
+- Files to create/modify:
+  - `src/features/extremes/ExtremesPanel.tsx`
+  - `src/features/extremes/EventSelector.tsx`
+  - `src/features/extremes/AnomalySummaryChart.tsx`
+  - `src/features/extremes/AnomalyTable.tsx`
+  - `src/features/extremes/extremes-copy.ts`
+  - `src/features/extremes/__tests__/extremes-panel.test.tsx`
+- Acceptance criteria:
+  - [ ] Extremes tab renders both 2019 flood and 2022 drought options.
+  - [ ] State x crop anomaly values are source-backed.
+  - [ ] NIG P(drought) and z-score caveats are visible.
+  - [ ] Event/crop/state filters work with URL state.
+  - [ ] Mobile layout remains legible.
+  - [ ] Typecheck passes.
+- QA notes:
+- Attempts: 0
+- Max attempts: 3
+- Attempt log:
+- Status: pending
+
+---
+
+## TASK-009
+
+- Feature group: Prediction
+- Title: Implement Task 4 prediction diagnostics panel
+- Depends on: TASK-002, TASK-003, TASK-004
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-009
+  - Integration status: not-started
+- Design source:
+  - `SCOPE.md` feature "Prediction Panel"
+  - `../artifacts/reports/neurips_2024.tex` Task 4 results
+- User value: Lets users understand model accuracy, feature contribution, and where crop prediction is hardest.
+- User flow:
+  - User opens Prediction tab.
+  - User sees headline 2023 holdout metrics.
+  - User compares ablation uplift, SHAP features, rotation-regime performance, and confusion/error patterns.
+- Functional notes:
+  - Render metric cards from `task4__test_metrics__20260413.json`.
+  - Render ablation chart.
+  - Render SHAP feature ranking.
+  - Render regime-stratified metrics.
+  - Render confusion matrix from JSON if present; if counts are not in artifact JSON, use a documented static/table fallback from paper-derived values only if source is explicit.
+- Edge cases:
+  - Confusion counts unavailable in source JSON.
+  - Long feature names.
+  - Regular regime macro F1 caveat due to sparse minority classes.
+- Test cases:
+  1. Headline OA/macro F1 render from source data.
+  2. Ablation rows render in expected order.
+  3. SHAP chart handles top-N feature labels.
+  4. Regime caveat appears.
+- Files to create/modify:
+  - `src/features/prediction/PredictionPanel.tsx`
+  - `src/features/prediction/AblationChart.tsx`
+  - `src/features/prediction/ShapFeatureChart.tsx`
+  - `src/features/prediction/RegimeMetricsChart.tsx`
+  - `src/features/prediction/ConfusionMatrix.tsx`
+  - `src/features/prediction/prediction-copy.ts`
+  - `src/features/prediction/__tests__/prediction-panel.test.tsx`
+- Acceptance criteria:
+  - [ ] Prediction tab renders headline test metrics.
+  - [ ] Ablation, SHAP, and regime-stratified views are source-backed.
+  - [ ] Confusion matrix renders from source or explicit documented fallback.
+  - [ ] Corn/soy confusion and irregular-rotation caveats are visible.
+  - [ ] Mobile layout remains legible.
+  - [ ] Typecheck passes.
+- QA notes:
+- Attempts: 0
+- Max attempts: 3
+- Attempt log:
+- Status: pending
+
+---
+
+## TASK-010
+
+- Feature group: Integration / QA
+- Title: Integrate panels, complete responsive polish, and prepare handover
+- Depends on: TASK-005, TASK-006, TASK-007, TASK-008, TASK-009
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-010
+  - Integration status: not-started
+- Design source:
+  - `SCOPE.md` non-functional requirements
+  - `memory/stack-guidance.md`
+  - `HANDOVER.md`
+- User value: Produces a coherent dashboard that can be run, reviewed, and deployed.
+- User flow:
+  - User opens the dashboard on desktop and mobile.
+  - User moves across all four task tabs.
+  - User shares/restores a filtered URL.
+  - User can read source/caveat information for each major panel.
+- Functional notes:
+  - Wire all panels into the shell.
+  - Resolve visual hierarchy, spacing, and responsive behavior.
+  - Ensure source/caveat notes are consistent.
+  - Update handover and run instructions.
+  - Do not add new feature scope; this is integration and QA readiness.
+- Edge cases:
+  - Missing artifact group.
+  - Small mobile viewport.
+  - Invalid URL state.
+  - Static map fallback in place of true map layers.
+- Test cases:
+  1. Desktop manual smoke covers shell, map, all tabs, filters, source notes.
+  2. Mobile manual smoke covers portrait layout, filters, tabs, map visibility.
+  3. URL share/restore works for representative state.
+  4. Missing-source/error state is visible.
+- Files to create/modify:
+  - `src/app/page.tsx` or `app/page.tsx`
+  - `src/components/layout/**`
+  - `src/features/**`
+  - `src/lib/state/**`
+  - `README.md`
+  - `HANDOVER.md`
+  - `PROJECT.md`
+  - `logs/Progress Log.md`
+- Acceptance criteria:
+  - [ ] All four task tabs are integrated into the dashboard shell.
+  - [ ] Desktop and mobile portrait manual smoke are recorded in QA notes.
+  - [ ] URL state share/restore works for representative filters.
+  - [ ] Source/caveat notes are visible for all major panels.
+  - [ ] Typecheck passes.
+  - [ ] Lint/tests pass or absences are documented.
+  - [ ] Handover includes run instructions, verification, known caveats, and next steps.
+- QA notes:
+- Attempts: 0
+- Max attempts: 3
+- Attempt log:
+- Status: pending

@@ -12,7 +12,7 @@
 
 <!-- 0-Intake | 1-Scope | 2-Setup | 3-Development | 4-QA | 5-Delivery | 6-Maintenance -->
 
-**Current:** 1-Scope
+**Current:** 2-Setup
 
 ## Source Docs
 
@@ -30,8 +30,8 @@
 |---------|--------|-------|
 | Intake capture | done | Dashboard plan imported into `docs/intake.md` |
 | Scope generation | done | `SCOPE.md` and `memory/stack-guidance.md` populated from intake |
-| Task generation | pending | Run after scope approval |
-| Dashboard build | pending | Builder/QA loop only after tasks exist |
+| Task generation | done | `TASKS.md` generated from approved scope |
+| Dashboard build | pending | Ready to start with `TASK-000` |
 
 ## Decisions
 
@@ -40,12 +40,13 @@
 - 2026-06-02: Use the dev agentic workflow kit for the dashboard workspace: intake -> scope -> tasks -> Builder/QA -> handover.
 - 2026-06-02: Treat Map Command Center with guided analytical tabs as the primary design direction until scope review changes it.
 - 2026-06-02: Use Next.js + React + TypeScript hosted on Vercel for the dashboard stack.
+- 2026-06-02: Generated 11 executable tasks with Builder/QA status fields and file ownership boundaries.
 
 ## Last Session
 
 - **Date:** 2026-06-02
-- **What was done:** Created dashboard workflow shell, imported the dashboard plan into `docs/intake.md`, selected Next.js/Vercel stack, and populated `SCOPE.md` plus `memory/stack-guidance.md`.
-- **What's next:** Review scope, then run `scope-to-tasks` to generate executable task blocks.
+- **What was done:** Created dashboard workflow shell, imported the dashboard plan into `docs/intake.md`, selected Next.js/Vercel stack, populated `SCOPE.md` plus `memory/stack-guidance.md`, and generated `TASKS.md`.
+- **What's next:** Assign `TASK-000` to a Builder to scaffold the Next.js app, then QA before committing.
 - **Blockers:** Map implementation fidelity, browser-ready geography inputs, Vercel project settings, and design concept asset handling are unresolved.
 
 ## Environment
