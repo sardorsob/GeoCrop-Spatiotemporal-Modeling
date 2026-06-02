@@ -31,7 +31,7 @@
 | Intake capture | done | Dashboard plan imported into `docs/intake.md` |
 | Scope generation | done | `SCOPE.md` and `memory/stack-guidance.md` populated from intake |
 | Task generation | done | `TASKS.md` generated from approved scope |
-| Dashboard build | pending | Ready to start with `TASK-000` |
+| Dashboard build | in-progress | `TASK-000` scaffold done; next task is `TASK-001` |
 
 ## Decisions
 
@@ -46,12 +46,12 @@
 
 - **Date:** 2026-06-02
 - **What was done:** Created dashboard workflow shell, imported the dashboard plan into `docs/intake.md`, selected Next.js/Vercel stack, populated `SCOPE.md` plus `memory/stack-guidance.md`, and generated `TASKS.md`.
-- **What's next:** Assign `TASK-000` to a Builder to scaffold the Next.js app, then QA before committing.
+- **What's next:** Start `TASK-001` to define artifact source registry and dashboard data types.
 - **Blockers:** Map implementation fidelity, browser-ready geography inputs, Vercel project settings, and design concept asset handling are unresolved.
 
 ## Environment
 
-- **Local setup:** Next.js app scaffold not created yet; expected stack is Node.js + Next.js + TypeScript.
+- **Local setup:** Run `npm install`, then `npm run dev` inside `dashboard/`.
 - **Secrets:** No secrets expected for MVP; use `.env.example` if any future services require configuration.
 - **External services:** None expected for MVP.
 

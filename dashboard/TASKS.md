@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 11 | 0 | 0 | 0 | 0 | 0 | 11 |
+| 11 | 1 | 0 | 0 | 0 | 0 | 10 |
 
 ---
 
@@ -57,18 +57,21 @@
   - `.env.example`
   - `README.md`
 - Acceptance criteria:
-  - [ ] Next.js TypeScript app exists under `dashboard/`.
-  - [ ] App starts locally and renders a minimal GeoCrop page.
-  - [ ] Tailwind CSS is configured and visibly applied.
-  - [ ] Typecheck passes or the absence of a typecheck script is documented for QA.
-  - [ ] Lint passes or lint absence is documented for QA.
-  - [ ] No workflow artifacts are overwritten or removed.
-  - [ ] No secrets or local absolute paths are introduced.
+  - [x] Next.js TypeScript app exists under `dashboard/`.
+  - [x] App starts locally and renders a minimal GeoCrop page.
+  - [x] Tailwind CSS is configured and visibly applied.
+  - [x] Typecheck passes or the absence of a typecheck script is documented for QA.
+  - [x] Lint passes or lint absence is documented for QA.
+  - [x] No workflow artifacts are overwritten or removed.
+  - [x] No secrets or local absolute paths are introduced.
 - QA notes:
-- Attempts: 0
+  - Builder handoff 2026-06-02: Created manual Next.js 16 + TypeScript scaffold to avoid overwriting workflow artifacts. Added Tailwind v4/PostCSS config, ESLint flat config, Vitest setup, minimal GeoCrop landing page, `.env.example`, and dashboard README. TDD evidence: `home-copy.test.ts` failed first on expected title assertion, then passed after implementation. Verification passed: `npm run test`, `npm run typecheck`, `npm run lint`, `npm run build`. Build warning about workspace root was resolved by pinning `turbopack.root` in `next.config.ts`. npm install reported 2 moderate advisories; no high/critical advisories were observed in install output.
+  - QA approval 2026-06-02: Scope matches TASK-000 scaffold ownership. Additional `.gitignore` update was accepted to keep `dashboard/node_modules/`, `dashboard/.next/`, and `dashboard/tsconfig.tsbuildinfo` out of commits. Verified `npm run build`, `npm run test`, `npm run lint`, `npm run typecheck`, `python scripts\validate-task-statuses.py`, `python scripts\check-required-artifacts.py`, and `npm audit --audit-level=high`. No high/critical npm advisories; two moderate advisories remain from Next/PostCSS with only breaking-force remediation suggested. No secret-like untracked files detected.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-- Status: pending
+  - 2026-06-02: Started TASK-000 as Builder; dependencies none; scoped to Next.js scaffold/config/app files plus README and env example.
+- Status: done
 
 ---
 

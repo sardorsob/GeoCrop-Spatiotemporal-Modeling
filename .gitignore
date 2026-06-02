@@ -66,3 +66,6 @@ build/
 # Local workflow / brainstorming tooling
 .superpowers/
 dashboard/dev-agentic-workflow-kit/
+dashboard/node_modules/
+dashboard/.next/
+dashboard/tsconfig.tsbuildinfo

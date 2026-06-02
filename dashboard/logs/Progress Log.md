@@ -73,3 +73,36 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 **AI tools used:**
 
 - Codex
+
+---
+
+## 2026-06-02 (0.55 hrs) - Codex Builder + QA
+
+**Work performed:**
+
+- Completed `TASK-000` Next.js scaffold.
+- Added Next.js 16, React 19, TypeScript, Tailwind v4, ESLint flat config, and Vitest.
+- Added minimal GeoCrop scaffold page with four research lanes.
+- Added `.env.example` and dashboard `README.md`.
+- Updated `.gitignore` for dashboard generated folders.
+- QA approved `TASK-000` and updated memory.
+
+**Verification:**
+
+- TDD red: `npm run test -- src/lib/scaffold/home-copy.test.ts` failed on expected title assertion before implementation.
+- `npm run test` passed.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run build` passed.
+- `npm audit --audit-level=high` passed with no high/critical advisories; two moderate advisories remain.
+- `python scripts\validate-task-statuses.py` passed.
+- `python scripts\check-required-artifacts.py` passed.
+
+**Blockers / cuts:**
+
+- Remaining moderate npm advisories are upstream Next/PostCSS and require breaking-force remediation according to npm.
+- This task only creates the scaffold; artifact source registry begins in `TASK-001`.
+
+**AI tools used:**
+
+- Codex
