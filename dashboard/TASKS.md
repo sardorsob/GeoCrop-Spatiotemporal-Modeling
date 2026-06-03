@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 11 | 4 | 0 | 1 | 0 | 0 | 6 |
+| 11 | 5 | 0 | 0 | 0 | 0 | 6 |
 
 ---
 
@@ -254,7 +254,7 @@
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-004
-  - Integration status: in-progress
+  - Integration status: done
 - Design source:
   - `SCOPE.md` data flow and shareability requirements
   - `memory/stack-guidance.md` state guidance
@@ -285,18 +285,20 @@
   - `src/components/filters/FilterBar.tsx`
   - `src/components/filters/ActiveFilterChips.tsx`
 - Acceptance criteria:
-  - [ ] URL state covers active tab, map layer, state, crop, event, rotation regime, and selected entity.
-  - [ ] Invalid params are validated and normalized.
-  - [ ] Active filters are visible as chips or equivalent UI.
-  - [ ] Tests cover parse/serialize/default/invalid cases.
-  - [ ] Typecheck passes.
-  - [ ] No analytical state is stored only in localStorage.
+  - [x] URL state covers active tab, map layer, state, crop, event, rotation regime, and selected entity.
+  - [x] Invalid params are validated and normalized.
+  - [x] Active filters are visible as chips or equivalent UI.
+  - [x] Tests cover parse/serialize/default/invalid cases.
+  - [x] Typecheck passes.
+  - [x] No analytical state is stored only in localStorage.
 - QA notes:
+  - Builder handoff 2026-06-02: Added URL state defaults/options, parse/serialize/update helpers, URL warnings, `FilterBar`, `ActiveFilterChips`, and URL-state tests. Query params cover tab, map layer, state, crop, event, rotation regime, selected entity, and map view longitude/latitude/zoom.
+  - QA approval 2026-06-02: Verified defaults are omitted, query output is stable ordered, invalid values normalize to defaults or omissions with warnings, unrelated URL params are preserved by the update helper, active filters render as removable chips, and no analytical state is stored in localStorage. Fresh verification passed: `npm run test`, `npm run typecheck`, `npm run lint`, and `npm run build`.
 - Attempts: 1
 - Max attempts: 3
 - Attempt log:
   - 2026-06-02: Started TASK-004 in parallel Builder lane; dependencies satisfied by TASK-001; scoped to URL/state helpers plus filter UI.
-- Status: in-progress
+- Status: done
 
 ---
 

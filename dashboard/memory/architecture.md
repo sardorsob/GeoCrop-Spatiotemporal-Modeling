@@ -19,6 +19,11 @@
 - `src/lib/data/__tests__/sources.test.ts` verifies registry completeness, stable ids, source paths, source notes, and compile-time invalid id rejection.
 - `src/lib/data/__tests__/normalize.test.ts` verifies representative source loads, missing-source errors, header aliases, row counts, and normalized Task 1-4 values.
 - `src/lib/format/number.ts` provides safe numeric parsing for CSV/JSON values.
+- `src/lib/state/dashboard-state.ts` defines default dashboard filter state, stable option lists, type guards, and normalization helpers.
+- `src/lib/state/url-state.ts` parses, validates, normalizes, serializes, and updates URL search params for shareable dashboard state.
+- `src/lib/state/__tests__/url-state.test.ts` verifies defaults, stable serialization, invalid param warnings, and unrelated-param preservation.
+- `src/components/filters/FilterBar.tsx` renders accessible controls for task, layer, crop, event, regime, selected entity, and map view.
+- `src/components/filters/ActiveFilterChips.tsx` renders visible active-filter chips and removal controls.
 - `src/lib/scaffold/home-copy.ts` stores minimal scaffold copy for the landing page.
 - `src/lib/scaffold/home-copy.test.ts` verifies the scaffold title and four research lanes.
 - `next.config.ts` pins `turbopack.root` to the dashboard folder so local builds do not infer a parent lockfile as the workspace root.
@@ -32,12 +37,14 @@
 - TASK-002 adds deterministic CSV/JSON loaders and typed normalization for all scoped Task 1-4 source registry entries.
 - Loader outputs preserve source id, path, label, caveat, date stamp, denominator, row count, and typed load errors.
 - Normalizers account for observed artifact header aliases instead of assuming registry-friendly column names.
+- TASK-004 adds URL-backed dashboard state helpers. Defaults are omitted from serialized URLs, invalid params produce warning objects, and incoming state is normalized before use.
 
 ## Important Boundaries
 
 - Workflow artifacts (`PROJECT.md`, `SCOPE.md`, `TASKS.md`, `AGENTS.md`, `memory/`, `logs/`, `scripts/`) remain outside the app runtime.
 - The current shell does not include backend, database, auth, MapLibre, D3, Observable Plot, or shadcn/ui yet.
 - Dashboard visual assets are code-native only for now; do not use image generation or `gpt-image-2`.
+- Analytical dashboard state is URL-backed; do not store active filters, map layer, selected entity, or analytical tab only in localStorage.
 - Generated folders `dashboard/node_modules/`, `dashboard/.next/`, and `dashboard/tsconfig.tsbuildinfo` are ignored.
 
 ## Known Caveats

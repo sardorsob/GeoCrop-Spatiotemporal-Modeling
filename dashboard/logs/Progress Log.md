@@ -65,6 +65,33 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-06-02 (0.25 hrs) - Codex QA + Builder Agent
+
+**Work performed:**
+
+- Completed `TASK-004` URL-backed dashboard filter and selection state.
+- Added typed dashboard defaults, options, type guards, parse/serialize/update helpers, and URL warning records.
+- Added accessible filter controls and active-filter chips for visible shareable state.
+
+**Verification:**
+
+- `npm run test` passed.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run build` passed.
+
+**Blockers / cuts:**
+
+- Filter controls are implemented as reusable components; full shell wiring waits for map/panel integration.
+- No localStorage or remote persistence added.
+
+**AI tools used:**
+
+- Codex QA/Orchestrator
+- Builder agent Hilbert for `TASK-004`
+
+---
+
 ## YYYY-MM-DD (0.00 hrs) - Agent / Human
 
 **Work performed:**

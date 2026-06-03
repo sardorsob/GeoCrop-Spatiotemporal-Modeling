@@ -69,3 +69,17 @@ Use semantic regions, CSS grid placeholders, inline React markup, and source/cav
 ```text
 Read Task 1 day-of-year from `day_of_year` or `doy`, and read Task 2 percent valid from `percent_of_valid` or `pct_of_valid`.
 ```
+
+---
+
+## URL State Codecs
+
+**Use when:** A dashboard view state affects the analytical evidence or should be shareable.
+
+**Rule:** Parse URL params into a typed normalized state plus warning objects, serialize in stable order, and omit defaults from the query string.
+
+**Example:**
+
+```text
+Serialize non-default `tab`, `mapLayer`, filters, selected entity, and map view; normalize bad values to defaults or omissions with warnings.
+```
