@@ -64,7 +64,7 @@ export function RotationClassChart({
   return (
     <section
       aria-label={ROTATION_COPY.classRegionLabel}
-      className="border border-slate-200 bg-white p-4"
+      className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm"
     >
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -80,7 +80,7 @@ export function RotationClassChart({
       </div>
 
       {sortedSummaries.length === 0 ? (
-        <div className="mt-4 border border-dashed border-slate-300 bg-slate-50 px-4 py-5">
+        <div className="mt-4 rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-5">
           <p className="text-sm font-medium text-slate-800">
             {ROTATION_COPY.classEmptyState}
           </p>
@@ -107,7 +107,7 @@ function ClassSummaryCard({
   return (
     <article
       className={[
-        "min-h-56 border bg-slate-50 p-3",
+        "min-h-56 rounded-xl border p-4",
         styles.border,
         styles.tint
       ].join(" ")}
@@ -123,19 +123,19 @@ function ClassSummaryCard({
         </div>
         <span
           aria-hidden="true"
-          className={["mt-1 h-3 w-3 shrink-0", styles.accent].join(" ")}
+          className={["mt-1 h-3 w-3 shrink-0 rounded-full", styles.accent].join(" ")}
         />
       </div>
 
-      <p className="mt-4 text-3xl font-semibold text-slate-950">
+      <p className="mt-4 text-3xl font-bold text-slate-950">
         {formatPercent(summary.percentOfValid)}
       </p>
       <div
         aria-hidden="true"
-        className="mt-3 h-2 w-full overflow-hidden bg-white/80"
+        className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/80"
       >
         <span
-          className={["block h-full", styles.accent].join(" ")}
+          className={["block h-full rounded-full", styles.accent].join(" ")}
           style={{ width: `${width}%` }}
         />
       </div>
@@ -166,7 +166,7 @@ function SourcePill({ source }: { readonly source?: DataPointSource }) {
   return (
     <p
       aria-label={source.label ?? source.sourceId}
-      className="shrink-0 border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-900"
+      className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800"
     >
       Class artifact source
     </p>

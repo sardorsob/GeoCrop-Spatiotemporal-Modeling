@@ -2,60 +2,46 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { MAP_LAYER_IDS } from "@/lib/state/dashboard-state";
-import { CornBeltMap } from "../CornBeltMap";
 import { CORN_BELT_MAP_LAYERS, getCornBeltMapLayer } from "@/features/map/map-layers";
+import { MapPanel } from "../MapPanel";
 
-describe("CornBeltMap", () => {
-  it("renders a source-backed fallback surface with visible caveats and legend", () => {
-    render(<CornBeltMap activeLayerId="rotation-class" />);
+describe("MapPanel", () => {
+  it("renders the current layer with legend and source context", () => {
+    render(
+      <MapPanel
+        activeLayerId="rotation-class"
+        onLayerChange={vi.fn()}
+      />
+    );
 
     expect(
       screen.getByRole("region", { name: "Corn Belt map surface" })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Corn Belt map" })
+      screen.getByRole("heading", { name: "Corn Belt geographic surface" })
     ).toBeInTheDocument();
-    expect(screen.getAllByText(/source-backed fallback/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/not pixel-precise/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/tap a state tile/i)).toBeInTheDocument();
 
-    const legend = screen.getByRole("list", {
-      name: "Rotation class legend"
-    });
-    expect(within(legend).getByText("Regular")).toBeInTheDocument();
-    expect(within(legend).getByText("Monoculture")).toBeInTheDocument();
-    expect(within(legend).getByText("Irregular")).toBeInTheDocument();
-
-    expect(
-      screen.getByText("Task 2 areal statistics by county")
-    ).toBeInTheDocument();
-    expect(screen.getByText(/County summaries are scoped/i)).toBeInTheDocument();
+    const region = screen.getByRole("region", { name: "Corn Belt map surface" });
+    expect(within(region).getAllByText("Regular").length).toBeGreaterThan(0);
+    expect(within(region).getByText("Monoculture")).toBeInTheDocument();
+    expect(within(region).getByText("No data")).toBeInTheDocument();
+    expect(within(region).getByText(/Corn Belt coverage:/)).toHaveTextContent(
+      "Corn Belt coverage: 10 states."
+    );
   });
 
-  it("offers controls for every dashboard MapLayerId", () => {
-    render(<CornBeltMap activeLayerId="prediction-agreement" />);
-
-    const controls = screen.getByRole("radiogroup", { name: "Map layer" });
-
-    for (const layerId of MAP_LAYER_IDS) {
-      const layer = getCornBeltMapLayer(layerId);
-      expect(
-        within(controls).getByRole("radio", { name: new RegExp(layer.label, "i") })
-      ).toBeInTheDocument();
-    }
-  });
-
-  it("emits selected geography and layer context when a tile is selected", () => {
+  it("emits selected geography and layer context when a state is selected", () => {
     const onSelectionChange = vi.fn();
 
     render(
-      <CornBeltMap
+      <MapPanel
         activeLayerId="soil-moisture-anomaly"
+        onLayerChange={vi.fn()}
         onSelectionChange={onSelectionChange}
       />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: /select iowa/i }));
+    fireEvent.click(screen.getByRole("button", { name: "Select Iowa" }));
 
     expect(onSelectionChange).toHaveBeenCalledWith({
       layerId: "soil-moisture-anomaly",
@@ -87,6 +73,7 @@ describe("Corn Belt map layer metadata", () => {
       expect(layer.legend.length).toBeGreaterThan(0);
       expect(layer.status).toBe("fallback-only");
       expect(layer.fallbackReason).toMatch(/No browser-ready GeoJSON\/TopoJSON/i);
+      expect(getCornBeltMapLayer(layer.id)).toBe(layer);
     }
   });
 });

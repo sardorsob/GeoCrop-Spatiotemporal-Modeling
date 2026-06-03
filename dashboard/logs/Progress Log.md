@@ -4,6 +4,80 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-06-02 (0.45 hrs) - Codex QA Cleanup
+
+**Work performed:**
+
+- Ran a no-UI-change cleanup pass on the Claude redesign after QA review.
+- Added tab-panel regression coverage in `DashboardShell.test.tsx` and made the active task section a matching `role="tabpanel"` with `id="tabpanel-{tab}"`.
+- Added `src/components/map/__tests__/MapPanel.test.tsx` so the shipped choropleth map path is covered directly.
+- Removed orphaned old schematic map/filter files (`CornBeltMap`, `MapLayerControl`, `MapLegend`, `CornBeltMap.test`, `FilterBar`, `ActiveFilterChips`) plus the unused Radix Tabs primitive.
+- Pruned unused reserved dependencies (`maplibre-gl`, `react-map-gl`, `tw-animate-css`, unused Radix packages, `@next/env`) and moved `d3-geo` into runtime dependencies.
+- Removed the unused `cn` import from `RotationGeoRanking`.
+- Updated handover, README, project memory, stack guidance, task notes, and decision notes to reflect the cleaned dependency/file set.
+
+**Verification:**
+
+- Red/green: focused `npx vitest run src/components/layout/DashboardShell.test.tsx src/components/map/__tests__/MapPanel.test.tsx` failed before the tab-panel fix and passed after it.
+- `npm run test` passed: 10 files, 37 tests.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run build` passed.
+- `python scripts\validate-task-statuses.py` passed.
+- `python scripts\check-required-artifacts.py` passed.
+- `npm audit --audit-level=high` exited 0; two moderate Next/PostCSS advisories remain.
+
+**Blockers / cuts:**
+
+- In-app browser screenshot smoke remains blocked by the existing Windows sandbox runtime issue; no UI redesign or image generation was attempted in this cleanup.
+- Vector-tile / MapLibre work remains a future scope item pending browser-ready geography.
+
+**AI tools used:**
+
+- Codex QA
+
+---
+
+## 2026-06-02 (2.50 hrs) - Claude Sonnet 4.6 Builder/QA + User Feedback Loop
+
+**Work performed:**
+
+- Completed `TASK-011` major UI redesign after user feedback that the prior Wave 5 polish pass was visually unusable and that the Corn Belt map was not rendering as a real map.
+- Added dependencies: `recharts`, `lucide-react`, `maplibre-gl`, `react-map-gl`, `us-atlas`, `topojson-client`, `d3-geo`, `class-variance-authority`, `clsx`, `tailwind-merge`, `tw-animate-css`, and Radix primitives (`react-slot`, `react-tabs`, `react-select`, `react-popover`, `react-dialog`, `react-tooltip`, `react-separator`, `react-scroll-area`). Dev: `@types/topojson-client`, `@types/d3-geo`.
+- Created local shadcn-style primitive layer under `src/components/ui/` (Card, Button, Badge, Input, Select, Tabs, Popover, Sheet) plus `cn()` helper at `src/lib/utils.ts`.
+- Rewrote `src/app/globals.css` with Tailwind v4 `@theme` design tokens, MapLibre CSS import, font smoothing, soft body gradient, scrollbar styling, MapLibre popup tweaks, and a fade-in keyframe.
+- Added new layout components: `src/components/layout/TopBar.tsx` (sticky brand bar with live source/task/load-issue badges) and rewrote `src/components/layout/DashboardShell.tsx` (Hero + KPI grid + filters Card + MapPanel + TaskTabs + active panel + DataLoadStatus).
+- Replaced the dashboard's filter UI with `src/components/filters/CompactFilterBar.tsx` (6-up filter row, removable chips, advanced sheet drawer for map view coordinates).
+- Replaced the squished schematic state-tile fallback with `src/components/map/UsChoropleth.tsx` (`d3-geo` + `us-atlas/states-albers-10m.json` Albers choropleth with hover tooltip, click-to-select state paths, and keyboard-activatable `role="button"` aria-labels) plus `src/components/map/MapPanel.tsx` (Card wrapper with layer select, info popover, legend, selected-context block).
+- Rewrote `src/features/phenology/NdviCurveChart.tsx` on a Recharts `ComposedChart` (Area band for the credible interval, posterior Line, dashed empirical Line, hover tooltips, peak summary tiles).
+- Rewrote `src/features/phenology/PhenologyMetrics.tsx` with tone-coded metric tiles (emerald RMSE/MAE, sky Coverage, violet CRPS) and a Lucide icon.
+- Rewrote `src/features/phenology/PhenologyPanel.tsx` with a Card-based `PanelHeader`, styled native crop `<select>` (so existing `getByLabelText("Crop")` keeps passing), and gradient SourceNotes cards.
+- Added a compact-view disclosure to `src/features/rotation/RotationGeoRanking.tsx`: default 5 visible rows + a Lucide-chevron "Show N more" / "Show less" toggle. After the first attempt collapsed the entire section, user clarified ("you completly removed it I was more refering to the fact its there but it maybe has like a arrows button to see further down becuase normally it is compact"), and the disclosure was scoped to additional table rows only.
+- Replaced an inline `data:image/svg+xml` chevron with an absolutely positioned Lucide `<ChevronDown />` overlay inside a `NativeSelect` helper after Lightning CSS surfaced a parser warning on the inline SVG background during `npm run build`.
+- Replaced the Radix `<Tabs>` shell with a controlled button-based tablist after `fireEvent.click` did not reliably propagate the controlled-state change through Radix under React 19 + JSDOM. Radix Tabs primitive remains under `src/components/ui/tabs.tsx` for future use.
+- Preserved the existing accessibility tree intentionally (`<h1 className="sr-only">`, named `role="region"` sections, named `role="tablist"`, `role="status"` for the data load card, `<label>`-wrapped inputs for "Map layer" / "State" / "Crop" / "Selected entity", `role="button" aria-label="Select ${name}"` on each choropleth state path) so all 38 prior tests pass without modification.
+- Updated all `.md` docs after redesign: `PROJECT.md`, `TASKS.md` (added `TASK-011` block; bumped Total/Done from 11 to 12), `HANDOVER.md`, `README.md`, `memory/architecture.md`, `memory/patterns.md` (7 new patterns), `memory/decisions.md` (new decision entry), `memory/stack-guidance.md`, `logs/Overview.md`, `logs/Handoff Notes.md`, and this log.
+
+**Verification:**
+
+- `npm run typecheck` passed.
+- `npm run lint` passed with 0 errors and 0 warnings (removed an unused `CardContent` import in `PhenologyMetrics.tsx` after lint flagged it).
+- `npm run test` passed: 10 files, 38 tests. Test count is unchanged from `TASK-010` (no tests added, no tests skipped).
+- `npm run build` passed cleanly after the chevron data-URL fix (the prior Lightning CSS warning was resolved).
+- HTTP smoke on the existing local dev server `http://localhost:3000` returned 200 for the redesigned shell.
+
+**Blockers / cuts:**
+
+- Could not delete the orphaned old-shell files (`src/components/map/CornBeltMap.tsx`, `MapLayerControl.tsx`, `MapLegend.tsx`, `__tests__/CornBeltMap.test.tsx`, `src/components/filters/FilterBar.tsx`, `ActiveFilterChips.tsx`): the auto-mode classifier blocked the `rm` without explicit user authorization naming the targets. The files are no longer imported by any production code; `CornBeltMap.test.tsx` still passes locally against its own colocated component. Recommend deletion in a follow-up commit.
+- In-app browser screenshot smoke was attempted but blocked by `windows sandbox failed: spawn setup refresh`; the Chrome MCP extension was also unreachable in this session. Fell back to HTTP smoke and the component/integration test suite.
+- `maplibre-gl` and `react-map-gl` are installed but unused; they are reserved for the future vector-tile swap and remain in `package.json`.
+
+**AI tools used:**
+
+- Claude Sonnet 4.6 (interactive Builder/QA loop, with user-driven feedback iterations on the rotation table disclosure semantics and the visual scope of the redesign).
+
+---
+
 ## 2026-06-02 (0.40 hrs) - Codex Orchestrator/QA + Builder Agents
 
 **Work performed:**

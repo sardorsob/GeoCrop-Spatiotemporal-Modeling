@@ -15,7 +15,7 @@ export interface AnomalyTableProps {
 export function AnomalyTable({ rows }: AnomalyTableProps) {
   if (rows.length === 0) {
     return (
-      <section className="border border-slate-200 bg-white p-4">
+      <section className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
         <h3 className="text-base font-semibold text-slate-950">
           State and crop anomaly values
         </h3>
@@ -31,7 +31,7 @@ export function AnomalyTable({ rows }: AnomalyTableProps) {
   );
 
   return (
-    <section className="border border-slate-200 bg-white p-4">
+    <section className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h3 className="text-base font-semibold text-slate-950">

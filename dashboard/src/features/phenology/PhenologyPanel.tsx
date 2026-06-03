@@ -1,3 +1,4 @@
+import { Card, CardContent } from "@/components/ui/card";
 import type {
   CropId,
   DataPointSource,
@@ -24,118 +25,118 @@ export function PhenologyPanel({
   selectedCrop
 }: PhenologyPanelProps) {
   const activeCrop = selectedCrop ?? getFirstCrop(modelEvaluation, phenologySeries);
-  const cropSeries = phenologySeries.filter((series) => series.crop === activeCrop);
+  const cropSeries = phenologySeries.filter((s) => s.crop === activeCrop);
   const metric = modelEvaluation.find((row) => row.crop === activeCrop);
   const isMissing = modelEvaluation.length === 0 && phenologySeries.length === 0;
   const sourceNotes = collectSources(metric, cropSeries);
 
   return (
     <section className="space-y-4" aria-labelledby="phenology-heading">
-      <div className="border border-slate-200 bg-white p-4">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              {PHENOLOGY_COPY.eyebrow}
-            </p>
-            <h2
-              className="mt-1 text-xl font-semibold leading-tight text-slate-950"
-              id="phenology-heading"
-            >
-              {PHENOLOGY_COPY.heading}
-            </h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-              {PHENOLOGY_COPY.summary}
-            </p>
-          </div>
-          <label className="grid min-w-44 gap-1 text-sm font-medium text-slate-700">
-            Crop
+      <PanelHeader
+        eyebrow={PHENOLOGY_COPY.eyebrow}
+        heading={PHENOLOGY_COPY.heading}
+        summary={PHENOLOGY_COPY.summary}
+        headingId="phenology-heading"
+        right={
+          <label className="grid min-w-44 gap-1.5 text-sm">
+            <span className="text-xs font-medium uppercase tracking-wide text-slate-500">Crop</span>
             <select
-              className="w-full border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-              onChange={(event) =>
-                onCropChange?.(event.currentTarget.value as CropId)
-              }
+              className="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-900 shadow-sm hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               value={activeCrop}
+              onChange={(e) => onCropChange?.(e.currentTarget.value as CropId)}
             >
-              {CROP_OPTIONS.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
+              {CROP_OPTIONS.map((opt) => (
+                <option key={opt.id} value={opt.id}>{opt.label}</option>
               ))}
             </select>
           </label>
-        </div>
-      </div>
+        }
+      />
 
-      {isMissing ? (
-        <div className="border border-dashed border-slate-300 bg-slate-50 p-4">
-          <h3 className="text-base font-semibold text-slate-950">
-            {PHENOLOGY_COPY.missingHeading}
-          </h3>
-          <p className="mt-1 text-sm leading-6 text-slate-600">
-            {PHENOLOGY_COPY.missingBody}
-          </p>
-        </div>
-      ) : null}
+      {isMissing && (
+        <Card>
+          <CardContent className="border-l-4 border-amber-400">
+            <h3 className="text-base font-semibold text-slate-900">{PHENOLOGY_COPY.missingHeading}</h3>
+            <p className="mt-1 text-sm leading-6 text-slate-600">{PHENOLOGY_COPY.missingBody}</p>
+          </CardContent>
+        </Card>
+      )}
 
       <PhenologyMetrics crop={activeCrop} metric={metric} />
       <NdviCurveChart crop={activeCrop} series={cropSeries} />
 
-      {sourceNotes.length > 0 ? <SourceNotes sources={sourceNotes} /> : null}
+      {sourceNotes.length > 0 && <SourceNotes sources={sourceNotes} />}
     </section>
   );
 }
 
-function SourceNotes({
-  sources
+export function PanelHeader({
+  eyebrow,
+  heading,
+  summary,
+  headingId,
+  right
 }: {
-  readonly sources: readonly DataPointSource[];
+  readonly eyebrow: string;
+  readonly heading: string;
+  readonly summary: string;
+  readonly headingId?: string;
+  readonly right?: React.ReactNode;
 }) {
   return (
-    <section
-      aria-label="Task 1 source notes"
-      className="border border-slate-200 bg-white p-4"
-    >
-      <h3 className="text-base font-semibold text-slate-950">Source notes</h3>
-      <div className="mt-3 grid gap-3 md:grid-cols-3">
-        {sources.map((source) => (
-          <article
-            className="border border-slate-200 bg-slate-50 p-3 text-sm"
-            key={`${source.sourceId}-${source.path ?? ""}`}
-          >
-            <h4 className="font-semibold text-slate-950">
-              {source.label ?? source.sourceId}
-            </h4>
-            {source.path ? (
-              <p className="mt-2 break-words text-xs leading-5 text-slate-600">
-                {source.path}
-              </p>
-            ) : null}
-            <div className="mt-3 flex flex-wrap gap-2 text-xs font-medium text-slate-700">
-              {source.rowCount !== undefined ? (
-                <span className="border border-slate-300 bg-white px-2 py-1">
-                  {source.rowCount.toLocaleString("en-US")} rows
-                </span>
-              ) : null}
-              {source.dateStamp ? (
-                <span className="border border-slate-300 bg-white px-2 py-1">
-                  {source.dateStamp}
-                </span>
-              ) : null}
-            </div>
-            {source.denominator ? (
-              <p className="mt-3 text-xs leading-5 text-slate-600">
-                Denominator: {source.denominator}
-              </p>
-            ) : null}
-            {source.caveat ? (
-              <p className="mt-3 text-sm leading-6 text-slate-700">
-                {source.caveat}
-              </p>
-            ) : null}
-          </article>
-        ))}
-      </div>
-    </section>
+    <Card>
+      <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-600">{eyebrow}</p>
+          <h2 className="mt-1 text-xl font-bold leading-tight text-slate-900" id={headingId}>
+            {heading}
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500">{summary}</p>
+        </div>
+        {right}
+      </CardContent>
+    </Card>
+  );
+}
+
+function SourceNotes({ sources }: { readonly sources: readonly DataPointSource[] }) {
+  return (
+    <Card>
+      <section aria-label="Task 1 source notes" className="px-5 py-5">
+        <h3 className="text-base font-semibold text-slate-900">Source notes</h3>
+        <div className="mt-3 grid gap-3 md:grid-cols-3">
+          {sources.map((source) => (
+            <article
+              key={`${source.sourceId}-${source.path ?? ""}`}
+              className="rounded-xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white p-3 text-sm"
+            >
+              <h4 className="font-semibold text-slate-900">{source.label ?? source.sourceId}</h4>
+              {source.path && (
+                <p className="mt-2 break-words font-mono text-[11px] leading-4 text-slate-500">{source.path}</p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-1.5 text-xs">
+                {source.rowCount !== undefined && (
+                  <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 font-medium text-slate-600">
+                    {source.rowCount.toLocaleString("en-US")} rows
+                  </span>
+                )}
+                {source.dateStamp && (
+                  <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 font-medium text-slate-600">
+                    {source.dateStamp}
+                  </span>
+                )}
+              </div>
+              {source.denominator && (
+                <p className="mt-3 text-xs leading-5 text-slate-500">Denominator: {source.denominator}</p>
+              )}
+              {source.caveat && (
+                <p className="mt-3 text-sm leading-6 text-slate-600">{source.caveat}</p>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+    </Card>
   );
 }
 
@@ -150,19 +151,13 @@ function collectSources(
   metric: PhenologyModelEvaluation | undefined,
   series: readonly PhenologySeries[]
 ): readonly DataPointSource[] {
-  const sources = [
-    metric?.source,
-    ...series.map((item) => item.source)
-  ].filter((source): source is DataPointSource => Boolean(source));
+  const sources = [metric?.source, ...series.map((s) => s.source)].filter(
+    (s): s is DataPointSource => Boolean(s)
+  );
   const seen = new Set<string>();
-
-  return sources.filter((source) => {
-    const key = `${source.sourceId}-${source.path ?? ""}`;
-
-    if (seen.has(key)) {
-      return false;
-    }
-
+  return sources.filter((s) => {
+    const key = `${s.sourceId}-${s.path ?? ""}`;
+    if (seen.has(key)) return false;
     seen.add(key);
     return true;
   });

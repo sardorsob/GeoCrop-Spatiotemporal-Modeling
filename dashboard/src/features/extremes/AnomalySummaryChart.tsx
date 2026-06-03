@@ -19,7 +19,7 @@ export function AnomalySummaryChart({
 }: AnomalySummaryChartProps) {
   if (rows.length === 0) {
     return (
-      <section className="border border-slate-200 bg-white p-4">
+      <section className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
         <h3 className="text-base font-semibold text-slate-950">
           Anomaly summary
         </h3>
@@ -35,7 +35,7 @@ export function AnomalySummaryChart({
   return (
     <section
       aria-label="Anomaly z-score summary"
-      className="border border-slate-200 bg-white p-4"
+      className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm"
     >
       <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -46,7 +46,7 @@ export function AnomalySummaryChart({
             {EXTREME_EVENT_DETAILS[eventId].description}
           </p>
         </div>
-        <p className="shrink-0 border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-900">
+        <p className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
           {formatCount(aggregate.totalPixelWeeks)} pixel-weeks
         </p>
       </div>
@@ -88,13 +88,13 @@ function MetricCard({
 }) {
   const toneClassName =
     tone === "wet"
-      ? "border-sky-600 bg-sky-50 text-sky-950"
-      : "border-amber-500 bg-amber-50 text-amber-950";
+      ? "border-sky-400 bg-sky-50 text-sky-950"
+      : "border-amber-400 bg-amber-50 text-amber-950";
 
   return (
-    <div className={`border-l-4 px-3 py-3 ${toneClassName}`}>
-      <p className="text-xs font-semibold uppercase tracking-wide">{label}</p>
-      <p className="mt-2 text-2xl font-semibold text-slate-950">{value}</p>
+    <div className={`rounded-xl border-l-4 px-4 py-4 shadow-sm ${toneClassName}`}>
+      <p className="text-xs font-semibold uppercase tracking-widest">{label}</p>
+      <p className="mt-2 text-2xl font-bold text-slate-950">{value}</p>
     </div>
   );
 }

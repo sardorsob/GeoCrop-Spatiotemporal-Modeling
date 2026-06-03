@@ -15,7 +15,7 @@ export function EventSelector({
   return (
     <fieldset className="grid gap-2">
       <legend className="text-sm font-semibold text-slate-700">Event</legend>
-      <div className="grid gap-px bg-slate-200 sm:grid-cols-2" role="group">
+      <div className="grid gap-1.5 sm:grid-cols-2" role="group">
         {EXTREME_EVENT_OPTIONS.map((option) => {
           const isSelected = option.id === selectedEvent;
           const details = EXTREME_EVENT_DETAILS[option.id];
@@ -26,10 +26,10 @@ export function EventSelector({
               aria-label={option.label}
               aria-pressed={isSelected}
               className={[
-                "bg-white px-3 py-3 text-left text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2",
+                "rounded-lg px-3 py-3 text-left text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2",
                 isSelected
-                  ? "border-l-4 border-emerald-600 text-slate-950"
-                  : "border-l-4 border-transparent text-slate-700"
+                  ? "border-l-4 border-emerald-500 bg-emerald-50 text-slate-950"
+                  : "border-l-4 border-transparent bg-slate-50 text-slate-700 hover:bg-slate-100"
               ].join(" ")}
               key={option.id}
               onClick={() => onEventChange?.(option.id)}

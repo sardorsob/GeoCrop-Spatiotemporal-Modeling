@@ -362,6 +362,13 @@ describe("DashboardShell", () => {
       expect(within(tablist).getByRole("tab", { name: tabName }))
         .toBeInTheDocument();
     }
+    expect(screen.getByRole("tabpanel")).toHaveAttribute(
+      "id",
+      "tabpanel-phenology"
+    );
+    expect(
+      within(tablist).getByRole("tab", { name: "Phenology" })
+    ).toHaveAttribute("aria-controls", "tabpanel-phenology");
 
     expect(
       screen.getByRole("heading", { name: "Task 1 phenology" })
@@ -386,6 +393,10 @@ describe("DashboardShell", () => {
     expect(mockNavigation.replace).toHaveBeenLastCalledWith(
       expect.stringContaining("tab=rotation"),
       { scroll: false }
+    );
+    expect(screen.getByRole("tabpanel")).toHaveAttribute(
+      "id",
+      "tabpanel-rotation"
     );
 
     fireEvent.click(within(tablist).getByRole("tab", { name: "Extremes" }));

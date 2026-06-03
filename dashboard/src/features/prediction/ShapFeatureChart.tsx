@@ -10,7 +10,7 @@ interface ShapFeatureChartProps {
 export function ShapFeatureChart({ features, topN = 5 }: ShapFeatureChartProps) {
   if (features.length === 0) {
     return (
-      <section className="border border-slate-200 bg-white p-4">
+      <section className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
         <h3 className="text-base font-semibold text-slate-950">SHAP feature ranking</h3>
         <p className="mt-2 text-sm text-slate-600">No SHAP feature importance rows are available.</p>
       </section>
@@ -24,7 +24,7 @@ export function ShapFeatureChart({ features, topN = 5 }: ShapFeatureChartProps) 
   const source = rankedFeatures[0]?.source;
 
   return (
-    <section className="border border-slate-200 bg-white p-4">
+    <section className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h3 className="text-base font-semibold text-slate-950">SHAP feature ranking</h3>
@@ -75,8 +75,8 @@ function ShapBar({
   return (
     <div className="grid min-w-36 gap-1">
       <span className="font-semibold text-slate-950">{formatShapValue(value)}</span>
-      <span className="h-2 w-full overflow-hidden bg-slate-100" aria-hidden="true">
-        <span className="block h-full bg-sky-600" style={{ width: `${width}%` }} />
+      <span className="h-2 w-full overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+        <span className="block h-full rounded-full bg-sky-500" style={{ width: `${width}%` }} />
       </span>
     </div>
   );
@@ -88,7 +88,7 @@ function SourcePill({ source }: { readonly source?: DataPointSource }) {
   }
 
   return (
-    <p className="shrink-0 border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-medium text-sky-900">
+    <p className="shrink-0 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-medium text-sky-800">
       {source.label ?? source.sourceId}
     </p>
   );

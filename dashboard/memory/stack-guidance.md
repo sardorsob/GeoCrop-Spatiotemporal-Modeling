@@ -4,26 +4,38 @@
 
 ## Status
 
-Stack direction selected during intake-to-scope on 2026-06-02. Treat this as
-the default unless the scope changes through the workflow.
+Stack direction selected during intake-to-scope on 2026-06-02 and refined after
+the `TASK-011` UI redesign on 2026-06-02. Treat this as the default unless the
+scope changes through the workflow.
 
 ## Stack Summary
 
-- Framework: Next.js with React and TypeScript.
+- Framework: Next.js 16 with React 19 and TypeScript 5.9.
 - Hosting: Vercel.
-- Styling: Tailwind CSS with small project-specific design tokens.
-- UI primitives: shadcn/ui where it speeds up accessible controls, dialogs,
-  tabs, sheets, and panels.
-- Charts: Observable Plot or D3. Prefer the simplest truthful chart; use D3 when
-  direct labels, custom annotations, or matrix/legend control require it.
-- Maps: MapLibre GL JS for interactive map surfaces. Use static image/SVG
-  fallbacks if true browser-safe geospatial data is not ready.
+- Styling: Tailwind CSS v4 with `@theme` design tokens in
+  `src/app/globals.css`, `class-variance-authority` for variant composition,
+  and `clsx` + `tailwind-merge` (via `cn()` in `src/lib/utils.ts`) for class
+  merging.
+- UI primitives: Local shadcn-style components under `src/components/ui/`
+  (`Card`, `Button`, `Badge`, `Input`, `Select`, `Popover`, `Sheet`) backed by
+  Radix where needed (`react-slot`, `react-select`, `react-popover`,
+  `react-dialog`).
+- Icons: `lucide-react`.
+- Charts: `recharts` for the NDVI seasonality `ComposedChart` (Area band +
+  posterior Line + empirical Line). Other panels keep code-native HTML/SVG
+  tables and bars where the data shape is simpler. Use a single chart library
+  per surface; do not mix Recharts with Observable Plot / D3 plotting in the
+  same view.
+- Maps: `d3-geo` + `topojson-client` + `us-atlas/states-albers-10m.json` for
+  the U.S. Albers choropleth in `UsChoropleth`. Add a tile/map library only
+  when browser-ready GeoJSON/TopoJSON or vector tiles are produced.
 - Data: static artifact ingestion from parent-repo CSV/JSON into typed,
-  dashboard-friendly data structures.
-- Persistence: URL search params for meaningful shareable state. No database for
-  MVP.
-- Tests: Vitest for transforms and small logic; Playwright can be added for
-  browser smoke once the app shell exists.
+  dashboard-friendly data structures (`src/lib/data/`).
+- Persistence: URL search params for meaningful shareable state
+  (`src/lib/state/`). No database for MVP.
+- Tests: Vitest + Testing Library for transforms, codecs, components, and the
+  shell integration test. Playwright can be added for browser smoke once the
+  deployment is configured.
 
 ## Architecture Defaults
 
@@ -39,15 +51,23 @@ the default unless the scope changes through the workflow.
 
 ## File And Module Conventions
 
-Recommended file ownership once implementation begins:
+Recommended file ownership:
 
 - `app/` or `src/app/`: routes and page composition.
-- `src/components/`: reusable UI and visualization components.
+- `src/components/ui/`: local shadcn-style primitives (cards, buttons, badges,
+  inputs, selects, popovers, sheets). Each primitive is a single small
+  file; build new ones only when several callers need the same control.
+- `src/components/layout/`: top bar, dashboard shell, hero, KPI, and other
+  shell-level layout components.
+- `src/components/filters/`: dashboard filter UI.
+- `src/components/map/`: choropleth + map card. `UsChoropleth` is the rendering
+  primitive; `MapPanel` is the dashboard-facing card.
 - `src/features/<task>/`: task-specific panels and charts.
 - `src/lib/data/`: source registry, CSV/JSON loaders, normalization, and typed
   contracts.
 - `src/lib/state/`: URL param codecs and dashboard state helpers.
 - `src/lib/format/`: number, percent, date, label, and caveat formatting.
+- `src/lib/utils.ts`: `cn()` class-merge helper. Keep this file tiny.
 - `public/`: static image fallbacks or copied dashboard assets.
 
 Builders must only edit files listed in their task block. If a task needs a new
@@ -102,7 +122,20 @@ cross-cutting module, stop and ask the Orchestrator/QA to update task ownership.
 - Do not commit generated caches, `.superpowers/`, or the dev workflow kit copy.
 - Do not use `any` without a recorded reason.
 - Do not add dependencies casually; justify every map/chart/UI dependency in the
-  task notes.
+  task notes. Post-`TASK-011` the approved set is Radix + `recharts` +
+  `lucide-react` + `d3-geo` + `topojson-client` + `us-atlas` + `cva` + `clsx` +
+  `tailwind-merge`. Add MapLibre or another map-tile dependency only when
+  browser-ready GeoJSON or vector tiles exist.
 - Do not let dashboard visuals imply pixel-level precision if the source view is
-  state/county summary or static image fallback.
+  state/county summary. The current choropleth is categorical-by-state; do not
+  add per-county or per-pixel layers until the modeling pipeline ships
+  browser-ready geometry.
 - Do not hide denominators, caveats, or source dates behind hover.
+- Do not break the existing accessibility tree when redesigning UI: keep the
+  hidden `<h1>GeoCrop Interactive Dashboard</h1>`, the `role="region"`
+  aria-labels ("Dashboard filters", "Corn Belt map surface"), the
+  `role="tablist"` aria-label ("Research tasks"), the visible `<label>`
+  associations for "Map layer" / "State" / "Crop" / "Selected entity", and the
+  `role="button" aria-label="Select ${name}"` on each state path. The test
+  suite encodes these contracts, including the tab `aria-controls` to active
+  `role="tabpanel"` relationship.

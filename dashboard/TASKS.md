@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 11 | 11 | 0 | 0 | 0 | 0 | 0 |
+| 12 | 12 | 0 | 0 | 0 | 0 | 0 |
 
 ---
 
@@ -646,4 +646,88 @@
 - Max attempts: 3
 - Attempt log:
   - 2026-06-02: Started final integration lane after TASK-005 through TASK-009 were committed; scoped to shell/page wiring, URL share/restore, smoke checks, and handover docs.
+- Status: done
+
+---
+
+## TASK-011
+
+- Feature group: UI Redesign
+- Title: Replace flat code-native shell with shadcn-style design system, Recharts NDVI, and US Albers choropleth
+- Depends on: TASK-010
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-011
+  - Integration status: done
+- Design source:
+  - User feedback session 2026-06-02 ("the UI is horrible", "redesign the entire dashbaord", "use plugins such as design plugin", "the corn belt map is not even shwoing up using map libre")
+  - `SCOPE.md` UI/UX section (Map Command Center, source-visible analytics)
+  - `memory/stack-guidance.md` UI guidance (shadcn/ui allowed where it accelerates accessible controls; MapLibre allowed for real geospatial layers)
+- User value: Produces a portfolio-quality interactive dashboard that no longer reads as an unstyled utility app. The map is now a real US Albers choropleth instead of a squished schematic tile grid; charts use a real charting library; filters are compact and chip-driven; the rotation geographic ranking is collapsible for compact reading.
+- User flow:
+  - User lands on the dashboard and sees a sticky top bar with brand mark, live source/task/issue badges, and a hero KPI strip.
+  - User scans the compact filter row (Crop, Event, Regime, State, Map Layer, Selected Entity) and removes active filters via chips.
+  - User reads the full-width Corn Belt choropleth, hovers states for tooltip values, clicks to push selection to downstream panels, switches layers via the in-card select, and opens the layer info popover for source/caveat detail.
+  - User switches research tabs (Phenology / Rotation / Extremes / Prediction) via the pill tab bar.
+  - User reads the NDVI seasonality view as a real Recharts ComposedChart with credible-interval band, solid posterior line, dashed empirical line, tooltips, and peak summary cards.
+  - User opens the Rotation tab and sees the Geographic rotation summaries table in compact form (5 rows) with a "Show N more" / "Show less" toggle at the bottom.
+- Functional notes:
+  - Add a local shadcn-style primitive layer under `src/components/ui/` backed by Radix (Slot, Tabs, Select, Popover, Dialog) and `class-variance-authority` / `clsx` / `tailwind-merge`.
+  - Introduce `cn()` helper in `src/lib/utils.ts`.
+  - Replace the schematic state-tile fallback (`CornBeltMap.tsx`) with a real US choropleth (`UsChoropleth.tsx`) using `d3-geo` + `us-atlas/states-albers-10m.json`.
+  - Categorical layer values are mapped to legend index → fill color. States outside the Corn Belt fallback registry render as no-data (soft slate).
+  - Replace the custom SVG NDVI chart with a Recharts ComposedChart (Area band + two Lines).
+  - Reorganize the page into: sticky `TopBar` → `Hero` (project narrative + 4 accent-bar KPI tiles) → filters Card → full-width map Card → pill TaskTabs → active panel section → DataLoadStatus.
+  - Replace the windowpane `gap-px` separator pattern with proper `gap-3/4` rounded cards everywhere.
+  - Add a "Show N more" / "Show less" disclosure to `RotationGeoRanking` with a default of 5 visible rows.
+  - Preserve all prior accessibility hooks needed by existing tests (`role="region"` named "Dashboard filters", "Corn Belt map surface"; `role="tablist"` named "Research tasks"; `role="status"` named "Data load status"; `role="button"` with `aria-label="Select ${name}"` on each state path; visible `<label>` for "Map layer", "State", "Crop", "Selected entity" inputs; hidden H1 "GeoCrop Interactive Dashboard").
+  - Keep prior URL-state, normalization, and source registry behavior unchanged.
+- Edge cases:
+  - States outside the Corn Belt fallback registry: render no-data swatch and absent in selection logic.
+  - Categorical map layers with index outside legend length: clamped to legend bounds in `colorScale`.
+  - Recharts SSR: `NdviCurveChart` and other client-only charts gated by `"use client"`.
+  - JSDOM rendering of Radix Tabs under React 19 was unreliable for the integration test; replaced Radix `<Tabs>` with a simple controlled button-based tablist in `DashboardShell.tsx` to keep the suite green, then pruned the unused Radix Tabs primitive during cleanup.
+  - The `<select>` chevron previously implemented as an inline SVG data URL produced a Lightning CSS parser warning at build time; replaced with an absolutely positioned Lucide `<ChevronDown />` overlay.
+  - Existing strict text assertions ("Peak posterior: 0.72 at DOY 160", "Selected geography: Illinois", "535 observations", "Selected geography: state:IL is not present in the loaded geographic summaries"): kept single-element strings to avoid breaking `getByText` matchers.
+- Test cases:
+  1. `npm run typecheck` passes against the new component tree.
+  2. `npm run lint` passes with 0 warnings.
+  3. `npm run test` passes the component/data/integration suite, including direct `MapPanel` coverage for the shipped choropleth path.
+  4. `npm run build` passes with no Lightning CSS errors after the chevron fix.
+  5. Manual: the rotation table shows 5 rows then "Show N more"; clicking expands; clicking again collapses.
+  6. Manual: clicking a state on the choropleth updates the Selected context block in the map card.
+- Files to create/modify:
+  - `package.json` (add: `recharts`, `lucide-react`, `us-atlas`, `topojson-client`, `d3-geo`, `class-variance-authority`, `clsx`, `tailwind-merge`, `@radix-ui/react-slot`, `@radix-ui/react-select`, `@radix-ui/react-popover`, `@radix-ui/react-dialog`; devDeps: `@types/topojson-client`, `@types/d3-geo`)
+  - `src/app/globals.css` (Tailwind v4 `@theme` tokens, font smoothing, scrollbar, fade-in keyframe)
+  - `src/lib/utils.ts` (new — `cn()` helper)
+  - `src/components/ui/card.tsx`, `button.tsx`, `badge.tsx`, `select.tsx`, `popover.tsx`, `sheet.tsx`, `input.tsx` (all new)
+  - `src/components/layout/TopBar.tsx` (new)
+  - `src/components/layout/DashboardShell.tsx` (rewritten: Hero + KPI grid + filters Card + MapPanel + TaskTabs + active panel + DataLoadStatus)
+  - `src/components/filters/CompactFilterBar.tsx` (new; replaces FilterBar/ActiveFilterChips in the shell)
+  - `src/components/map/UsChoropleth.tsx` (new; d3-geo + us-atlas Albers choropleth with hover tooltip and keyboard-activatable state paths)
+  - `src/components/map/MapPanel.tsx` (new; choropleth wrapper with layer select, info popover, legend, selected-context block)
+  - `src/features/phenology/NdviCurveChart.tsx` (rewritten on Recharts ComposedChart)
+  - `src/features/phenology/PhenologyMetrics.tsx` (rewritten: tone-coded metric tiles, Lucide icon)
+  - `src/features/phenology/PhenologyPanel.tsx` (rewritten: Card-based PanelHeader, native styled select, gradient SourceNotes cards)
+  - `src/features/rotation/RotationGeoRanking.tsx` (collapsible: 5 visible rows + "Show N more" disclosure)
+  - `tsconfig.json` (no change; existing `resolveJsonModule` allows the us-atlas TopoJSON import)
+- Acceptance criteria:
+  - [x] New shadcn-style primitive layer exists under `src/components/ui/` and is used by the redesigned shell, map card, and feature panels.
+  - [x] The Corn Belt map renders as a real US Albers choropleth (not state-tile boxes).
+  - [x] States are clickable and emit `CornBeltMapSelectionContext` for downstream panels.
+  - [x] NDVI seasonality view uses a real chart library (Recharts) with a credible-interval band, posterior line, and empirical line.
+  - [x] `RotationGeoRanking` shows a compact 5-row view by default with a "Show N more" / "Show less" toggle when there are more than 5 rows.
+  - [x] Filter bar is compact (single visible row of 6 fields) with chip-based active filter display and an advanced sheet for map view coordinates.
+  - [x] Existing accessibility tree is preserved, with added coverage for tab-panel linkage and the shipped `MapPanel` choropleth.
+  - [x] `npm run typecheck`, `npm run lint`, `npm run test`, and `npm run build` all pass.
+  - [x] No backend, database, auth, or live data is introduced.
+  - [x] No image generation or `gpt-image-2` is used.
+- QA notes:
+  - Builder handoff 2026-06-02: User reported the prior layout was "horrible and non functional", that the Corn Belt map was not actually rendering ("the corn belt map is not even shwoing up using map libre"), and that the layout was "too squished". Authorized adding component-library and charting dependencies. Implemented the full redesign listed in Files. Replaced Radix Tabs with a controlled button tablist after JSDOM + React 19 reliability issues during integration testing. Replaced an inline SVG data-URL chevron with a Lucide overlay after a Lightning CSS parser warning during `npm run build`. Iteration: first pass made the rotation table fully collapsible at the section level; user clarified ("you completly removed it I was more refering to the fact its there but it maybe has like a arrows button to see further down becuase normally it is compact"), so the section header was restored and the disclosure was moved to a "Show N more" toggle below the table that shows a compact 5-row view by default.
+  - QA cleanup 2026-06-02: Removed the old schematic map/filter components and their old colocated test, added `MapPanel.test.tsx` for the shipped choropleth path, added a tab-panel ARIA regression assertion, made the active panel a matching `role="tabpanel"`, removed the unused `cn` import from `RotationGeoRanking`, pruned unused reserved dependencies, and moved `d3-geo` into runtime dependencies.
+- Attempts: 1
+- Max attempts: 3
+- Attempt log:
+  - 2026-06-02: Started TASK-011 in-house after user feedback on the prior Wave 5 polish pass; scoped to dependencies, design-system primitives, map redesign, NDVI chart redesign, shell rewrite, and the RotationGeoRanking compact-view disclosure.
 - Status: done

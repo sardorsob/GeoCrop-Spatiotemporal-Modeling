@@ -16,7 +16,7 @@ export function ConfusionMatrix({ metrics }: ConfusionMatrixProps) {
   const hasCounts = matrix && matrix.some((row) => row.length > 0);
 
   return (
-    <section className="border border-slate-200 bg-white p-4">
+    <section className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
       <div>
         <h3 className="text-base font-semibold text-slate-950">Test confusion matrix</h3>
         <p className="mt-1 text-sm text-slate-600">{predictionCopy.cornSoyCaveat}</p>
@@ -58,7 +58,7 @@ export function ConfusionMatrix({ metrics }: ConfusionMatrixProps) {
           </table>
         </div>
       ) : (
-        <div className="mt-4 border border-amber-300 bg-amber-50 px-3 py-3 text-sm text-amber-950" role="status">
+        <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900" role="status">
           <p>{predictionCopy.confusionFallback}</p>
           <p className="mt-2 font-mono text-xs">{predictionCopy.confusionFallbackPath}</p>
         </div>

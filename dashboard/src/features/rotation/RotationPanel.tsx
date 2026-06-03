@@ -42,7 +42,7 @@ export function RotationPanel({
 
   return (
     <section className="space-y-4" aria-labelledby="rotation-heading">
-      <div className="border border-slate-200 bg-white p-4">
+      <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
         <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
           {ROTATION_COPY.eyebrow}
         </p>
@@ -89,26 +89,26 @@ function RotationMethodCaveat({
   return (
     <section
       aria-label="Rotation methodology caveat"
-      className="border border-amber-300 bg-amber-50 p-4 text-amber-950"
+      className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-950"
     >
       <h3 className="text-base font-semibold">Modeling caveat</h3>
       <p className="mt-2 text-sm leading-6">{ROTATION_COPY.methodCaveat}</p>
       <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-3">
-        <p className="border border-amber-200 bg-white/70 px-3 py-2">
+        <p className="rounded-lg border border-amber-200 bg-white/70 px-3 py-2">
           Markov rows: {formatCount(markovTransitions.length)}
         </p>
-        <p className="border border-amber-200 bg-white/70 px-3 py-2">
+        <p className="rounded-lg border border-amber-200 bg-white/70 px-3 py-2">
           Threshold rows: {formatCount(thresholdSensitivity.length)}
         </p>
         {leadingTransition ? (
-          <p className="border border-amber-200 bg-white/70 px-3 py-2">
+          <p className="rounded-lg border border-amber-200 bg-white/70 px-3 py-2">
             Top transition: {cropLabels[leadingTransition.fromCrop]} to{" "}
             {cropLabels[leadingTransition.toCrop]}{" "}
             {formatPercent(leadingTransition.probability)}
           </p>
         ) : null}
         {firstThreshold ? (
-          <p className="border border-amber-200 bg-white/70 px-3 py-2">
+          <p className="rounded-lg border border-amber-200 bg-white/70 px-3 py-2">
             Baseline sensitivity: alternation{" "}
             {formatThreshold(firstThreshold.alternationMin)}, distance{" "}
             {formatThreshold(firstThreshold.patternDistanceMax)}
@@ -127,13 +127,13 @@ function SourceNotes({
   return (
     <section
       aria-label={ROTATION_COPY.sourceRegionLabel}
-      className="border border-slate-200 bg-white p-4"
+      className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm"
     >
       <h3 className="text-base font-semibold text-slate-950">Source notes</h3>
       <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {sources.map((source, index) => (
           <article
-            className="border border-slate-200 bg-slate-50 p-3 text-sm"
+            className="rounded-lg border border-slate-100 bg-slate-50 p-3 text-sm"
             key={`${source.sourceId}-${source.path ?? ""}`}
           >
             <h4 className="font-semibold text-slate-950">
@@ -146,12 +146,12 @@ function SourceNotes({
             ) : null}
             <div className="mt-3 flex flex-wrap gap-2 text-xs font-medium text-slate-700">
               {source.rowCount !== undefined ? (
-                <span className="border border-slate-300 bg-white px-2 py-1">
+                <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5">
                   {formatCount(source.rowCount)} rows
                 </span>
               ) : null}
               {source.dateStamp ? (
-                <span className="border border-slate-300 bg-white px-2 py-1">
+                <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5">
                   {index === 0 ? source.dateStamp : `Date: ${source.dateStamp}`}
                 </span>
               ) : null}

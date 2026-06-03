@@ -2,21 +2,22 @@
 
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { AlertTriangle, Leaf, Repeat, ShieldAlert, Target, CheckCircle2 } from "lucide-react";
 
-import { FilterBar } from "@/components/filters/FilterBar";
-import { CornBeltMap } from "@/components/map/CornBeltMap";
+import { CompactFilterBar } from "@/components/filters/CompactFilterBar";
+import { MapPanel } from "@/components/map/MapPanel";
+import { TopBar } from "@/components/layout/TopBar";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { ExtremesPanel } from "@/features/extremes/ExtremesPanel";
 import type { CornBeltMapSelectionContext } from "@/features/map/map-selection";
 import { PhenologyPanel } from "@/features/phenology/PhenologyPanel";
 import { PredictionPanel } from "@/features/prediction/PredictionPanel";
 import { RotationPanel } from "@/features/rotation/RotationPanel";
 import type { NormalizedDashboardData } from "@/lib/data/normalize";
-import type {
-  DashboardFilterState,
-  DashboardTab,
-} from "@/lib/data/types";
+import type { DashboardFilterState, DashboardTab } from "@/lib/data/types";
 import {
-  DASHBOARD_TAB_OPTIONS,
   DEFAULT_DASHBOARD_FILTER_STATE,
   normalizeDashboardFilterState
 } from "@/lib/state/dashboard-state";
@@ -29,25 +30,11 @@ export interface DashboardShellProps {
   readonly data: NormalizedDashboardData;
 }
 
-const tabSummaries: Readonly<
-  Record<DashboardTab, { readonly status: string; readonly metric: string }>
-> = {
-  phenology: {
-    status: "Stage timing",
-    metric: "NDVI phase alignment"
-  },
-  rotation: {
-    status: "Crop sequence",
-    metric: "Rotation class share"
-  },
-  extremes: {
-    status: "Stress windows",
-    metric: "Soil moisture anomalies"
-  },
-  prediction: {
-    status: "Model diagnostics",
-    metric: "Held-out crop accuracy"
-  }
+const TAB_META: Record<DashboardTab, { label: string; status: string; icon: React.ComponentType<{ className?: string }> }> = {
+  phenology: { label: "Phenology", status: "Stage timing", icon: Leaf },
+  rotation: { label: "Rotation", status: "Crop sequence", icon: Repeat },
+  extremes: { label: "Extremes", status: "Stress windows", icon: ShieldAlert },
+  prediction: { label: "Prediction", status: "Model diagnostics", icon: Target }
 };
 
 export function DashboardShell({ data }: DashboardShellProps) {
@@ -62,31 +49,19 @@ export function DashboardShell({ data }: DashboardShellProps) {
   const [localState, setLocalState] = useState<{
     readonly searchParamString: string;
     readonly state: DashboardFilterState;
-  }>({
-    searchParamString,
-    state: parsedUrlState.state
-  });
+  }>({ searchParamString, state: parsedUrlState.state });
   const dashboardState =
-    localState.searchParamString === searchParamString
-      ? localState.state
-      : parsedUrlState.state;
+    localState.searchParamString === searchParamString ? localState.state : parsedUrlState.state;
 
   function updateState(nextState: DashboardFilterState) {
-    const normalizedState = normalizeDashboardFilterState(nextState);
-    setLocalState({
-      searchParamString,
-      state: normalizedState
-    });
-
+    const normalized = normalizeDashboardFilterState(nextState);
+    setLocalState({ searchParamString, state: normalized });
     const nextParams = updateDashboardUrlSearchParams(
       new URLSearchParams(searchParamString),
-      normalizedState
+      normalized
     );
-    const nextQuery = nextParams.toString();
-
-    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
-      scroll: false
-    });
+    const q = nextParams.toString();
+    router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
   }
 
   function patchState(patch: Partial<DashboardFilterState>) {
@@ -102,77 +77,93 @@ export function DashboardShell({ data }: DashboardShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              GeoCrop command center
-            </p>
-            <h1 className="mt-1 text-2xl font-semibold leading-tight text-slate-950 sm:text-3xl">
-              GeoCrop Interactive Dashboard
-            </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-              Source-backed crop evidence workspace for phenology, rotation,
-              soil moisture extremes, and prediction diagnostics.
-            </p>
-          </div>
-          <StatusStrip data={data} />
-        </div>
-      </header>
+    <div className="min-h-screen text-slate-900">
+      <TopBar data={data} />
 
-      <main className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6 lg:px-8">
-        <FilterBar
-          onChange={updateState}
-          onReset={resetState}
-          value={dashboardState}
-          warnings={parsedUrlState.warnings}
+      <main className="mx-auto flex max-w-[1600px] flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8">
+        {/* HERO */}
+        <Hero data={data} />
+
+        {/* FILTERS */}
+        <Card asChild>
+          <section aria-label="Dashboard filters">
+            <CardContent className="py-4">
+              <CompactFilterBar
+                onChange={updateState}
+                onReset={resetState}
+                value={dashboardState}
+                warnings={parsedUrlState.warnings}
+              />
+            </CardContent>
+          </section>
+        </Card>
+
+        {/* MAP — full width */}
+        <MapPanel
+          activeLayerId={dashboardState.mapLayer}
+          onLayerChange={(mapLayer) => patchState({ mapLayer })}
+          onSelectionChange={handleMapSelection}
+          selectedGeographyId={dashboardState.selectedEntity}
         />
 
-        <ResearchTabs
+        {/* TASK TABS */}
+        <TaskTabs
           activeTab={dashboardState.tab}
           onTabChange={(tab) => patchState({ tab })}
         />
 
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
-          <div className="min-w-0 space-y-5">
-            <CornBeltMap
-              activeLayerId={dashboardState.mapLayer}
-              onLayerChange={(mapLayer) => patchState({ mapLayer })}
-              onSelectionChange={handleMapSelection}
-              selectedGeographyId={dashboardState.selectedEntity}
+        <section
+          aria-label="Active task panel"
+          className="mt-1"
+          id={`tabpanel-${dashboardState.tab}`}
+          role="tabpanel"
+        >
+          {dashboardState.tab === "phenology" && (
+            <PhenologyPanel
+              modelEvaluation={data.task1.modelEvaluation}
+              onCropChange={(crop) => patchState({ crop })}
+              phenologySeries={data.task1.phenologySeries}
+              selectedCrop={dashboardState.crop}
             />
-
-            <section
-              aria-label="Task evidence"
-              className="min-w-0"
-              role="tabpanel"
-            >
-              <ActivePanel
-                data={data}
-                state={dashboardState}
-                updateState={patchState}
-              />
-            </section>
-          </div>
-
-          <aside
-            aria-label="Selected context"
-            className="border border-slate-200 bg-white"
-          >
-            <SelectedContext data={data} state={dashboardState} />
-          </aside>
-        </div>
+          )}
+          {dashboardState.tab === "rotation" && (
+            <RotationPanel
+              classSummaries={data.task2.classSummaries}
+              geographySummaries={data.task2.geographySummaries}
+              markovTransitions={data.task2.markovTransitions}
+              selectedEntity={dashboardState.selectedEntity}
+              thresholdSensitivity={data.task2.thresholdSensitivity}
+            />
+          )}
+          {dashboardState.tab === "extremes" && (
+            <ExtremesPanel
+              anomalySummaries={data.task3.anomalySummaries}
+              onCropChange={(crop) => patchState({ crop })}
+              onEventChange={(event) => patchState({ event })}
+              onStateChange={(s) => patchState({ state: s })}
+              selectedCrop={dashboardState.crop}
+              selectedEvent={dashboardState.event}
+              selectedState={dashboardState.state}
+            />
+          )}
+          {dashboardState.tab === "prediction" && (
+            <PredictionPanel
+              ablationResults={data.task4.ablationResults}
+              regimeMetrics={data.task4.regimeMetrics}
+              shapFeatures={data.task4.shapFeatures}
+              splitSummaries={data.task4.splitSummaries}
+              testMetrics={data.task4.testMetrics}
+            />
+          )}
+        </section>
 
         <DataLoadStatus data={data} />
-
-        <AnalyticalSummary data={data} />
       </main>
     </div>
   );
 }
 
-function ResearchTabs({
+function TaskTabs({
   activeTab,
   onTabChange
 }: {
@@ -180,40 +171,32 @@ function ResearchTabs({
   readonly onTabChange: (tab: DashboardTab) => void;
 }) {
   return (
-    <nav aria-label="Research tasks" className="bg-white">
-      <div
-        aria-label="Research tasks"
-        className="grid grid-cols-2 gap-px bg-slate-200 sm:grid-cols-4"
-        role="tablist"
-      >
-        {DASHBOARD_TAB_OPTIONS.map((tab) => {
-          const isActive = tab.id === activeTab;
-          const summary = tabSummaries[tab.id];
-
+    <nav
+      aria-label="Research tasks"
+      role="tablist"
+      className="inline-flex w-full items-center rounded-xl border border-slate-200 bg-white p-1 shadow-sm"
+    >
+      <div className="grid w-full grid-cols-2 gap-1 sm:grid-cols-4">
+        {(Object.entries(TAB_META) as [DashboardTab, typeof TAB_META[DashboardTab]][]).map(([id, meta]) => {
+          const Icon = meta.icon;
+          const isActive = id === activeTab;
           return (
             <button
-              aria-label={tab.label}
-              aria-selected={isActive}
-              className={[
-                "min-h-24 bg-white px-4 py-3 text-left focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2",
-                isActive
-                  ? "border-t-4 border-emerald-600"
-                  : "border-t-4 border-transparent"
-              ].join(" ")}
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
+              key={id}
               role="tab"
               type="button"
+              aria-selected={isActive}
+              aria-controls={`tabpanel-${id}`}
+              onClick={() => onTabChange(id)}
+              className={cn(
+                "inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
+                isActive
+                  ? "bg-emerald-50 text-emerald-900 shadow-sm"
+                  : "text-slate-600 hover:bg-slate-50"
+              )}
             >
-              <span className="block text-base font-semibold text-slate-950">
-                {tab.label}
-              </span>
-              <span className="mt-1 block text-xs font-medium uppercase tracking-wide text-slate-500">
-                {summary.status}
-              </span>
-              <span className="mt-2 block text-sm leading-5 text-slate-600">
-                {summary.metric}
-              </span>
+              <Icon className="size-4" aria-hidden />
+              {meta.label}
             </button>
           );
         })}
@@ -222,241 +205,135 @@ function ResearchTabs({
   );
 }
 
-function StatusStrip({ data }: { readonly data: NormalizedDashboardData }) {
+function Hero({ data }: { readonly data: NormalizedDashboardData }) {
   return (
-    <div className="grid grid-cols-3 gap-2 text-sm sm:min-w-96">
-      <div className="border-l-4 border-emerald-600 bg-emerald-50 px-3 py-2">
-        <p className="text-xs font-medium text-emerald-800">Sources</p>
-        <p className="font-semibold text-slate-950">
-          {data.sources.length} tracked
-        </p>
-      </div>
-      <div className="border-l-4 border-sky-600 bg-sky-50 px-3 py-2">
-        <p className="text-xs font-medium text-sky-800">Tasks</p>
-        <p className="font-semibold text-slate-950">1-4 wired</p>
-      </div>
-      <div className="border-l-4 border-amber-500 bg-amber-50 px-3 py-2">
-        <p className="text-xs font-medium text-amber-800">Load issues</p>
-        <p className="font-semibold text-slate-950">{data.errors.length}</p>
-      </div>
-    </div>
-  );
-}
-
-function ActivePanel({
-  data,
-  state,
-  updateState
-}: {
-  readonly data: NormalizedDashboardData;
-  readonly state: DashboardFilterState;
-  readonly updateState: (patch: Partial<DashboardFilterState>) => void;
-}) {
-  switch (state.tab) {
-    case "rotation":
-      return (
-        <RotationPanel
-          classSummaries={data.task2.classSummaries}
-          geographySummaries={data.task2.geographySummaries}
-          markovTransitions={data.task2.markovTransitions}
-          selectedEntity={state.selectedEntity}
-          thresholdSensitivity={data.task2.thresholdSensitivity}
-        />
-      );
-    case "extremes":
-      return (
-        <ExtremesPanel
-          anomalySummaries={data.task3.anomalySummaries}
-          onCropChange={(crop) => updateState({ crop })}
-          onEventChange={(event) => updateState({ event })}
-          onStateChange={(selectedState) => updateState({ state: selectedState })}
-          selectedCrop={state.crop}
-          selectedEvent={state.event}
-          selectedState={state.state}
-        />
-      );
-    case "prediction":
-      return (
-        <PredictionPanel
-          ablationResults={data.task4.ablationResults}
-          regimeMetrics={data.task4.regimeMetrics}
-          shapFeatures={data.task4.shapFeatures}
-          splitSummaries={data.task4.splitSummaries}
-          testMetrics={data.task4.testMetrics}
-        />
-      );
-    case "phenology":
-    default:
-      return (
-        <PhenologyPanel
-          modelEvaluation={data.task1.modelEvaluation}
-          onCropChange={(crop) => updateState({ crop })}
-          phenologySeries={data.task1.phenologySeries}
-          selectedCrop={state.crop}
-        />
-      );
-  }
-}
-
-function SelectedContext({
-  data,
-  state
-}: {
-  readonly data: NormalizedDashboardData;
-  readonly state: DashboardFilterState;
-}) {
-  return (
-    <>
-      <div className="border-b border-slate-200 px-4 py-4">
-        <h2 className="text-lg font-semibold text-slate-950">
-          Selected context
-        </h2>
-        <p className="mt-1 text-sm text-slate-600">
-          URL-backed task, map, filter, and source state.
-        </p>
-      </div>
-      <div className="space-y-5 px-4 py-4">
-        <ContextBlock label="Active tab" value={state.tab} />
-        <ContextBlock label="Map layer" value={state.mapLayer} />
-        <ContextBlock label="State" value={state.state ?? "All states"} />
-        <ContextBlock label="Crop" value={state.crop ?? "All crops"} />
-        <ContextBlock
-          label="Extreme event"
-          value={state.event ?? "All events"}
-        />
-        <ContextBlock
-          label="Selection"
-          value={state.selectedEntity ?? "No map geography selected"}
-        />
-
-        <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Source registry
-          </h3>
-          <p className="mt-2 text-2xl font-semibold text-slate-950">
-            {data.sources.length}
-          </p>
-          <p className="mt-1 text-sm leading-6 text-slate-600">
-            Scoped Task 1-4 CSV/JSON inputs tracked with labels, caveats, and
-            denominators.
-          </p>
+    <section className="grid gap-4 lg:grid-cols-[2fr_3fr]">
+      <h1 className="sr-only">GeoCrop Interactive Dashboard</h1>
+      <Card className="overflow-hidden">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-white to-sky-50 opacity-80" aria-hidden />
+          <div className="relative px-6 py-7">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-600">
+              GeoCrop · Spatiotemporal Modeling
+            </p>
+            <h2 className="mt-2 text-2xl font-bold leading-tight text-slate-900 sm:text-3xl">
+              Source-backed crop evidence for the U.S. Corn Belt
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-slate-600">
+              Phenology, rotation, soil-moisture extremes, and prediction
+              diagnostics — every chart traces back to an exported task artifact.
+            </p>
+          </div>
         </div>
+      </Card>
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <KpiCard
+          label="Phenology crops"
+          value={String(data.task1.modelEvaluation.length)}
+          detail="HSGP rows"
+          accent="emerald"
+        />
+        <KpiCard
+          label="Rotation classes"
+          value={String(data.task2.classSummaries.length)}
+          detail="Class summaries"
+          accent="violet"
+        />
+        <KpiCard
+          label="Extreme rows"
+          value={String(data.task3.anomalySummaries.length)}
+          detail="State × crop"
+          accent="amber"
+        />
+        <KpiCard
+          label="Prediction"
+          value={data.task4.testMetrics ? "Ready" : "Missing"}
+          detail="Held-out diagnostics"
+          accent={data.task4.testMetrics ? "sky" : "rose"}
+        />
       </div>
-    </>
+    </section>
   );
 }
 
-function ContextBlock({
+const accentClasses = {
+  emerald: { bar: "from-emerald-400 to-emerald-600", text: "text-emerald-700" },
+  sky: { bar: "from-sky-400 to-sky-600", text: "text-sky-700" },
+  amber: { bar: "from-amber-400 to-amber-600", text: "text-amber-700" },
+  violet: { bar: "from-violet-400 to-violet-600", text: "text-violet-700" },
+  rose: { bar: "from-rose-400 to-rose-600", text: "text-rose-700" }
+} as const;
+
+function KpiCard({
   label,
-  value
+  value,
+  detail,
+  accent
 }: {
   readonly label: string;
   readonly value: string;
+  readonly detail: string;
+  readonly accent: keyof typeof accentClasses;
 }) {
+  const a = accentClasses[accent];
   return (
-    <div>
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-        {label}
-      </h3>
-      <p className="mt-2 break-words text-base font-semibold text-slate-950">
-        {value}
-      </p>
-    </div>
+    <Card className="relative overflow-hidden">
+      <span aria-hidden className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${a.bar}`} />
+      <CardContent className="py-4">
+        <p className={`text-[10px] font-semibold uppercase tracking-[0.16em] ${a.text}`}>{label}</p>
+        <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900">{value}</p>
+        <p className="mt-0.5 text-xs text-slate-500">{detail}</p>
+      </CardContent>
+    </Card>
   );
 }
 
 function DataLoadStatus({ data }: { readonly data: NormalizedDashboardData }) {
   if (data.errors.length === 0) {
     return (
-      <section
-        aria-label="Data load status"
-        className="border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-950"
-        role="status"
-      >
-        All scoped source artifacts loaded for this dashboard snapshot.
-      </section>
+      <Card asChild className="border-emerald-100 bg-gradient-to-r from-emerald-50/60 to-white">
+        <section role="status" aria-label="Data load status">
+          <CardContent className="flex items-center gap-3 py-3">
+            <CheckCircle2 className="size-5 text-emerald-600" />
+            <p className="text-sm text-emerald-900">
+              All scoped source artifacts loaded for this dashboard snapshot.
+            </p>
+          </CardContent>
+        </section>
+      </Card>
     );
   }
 
   return (
-    <section
-      aria-label="Data load status"
-      className="border border-amber-300 bg-amber-50 p-4 text-amber-950"
-      role="status"
-    >
-      <h2 className="text-base font-semibold">Data load status</h2>
-      <p className="mt-1 text-sm leading-6">
-        {data.errors.length} source artifact
-        {data.errors.length === 1 ? "" : "s"} reported a load issue. Panels
-        remain visible with the loaded data and explicit empty states where
-        needed.
-      </p>
-      <ul className="mt-3 grid gap-2 text-sm md:grid-cols-2">
-        {data.errors.map((error) => (
-          <li
-            className="border border-amber-200 bg-white/70 px-3 py-2"
-            key={`${error.sourceId}-${error.path}`}
-          >
-            <span className="block font-semibold">{error.label}</span>
-            <span className="mt-1 block text-amber-900">{error.message}</span>
-            <span className="mt-1 block break-all font-mono text-xs">
-              {error.path}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
-function AnalyticalSummary({ data }: { readonly data: NormalizedDashboardData }) {
-  return (
-    <section
-      aria-label="Analytical summary"
-      className="border border-slate-200 bg-white"
-    >
-      <div className="grid gap-px bg-slate-200 sm:grid-cols-4">
-        <SummaryCard
-          label="Phenology crops"
-          value={String(data.task1.modelEvaluation.length)}
-          detail="Task 1 model-evaluation rows available."
-        />
-        <SummaryCard
-          label="Rotation classes"
-          value={String(data.task2.classSummaries.length)}
-          detail="Regular, monoculture, and irregular source summaries."
-        />
-        <SummaryCard
-          label="Extreme rows"
-          value={String(data.task3.anomalySummaries.length)}
-          detail="State x crop anomaly rows loaded for Task 3."
-        />
-        <SummaryCard
-          label="Prediction metrics"
-          value={data.task4.testMetrics ? "Ready" : "Missing"}
-          detail="Held-out Task 4 diagnostics panel status."
-        />
-      </div>
-    </section>
-  );
-}
-
-function SummaryCard({
-  detail,
-  label,
-  value
-}: {
-  readonly detail: string;
-  readonly label: string;
-  readonly value: string;
-}) {
-  return (
-    <div className="bg-white px-4 py-4">
-      <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-semibold text-slate-950">{value}</p>
-      <p className="mt-1 text-sm leading-6 text-slate-600">{detail}</p>
-    </div>
+    <Card asChild className="border-amber-200 bg-gradient-to-r from-amber-50/60 to-white">
+      <section role="status" aria-label="Data load status">
+      <CardContent className="py-4">
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600" />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-amber-900">
+              {data.errors.length} source artifact{data.errors.length === 1 ? "" : "s"} reported a load issue
+            </p>
+            <p className="mt-0.5 text-sm leading-6 text-amber-700">
+              Panels remain visible with the loaded data and explicit empty states where needed.
+            </p>
+            <ul className="mt-3 grid gap-2 text-sm md:grid-cols-2">
+              {data.errors.map((error) => (
+                <li key={`${error.sourceId}-${error.path}`} className="rounded-lg border border-amber-200 bg-white px-3 py-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-semibold text-slate-900">{error.label}</span>
+                    <Badge variant="amber">Error</Badge>
+                  </div>
+                  <p className="mt-1 text-xs text-amber-700">{error.message}</p>
+                  <p className="mt-1 break-all font-mono text-[10px] text-slate-500">{error.path}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </CardContent>
+      </section>
+    </Card>
   );
 }
