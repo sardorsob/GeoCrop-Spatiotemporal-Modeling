@@ -111,3 +111,17 @@ Use state tiles for Corn Belt orientation, emit typed selection context, and sta
 ```text
 Pair NDVI curves, ablation rows, SHAP rankings, and confusion matrices with visible source cards and fallback messages for missing source slices.
 ```
+
+---
+
+## URL-Compatible Panel Props
+
+**Use when:** A feature panel needs local controls before final shell integration.
+
+**Rule:** Accept selected values and change callbacks using the same ids as `DashboardFilterState`, so TASK-010 can wire controls to URL-backed state without adapter code.
+
+**Example:**
+
+```text
+Rotation accepts `selectedEntity`; extremes accepts `selectedEvent`, `selectedCrop`, and `selectedState` with matching callbacks.
+```

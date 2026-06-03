@@ -125,6 +125,36 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-06-02 (0.45 hrs) - Codex QA + Builder Agents
+
+**Work performed:**
+
+- Completed `TASK-007` rotation panel with class summary cards, geographic ranking, selected geography state, Markov/threshold caveat band, source notes, and tests.
+- Completed `TASK-008` soil moisture extremes panel with event selector, URL-state-compatible crop/state filters, anomaly summary cards, state x crop table, NIG/z-score caveats, source notes, and tests.
+- Updated task QA notes, architecture memory, and reusable URL-compatible panel prop pattern.
+
+**Verification:**
+
+- Focused rotation/extremes test run passed: 2 files, 5 tests.
+- `npm run test` passed: 10 files, 37 tests.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run build` passed.
+- Non-ASCII scan over rotation/extremes source folders returned no matches after QA cleanup.
+
+**Blockers / cuts:**
+
+- TASK-010 still needs final shell integration, URL share/restore smoke, handover updates, and local browser/HTTP smoke.
+- Browser-ready geography remains unavailable; map layer fidelity remains schematic.
+
+**AI tools used:**
+
+- Codex QA/Orchestrator
+- Builder agent Pascal for `TASK-007`
+- Builder agent Popper for `TASK-008`
+
+---
+
 ## YYYY-MM-DD (0.00 hrs) - Agent / Human
 
 **Work performed:**

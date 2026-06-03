@@ -31,7 +31,7 @@
 | Intake capture | done | Dashboard plan imported into `docs/intake.md` |
 | Scope generation | done | `SCOPE.md` and `memory/stack-guidance.md` populated from intake |
 | Task generation | done | `TASKS.md` generated from approved scope |
-| Dashboard build | in-progress | `TASK-000` through `TASK-006` and `TASK-009` are done; rotation, extremes, and final integration remain |
+| Dashboard build | in-progress | `TASK-000` through `TASK-009` are done; final integration and handover remain |
 
 ## Decisions
 
@@ -46,8 +46,8 @@
 ## Last Session
 
 - **Date:** 2026-06-02
-- **What was done:** Completed `TASK-005` map fallback, `TASK-006` phenology panel, and `TASK-009` prediction diagnostics using parallel Builder agents with QA verification.
-- **What's next:** Complete `TASK-007` rotation panel and `TASK-008` extremes panel in parallel, then run `TASK-010` final integration/handover.
+- **What was done:** Completed `TASK-007` rotation panel and `TASK-008` soil moisture extremes panel using parallel Builder agents with QA verification.
+- **What's next:** Run `TASK-010` final integration/handover: wire all panels into the shell, verify URL share/restore, record smoke checks, and update run notes.
 - **Blockers:** Browser-ready geography inputs, Vercel project settings, and full map implementation fidelity are unresolved.
 
 ## Environment

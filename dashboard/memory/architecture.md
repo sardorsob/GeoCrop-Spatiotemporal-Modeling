@@ -32,6 +32,10 @@
 - `src/features/phenology/NdviCurveChart.tsx` and `src/features/phenology/PhenologyMetrics.tsx` render Task 1 evidence with code-native SVG and visible uncertainty/caveat text.
 - `src/features/prediction/PredictionPanel.tsx` composes the TASK-009 prediction diagnostics tab from headline metrics, ablation, SHAP, regime metrics, and confusion matrix views.
 - `src/features/prediction/AblationChart.tsx`, `ShapFeatureChart.tsx`, `RegimeMetricsChart.tsx`, and `ConfusionMatrix.tsx` render Task 4 diagnostic evidence with visible source/caveat context.
+- `src/features/rotation/RotationPanel.tsx` composes the TASK-007 rotation tab from class summaries, geographic ranking, Markov/threshold caveats, selection status, and source notes.
+- `src/features/rotation/RotationClassChart.tsx` and `src/features/rotation/RotationGeoRanking.tsx` render Task 2 class and geography evidence using code-native cards/tables.
+- `src/features/extremes/ExtremesPanel.tsx` composes the TASK-008 soil moisture extremes tab from event selection, URL-state-compatible filters, anomaly summary cards, anomaly table, caveats, and source notes.
+- `src/features/extremes/EventSelector.tsx`, `AnomalySummaryChart.tsx`, and `AnomalyTable.tsx` render Task 3 event, aggregate, and state x crop evidence.
 - `src/lib/scaffold/home-copy.ts` stores minimal scaffold copy for the landing page.
 - `src/lib/scaffold/home-copy.test.ts` verifies the scaffold title and four research lanes.
 - `next.config.ts` pins `turbopack.root` to the dashboard folder so local builds do not infer a parent lockfile as the workspace root.
@@ -49,6 +53,8 @@
 - TASK-005, TASK-006, and TASK-009 consume normalized source contracts through component props; they do not load filesystem artifacts directly.
 - Map selections are represented as typed context records so later integration can synchronize selected geography, map layer, and panel evidence through URL-backed state.
 - Phenology and prediction visual components keep essential values, source paths, and caveats visible without hover.
+- Rotation and extremes visual components receive normalized Task 2/3 data via props and expose URL-state-compatible selection/filter props for TASK-010 integration.
+- Rotation consumes `selectedEntity` or `selectedGeographyId`; extremes consumes `selectedEvent`, `selectedCrop`, and `selectedState` plus matching callbacks.
 
 ## Important Boundaries
 
@@ -62,5 +68,5 @@
 ## Known Caveats
 
 - `npm audit --audit-level=high` reports no high/critical advisories, but npm install/audit reports two moderate advisories in Next/PostCSS with only breaking `npm audit fix --force` remediation suggested.
-- The current dashboard shell still needs TASK-010 integration to wire source-backed map, phenology, and prediction components into the main page.
+- The current dashboard shell still needs TASK-010 integration to wire source-backed map, phenology, rotation, extremes, and prediction components into the main page.
 - The TASK-005 map is a schematic state-tile fallback because browser-ready GeoJSON/TopoJSON has not been produced yet.

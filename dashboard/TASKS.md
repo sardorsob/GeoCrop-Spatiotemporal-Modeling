@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 11 | 8 | 0 | 0 | 0 | 0 | 3 |
+| 11 | 10 | 0 | 0 | 0 | 0 | 1 |
 
 ---
 
@@ -424,7 +424,7 @@
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-007
-  - Integration status: not-started
+  - Integration status: done
 - Design source:
   - `SCOPE.md` feature "Rotation Panel"
   - `../artifacts/reports/neurips_2024.tex` Task 2 results
@@ -453,17 +453,20 @@
   - `src/features/rotation/rotation-copy.ts`
   - `src/features/rotation/__tests__/rotation-panel.test.tsx`
 - Acceptance criteria:
-  - [ ] Rotation tab renders regular, monoculture, and irregular summaries.
-  - [ ] Geographic summaries render or unavailable state is explicit.
-  - [ ] Map selection/filter state is consumed where available.
-  - [ ] Bayesian/threshold caveat is visible.
-  - [ ] Mobile layout remains legible.
-  - [ ] Typecheck passes.
+  - [x] Rotation tab renders regular, monoculture, and irregular summaries.
+  - [x] Geographic summaries render or unavailable state is explicit.
+  - [x] Map selection/filter state is consumed where available.
+  - [x] Bayesian/threshold caveat is visible.
+  - [x] Mobile layout remains legible.
+  - [x] Typecheck passes.
 - QA notes:
-- Attempts: 0
+  - Builder handoff 2026-06-02: Added rotation panel, class summary cards, geographic ranking table, Markov/threshold caveat band, source-note cards, map-selection highlighting, and component tests.
+  - QA approval 2026-06-02: Verified regular/monoculture/irregular summaries, selected geography messaging, empty geographic state, visible Bayesian/Markov/threshold caveat, source notes, and mobile-safe overflow table. Replaced a non-ASCII separator artifact with ASCII. Fresh verification passed: focused rotation/extremes tests, `npm run test`, `npm run typecheck`, `npm run lint`, and `npm run build`.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-- Status: pending
+  - 2026-06-02: Started TASK-007 in parallel Builder lane after TASK-005 map fallback commit; scoped to rotation class summaries, geographic ranking, selection context, and visible Markov/threshold caveats.
+- Status: done
 
 ---
 
@@ -476,7 +479,7 @@
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-008
-  - Integration status: not-started
+  - Integration status: done
 - Design source:
   - `SCOPE.md` feature "Extremes Panel"
   - `../artifacts/reports/neurips_2024.tex` Task 3 results
@@ -506,17 +509,20 @@
   - `src/features/extremes/extremes-copy.ts`
   - `src/features/extremes/__tests__/extremes-panel.test.tsx`
 - Acceptance criteria:
-  - [ ] Extremes tab renders both 2019 flood and 2022 drought options.
-  - [ ] State x crop anomaly values are source-backed.
-  - [ ] NIG P(drought) and z-score caveats are visible.
-  - [ ] Event/crop/state filters work with URL state.
-  - [ ] Mobile layout remains legible.
-  - [ ] Typecheck passes.
+  - [x] Extremes tab renders both 2019 flood and 2022 drought options.
+  - [x] State x crop anomaly values are source-backed.
+  - [x] NIG P(drought) and z-score caveats are visible.
+  - [x] Event/crop/state filters work with URL state.
+  - [x] Mobile layout remains legible.
+  - [x] Typecheck passes.
 - QA notes:
-- Attempts: 0
+  - Builder handoff 2026-06-02: Added extremes panel, event selector, anomaly summary cards, state x crop table, source notes, URL-state-compatible event/crop/state callbacks, and component tests.
+  - QA approval 2026-06-02: Verified 2019 flood and 2022 drought options, source-backed Illinois corn anomaly values, event/crop/state callback behavior, NIG/z-score caveats, small-denominator labeling, and empty state. Fresh verification passed: focused rotation/extremes tests, `npm run test`, `npm run typecheck`, `npm run lint`, and `npm run build`.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-- Status: pending
+  - 2026-06-02: Started TASK-008 in parallel Builder lane after TASK-005 map fallback commit; scoped to event selector, anomaly summary chart/table, URL-state-compatible filters, and visible NIG/z-score caveats.
+- Status: done
 
 ---
 
