@@ -12,7 +12,7 @@
 
 <!-- 0-Intake | 1-Scope | 2-Setup | 3-Development | 4-QA | 5-Delivery | 6-Maintenance -->
 
-**Current:** 2-Setup
+**Current:** 3-Development
 
 ## Source Docs
 
@@ -31,7 +31,7 @@
 | Intake capture | done | Dashboard plan imported into `docs/intake.md` |
 | Scope generation | done | `SCOPE.md` and `memory/stack-guidance.md` populated from intake |
 | Task generation | done | `TASKS.md` generated from approved scope |
-| Dashboard build | in-progress | `TASK-000` scaffold done; next task is `TASK-001` |
+| Dashboard build | in-progress | `TASK-000`, `TASK-001`, and `TASK-003` done; next task is `TASK-002` |
 
 ## Decisions
 
@@ -41,13 +41,14 @@
 - 2026-06-02: Treat Map Command Center with guided analytical tabs as the primary design direction until scope review changes it.
 - 2026-06-02: Use Next.js + React + TypeScript hosted on Vercel for the dashboard stack.
 - 2026-06-02: Generated 11 executable tasks with Builder/QA status fields and file ownership boundaries.
+- 2026-06-02: Keep dashboard visual work code-native only; do not use image generation or `gpt-image-2`.
 
 ## Last Session
 
 - **Date:** 2026-06-02
-- **What was done:** Created dashboard workflow shell, imported the dashboard plan into `docs/intake.md`, selected Next.js/Vercel stack, populated `SCOPE.md` plus `memory/stack-guidance.md`, and generated `TASKS.md`.
-- **What's next:** Start `TASK-001` to define artifact source registry and dashboard data types.
-- **Blockers:** Map implementation fidelity, browser-ready geography inputs, Vercel project settings, and design concept asset handling are unresolved.
+- **What was done:** Completed `TASK-001` typed artifact source registry and `TASK-003` responsive dashboard shell using Builder agents with QA verification.
+- **What's next:** Start `TASK-002` to load and normalize scoped CSV/JSON artifacts into dashboard-ready data structures.
+- **Blockers:** Browser-ready geography inputs, Vercel project settings, and full map implementation fidelity are unresolved.
 
 ## Environment
 

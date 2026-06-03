@@ -69,6 +69,12 @@ Before `done`:
 - secrets are not committed
 - manual smoke is recorded when needed
 
+## Tool Guardrails
+
+- Do not generate images or invoke image-generation tools for dashboard work.
+- Do not use or request `gpt-image-2`; if visual concepts are needed, describe
+  them in text or implement them directly in code.
+
 ## Commit Policy
 
 Use task-based commits once tasks exist:
@@ -78,4 +84,3 @@ feat(scope): TASK-001 implement feature
 fix(scope): TASK-001 handle edge case
 docs(handover): finalize handoff
 ```
-

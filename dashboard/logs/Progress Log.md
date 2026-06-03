@@ -4,6 +4,39 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-06-02 (0.40 hrs) - Codex Orchestrator/QA + Builder Agents
+
+**Work performed:**
+
+- Re-dispatched code-only Builder agents with explicit no-image-generation and no-`gpt-image-2` guardrails.
+- Completed `TASK-001` typed artifact source registry for scoped Task 1-4 CSV/JSON inputs.
+- Completed `TASK-003` responsive Map Command Center shell with task tabs, main evidence slot, selected context rail, filter/layer controls, and analytical summary band.
+- Added `AGENTS.md`, `PROJECT.md`, `TASKS.md`, and memory updates so the workflow reflects the completed lanes and the no-image-generation rule.
+
+**Verification:**
+
+- `npm run test` passed.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run build` passed.
+- `python scripts\validate-task-statuses.py` passed.
+- `python scripts\check-required-artifacts.py` passed.
+- Local HTTP smoke at `http://localhost:3000` returned 200 and included the dashboard heading plus major region labels.
+
+**Blockers / cuts:**
+
+- `TASK-002` data loading/normalization remains next.
+- Map data is still not browser-ready; no MapLibre/data-backed map layer was implemented in this task pair.
+- In-app browser smoke was attempted twice but the browser runtime failed during sandbox startup; HTTP smoke and automated tests covered this checkpoint.
+
+**AI tools used:**
+
+- Codex QA/Orchestrator
+- Builder agent Banach for `TASK-001`
+- Builder agent Franklin for `TASK-003`
+
+---
+
 ## YYYY-MM-DD (0.00 hrs) - Agent / Human
 
 **Work performed:**

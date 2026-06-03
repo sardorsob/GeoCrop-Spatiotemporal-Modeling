@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 11 | 1 | 0 | 0 | 0 | 0 | 10 |
+| 11 | 3 | 0 | 0 | 0 | 0 | 8 |
 
 ---
 
@@ -22,7 +22,7 @@
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-000
-  - Integration status: not-started
+  - Integration status: done
 - Design source:
   - `SCOPE.md` sections 2-4
   - `memory/stack-guidance.md`
@@ -84,7 +84,7 @@
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-001
-  - Integration status: not-started
+  - Integration status: done
 - Design source:
   - `SCOPE.md` feature "Artifact Data Registry And Normalization"
   - `docs/intake.md` data section
@@ -112,17 +112,20 @@
   - `src/lib/data/source-notes.ts`
   - `src/lib/data/__tests__/sources.test.ts`
 - Acceptance criteria:
-  - [ ] Source registry covers all scoped Task 1-4 CSV/JSON inputs.
-  - [ ] Core dashboard data types are exported without `any`.
-  - [ ] Source notes include path, task id, label, and caveat/status text.
-  - [ ] Tests verify at least registry completeness and stable ids.
-  - [ ] Typecheck passes.
-  - [ ] No source file is parsed or copied in this task beyond registry tests.
+  - [x] Source registry covers all scoped Task 1-4 CSV/JSON inputs.
+  - [x] Core dashboard data types are exported without `any`.
+  - [x] Source notes include path, task id, label, and caveat/status text.
+  - [x] Tests verify at least registry completeness and stable ids.
+  - [x] Typecheck passes.
+  - [x] No source file is parsed or copied in this task beyond registry tests.
 - QA notes:
-- Attempts: 0
+  - Builder handoff 2026-06-02: Added `src/lib/data/types.ts`, `src/lib/data/sources.ts`, `src/lib/data/source-notes.ts`, and `src/lib/data/__tests__/sources.test.ts`. Registry covers Task 1-4 scoped CSV/JSON inputs with stable ids, explicit parent artifact paths, expected columns, caveats, status text, date stamps, and denominators where known.
+  - QA approval 2026-06-02: Verified the data registry imports without reading source files and source notes are derived from the registry. Fresh verification passed: `npm run test`, `npm run typecheck`, `npm run lint`, `npm run build`, `python scripts\validate-task-statuses.py`, and `python scripts\check-required-artifacts.py`.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-- Status: pending
+  - 2026-06-02: Started TASK-001 in parallel Builder lane; dependencies satisfied by TASK-000; shared workflow files reserved for Orchestrator/QA.
+- Status: done
 
 ---
 
@@ -190,7 +193,7 @@
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-003
-  - Integration status: not-started
+  - Integration status: done
 - Design source:
   - `SCOPE.md` design direction
   - `memory/stack-guidance.md` UI guidance
@@ -222,17 +225,20 @@
   - `src/components/layout/SourceStatus.tsx`
   - `src/components/ui/*` if needed for local primitives
 - Acceptance criteria:
-  - [ ] Dashboard shell reflects Map Command Center reading path.
-  - [ ] Four task tabs are present: Phenology, Rotation, Extremes, Prediction.
-  - [ ] Responsive mobile portrait layout keeps the main evidence slot visible before secondary controls.
-  - [ ] Placeholder source/caveat status is visible.
-  - [ ] Keyboard navigation works for tabs/major controls.
-  - [ ] Typecheck passes.
+  - [x] Dashboard shell reflects Map Command Center reading path.
+  - [x] Four task tabs are present: Phenology, Rotation, Extremes, Prediction.
+  - [x] Responsive mobile portrait layout keeps the main evidence slot visible before secondary controls.
+  - [x] Placeholder source/caveat status is visible.
+  - [x] Keyboard navigation works for tabs/major controls.
+  - [x] Typecheck passes.
 - QA notes:
-- Attempts: 0
+  - Builder handoff 2026-06-02: Added `src/components/layout/DashboardShell.tsx`, restored `src/app/page.tsx`, and added `src/components/layout/DashboardShell.test.tsx`. The first screen now renders a responsive Map Command Center with top status metrics, research task tabs, main evidence map placeholder, selected context rail, filter controls, layer toggles, and analytical summary band.
+  - QA approval 2026-06-02: Verified semantic landmarks and tab structure via Testing Library. Fresh verification passed: `npm run test`, `npm run typecheck`, `npm run lint`, `npm run build`, `python scripts\validate-task-statuses.py`, and `python scripts\check-required-artifacts.py`. Local HTTP smoke at `http://localhost:3000` returned 200 and included the dashboard heading, task text, and major region labels. In-app browser smoke was attempted twice but the browser runtime failed during sandbox startup; no image generation was used. Source/caveat placeholder remains explicit until TASK-002/TASK-005 provide data-backed layers.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-- Status: pending
+  - 2026-06-02: Started TASK-003 in parallel Builder lane; dependencies satisfied by TASK-000; shared workflow files reserved for Orchestrator/QA.
+- Status: done
 
 ---
 
