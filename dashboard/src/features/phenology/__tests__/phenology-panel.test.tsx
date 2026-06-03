@@ -189,6 +189,40 @@ describe("PhenologyPanel", () => {
     ).toBeInTheDocument();
   });
 
+  it("lets reviewers zoom to a selected HSGP season window without hiding direct values", () => {
+    render(
+      <PhenologyPanel
+        modelEvaluation={modelEvaluation}
+        phenologySeries={phenologySeries}
+        selectedCrop="corn"
+      />
+    );
+
+    const controls = screen.getByRole("region", { name: "Season window controls" });
+    expect(within(controls).getByText("Visible span: DOY 100-225")).toBeInTheDocument();
+
+    fireEvent.click(within(controls).getByRole("button", { name: "Senescence" }));
+
+    expect(within(controls).getByText("Visible span: DOY 210-225")).toBeInTheDocument();
+    expect(screen.getByText("Peak posterior: 0.51 at DOY 220")).toBeInTheDocument();
+    expect(screen.getByText("Peak empirical: 0.50 at DOY 225")).toBeInTheDocument();
+
+    fireEvent.change(within(controls).getByLabelText("Start day of year"), {
+      target: { value: "150" }
+    });
+    fireEvent.change(within(controls).getByLabelText("End day of year"), {
+      target: { value: "170" }
+    });
+
+    expect(within(controls).getByText("Visible span: DOY 150-170")).toBeInTheDocument();
+    expect(screen.getByText("Peak posterior: 0.72 at DOY 160")).toBeInTheDocument();
+
+    fireEvent.click(within(controls).getByRole("button", { name: "Full season" }));
+
+    expect(within(controls).getByText("Visible span: DOY 100-225")).toBeInTheDocument();
+    expect(screen.getByText("Peak posterior: 0.72 at DOY 160")).toBeInTheDocument();
+  });
+
   it("shows an explicit missing-data state with documented static figure fallbacks", () => {
     render(
       <PhenologyPanel

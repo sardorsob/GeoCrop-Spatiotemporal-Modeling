@@ -4,6 +4,40 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-06-03 (0.35 hrs) - Codex QA HSGP Season Window
+
+**Work performed:**
+
+- Added `TASK-012` for the Task 1 HSGP season-window zoom enhancement.
+- Added `src/features/phenology/season-window.ts` helpers for day-of-year bounds, clamping, row filtering, brush indexes, and presets.
+- Added season-window controls to `NdviCurveChart`: Full season, Green-up, Peak, Senescence, custom start/end DOY inputs, visible span text, and a controlled Recharts brush.
+- Updated selected-span peak summary cards so reviewers can inspect green-up, peak, and senescence windows without changing source data.
+- Updated README, HANDOVER, PROJECT, TASKS, memory patterns, and decisions.
+
+**Verification:**
+
+- TDD red: focused phenology tests failed because `season-window.ts` was missing and the chart had no `Season window controls` region.
+- Focused green: `npx vitest run src/features/phenology/__tests__/season-window.test.ts src/features/phenology/__tests__/phenology-panel.test.tsx` passed: 2 files, 9 tests.
+- Full suite: `npm run test` passed: 11 files, 42 tests.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run build` passed.
+- `python scripts\validate-task-statuses.py` passed.
+- `python scripts\check-required-artifacts.py` passed.
+- `npm audit --audit-level=high` exited 0; two moderate Next/PostCSS advisories remain.
+- HTTP smoke at `http://localhost:3000` returned 200 and the prerendered page included `GeoCrop Interactive Dashboard`, `Season window`, and `Full season`.
+
+**Blockers / cuts:**
+
+- Season-window state is local to the chart for this experiment; URL-backed HSGP span sharing is a possible follow-up.
+- In-app browser smoke was attempted twice but remains blocked by `windows sandbox failed: spawn setup refresh`.
+
+**AI tools used:**
+
+- Codex QA
+
+---
+
 ## 2026-06-02 (0.45 hrs) - Codex QA Cleanup
 
 **Work performed:**

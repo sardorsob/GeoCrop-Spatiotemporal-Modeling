@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import {
   Area,
+  Brush,
   CartesianGrid,
   ComposedChart,
   Line,
@@ -11,10 +13,20 @@ import {
   YAxis
 } from "recharts";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { CropId, PhenologySeries } from "@/lib/data/types";
 
 import { CROP_LABELS, PHENOLOGY_COPY, STATIC_FALLBACK_FIGURES } from "./phenology-copy";
+import {
+  clampSeasonWindow,
+  filterRowsByWindow,
+  findBrushIndexes,
+  getSeasonBounds,
+  getSeasonWindowPreset,
+  type SeasonWindow,
+  type SeasonWindowPresetId
+} from "./season-window";
 
 export interface NdviCurveChartProps {
   readonly crop: CropId;
@@ -28,18 +40,59 @@ interface ChartRow {
   empirical?: number;
 }
 
+type SeasonWindowMode = SeasonWindowPresetId | "custom";
+
+const SEASON_PRESET_IDS: readonly SeasonWindowPresetId[] = [
+  "full",
+  "green_up",
+  "peak",
+  "senescence"
+];
+
 export function NdviCurveChart({ crop, series }: NdviCurveChartProps) {
   const cropLabel = CROP_LABELS[crop];
   const cropSeries = series.filter((s) => s.crop === crop);
 
   const rows = buildRows(cropSeries);
+  const seasonBounds = getSeasonBounds(rows);
+  const [seasonWindow, setSeasonWindow] = useState<SeasonWindow | undefined>(seasonBounds);
+  const [seasonWindowMode, setSeasonWindowMode] = useState<SeasonWindowMode>("full");
+  const activeSeasonWindow = seasonBounds
+    ? clampSeasonWindow(seasonWindow ?? seasonBounds, seasonBounds)
+    : undefined;
+  const visibleRows = activeSeasonWindow ? filterRowsByWindow(rows, activeSeasonWindow) : rows;
+  const brushIndexes = activeSeasonWindow ? findBrushIndexes(rows, activeSeasonWindow) : undefined;
+  const posteriorPeak = peak(visibleRows, (r) => r.posteriorMean);
+  const empiricalPeak = peak(visibleRows, (r) => r.empirical);
+
+  const setPresetWindow = (id: SeasonWindowPresetId) => {
+    if (!seasonBounds) return;
+    const preset = getSeasonWindowPreset(id, seasonBounds);
+    setSeasonWindow(preset.window);
+    setSeasonWindowMode(id);
+  };
+
+  const setCustomWindow = (nextWindow: SeasonWindow) => {
+    if (!seasonBounds) return;
+    setSeasonWindow(clampSeasonWindow(nextWindow, seasonBounds));
+    setSeasonWindowMode("custom");
+  };
+
+  const handleBrushChange = (range: { startIndex?: number; endIndex?: number }) => {
+    if (!seasonBounds) return;
+    const startRow = rows[range.startIndex ?? 0];
+    const endRow = rows[range.endIndex ?? rows.length - 1];
+    if (!startRow || !endRow) return;
+
+    setCustomWindow({
+      startDay: startRow.dayOfYear,
+      endDay: endRow.dayOfYear
+    });
+  };
 
   if (rows.length === 0) {
     return <StaticFallback cropLabel={cropLabel} />;
   }
-
-  const posteriorPeak = peak(rows, (r) => r.posteriorMean);
-  const empiricalPeak = peak(rows, (r) => r.empirical);
 
   return (
     <Card>
@@ -61,6 +114,76 @@ export function NdviCurveChart({ crop, series }: NdviCurveChartProps) {
         </p>
 
         <CardContent className="px-2 py-3 sm:px-5">
+          {activeSeasonWindow && seasonBounds && (
+            <section
+              aria-label="Season window controls"
+              className="mb-4 rounded-xl border border-slate-100 bg-slate-50/70 px-3 py-3"
+            >
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Season window
+                  </p>
+                  <p className="mt-1 text-sm font-medium text-slate-800">
+                    {`Visible span: DOY ${activeSeasonWindow.startDay}-${activeSeasonWindow.endDay}`}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {SEASON_PRESET_IDS.map((presetId) => {
+                    const preset = getSeasonWindowPreset(presetId, seasonBounds);
+
+                    return (
+                      <Button
+                        key={preset.id}
+                        type="button"
+                        variant={seasonWindowMode === preset.id ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setPresetWindow(preset.id)}
+                      >
+                        {preset.label}
+                      </Button>
+                    );
+                  })}
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <label className="grid gap-1">
+                    <span className="text-xs font-medium text-slate-500">Start DOY</span>
+                    <input
+                      aria-label="Start day of year"
+                      className="h-8 w-24 rounded-md border border-slate-200 bg-white px-2 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      max={seasonBounds.endDay}
+                      min={seasonBounds.startDay}
+                      type="number"
+                      value={activeSeasonWindow.startDay}
+                      onChange={(event) => {
+                        setCustomWindow({
+                          startDay: Number(event.currentTarget.value),
+                          endDay: activeSeasonWindow.endDay
+                        });
+                      }}
+                    />
+                  </label>
+                  <label className="grid gap-1">
+                    <span className="text-xs font-medium text-slate-500">End DOY</span>
+                    <input
+                      aria-label="End day of year"
+                      className="h-8 w-24 rounded-md border border-slate-200 bg-white px-2 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      max={seasonBounds.endDay}
+                      min={seasonBounds.startDay}
+                      type="number"
+                      value={activeSeasonWindow.endDay}
+                      onChange={(event) => {
+                        setCustomWindow({
+                          startDay: activeSeasonWindow.startDay,
+                          endDay: Number(event.currentTarget.value)
+                        });
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+            </section>
+          )}
           <div
             role="img"
             aria-label={`${cropLabel} NDVI phenology curve`}
@@ -129,6 +252,17 @@ export function NdviCurveChart({ crop, series }: NdviCurveChartProps) {
                   dot={false}
                   isAnimationActive={false}
                 />
+                {brushIndexes && (
+                  <Brush
+                    dataKey="dayOfYear"
+                    endIndex={brushIndexes.endIndex}
+                    height={24}
+                    onChange={handleBrushChange}
+                    startIndex={brushIndexes.startIndex}
+                    stroke="#0d9488"
+                    travellerWidth={8}
+                  />
+                )}
               </ComposedChart>
             </ResponsiveContainer>
           </div>

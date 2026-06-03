@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 12 | 12 | 0 | 0 | 0 | 0 | 0 |
+| 13 | 13 | 0 | 0 | 0 | 0 | 0 |
 
 ---
 
@@ -730,4 +730,72 @@
 - Max attempts: 3
 - Attempt log:
   - 2026-06-02: Started TASK-011 in-house after user feedback on the prior Wave 5 polish pass; scoped to dependencies, design-system primitives, map redesign, NDVI chart redesign, shell rewrite, and the RotationGeoRanking compact-view disclosure.
+- Status: done
+
+---
+
+## TASK-012
+
+- Feature group: Phenology
+- Title: Add HSGP season-window zoom controls to NDVI chart
+- Depends on: TASK-011
+- Assigned agent: Codex QA
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-012
+  - Integration status: done
+- Design source:
+  - User follow-up 2026-06-03 proposing selectable data span and zoom for Task 1 HSGP.
+  - `TASK-006` Task 1 phenology acceptance criteria.
+  - `TASK-011` Recharts NDVI chart implementation.
+- User value: Lets reviewers inspect green-up, peak, and senescence windows in the HSGP posterior and empirical NDVI series without losing the full-season context.
+- User flow:
+  - User opens Phenology.
+  - User chooses Full season, Green-up, Peak, or Senescence, or enters custom start/end day-of-year values.
+  - The chart brush, visible span label, and direct peak summary cards update to the selected window.
+  - User resets to Full season.
+- Functional notes:
+  - Keep the season window local to the NDVI chart for this experiment; do not add URL params yet.
+  - Add keyboard-usable numeric start/end DOY inputs in addition to the Recharts brush.
+  - Treat the selected span as a view transform only; source notes and underlying data remain unchanged.
+  - Preserve the existing UI redesign and no-image-generation rule.
+- Edge cases:
+  - Missing series still renders the documented static fallback.
+  - Custom inverted or out-of-bounds DOY ranges clamp to the available data bounds.
+  - Sparse windows recalculate visible peak summaries only from rows inside the selected span.
+- Test cases:
+  1. Season-window helpers derive full-season bounds.
+  2. Custom windows clamp and map to brush indexes.
+  3. Presets clamp within available data bounds.
+  4. Phenology panel exposes season-window controls.
+  5. Senescence/custom/full-season interactions update visible span and direct peak labels.
+- Files to create/modify:
+  - `src/features/phenology/season-window.ts`
+  - `src/features/phenology/NdviCurveChart.tsx`
+  - `src/features/phenology/__tests__/season-window.test.ts`
+  - `src/features/phenology/__tests__/phenology-panel.test.tsx`
+  - `README.md`
+  - `HANDOVER.md`
+  - `PROJECT.md`
+  - `memory/patterns.md`
+  - `memory/decisions.md`
+  - `logs/Progress Log.md`
+- Acceptance criteria:
+  - [x] NDVI chart exposes visible season-window controls.
+  - [x] Presets include Full season, Green-up, Peak, and Senescence.
+  - [x] Numeric start/end DOY controls provide a non-drag path.
+  - [x] Recharts brush supports plot zooming.
+  - [x] Peak summary cards reflect the selected span.
+  - [x] Source/caveat notes and crop selection behavior are unchanged.
+  - [x] Focused red/green tests cover the new behavior.
+  - [x] Typecheck passes.
+- QA notes:
+  - TDD red 2026-06-03: `npx vitest run src/features/phenology/__tests__/season-window.test.ts src/features/phenology/__tests__/phenology-panel.test.tsx` failed because `season-window.ts` was missing and the panel had no `Season window controls` region.
+  - Builder/QA 2026-06-03: Added typed season-window helpers, preset buttons, controlled numeric DOY inputs, visible span text, controlled Recharts `Brush`, and selected-span peak summaries in `NdviCurveChart`.
+  - Focused green 2026-06-03: `npx vitest run src/features/phenology/__tests__/season-window.test.ts src/features/phenology/__tests__/phenology-panel.test.tsx` passed: 2 files, 9 tests.
+  - Full QA 2026-06-03: `npm run test` passed: 11 files, 42 tests; `npm run typecheck`, `npm run lint`, `npm run build`, `python scripts\validate-task-statuses.py`, and `python scripts\check-required-artifacts.py` passed. `npm audit --audit-level=high` exited 0 with two moderate Next/PostCSS advisories. HTTP smoke at `http://localhost:3000` returned 200 and included the new Season window controls. In-app browser smoke was attempted twice but blocked by `windows sandbox failed: spawn setup refresh`.
+- Attempts: 1
+- Max attempts: 3
+- Attempt log:
+  - 2026-06-03: Completed scoped HSGP season-window zoom enhancement in-house; no agents needed because the change owned one chart path and its tests/docs.
 - Status: done

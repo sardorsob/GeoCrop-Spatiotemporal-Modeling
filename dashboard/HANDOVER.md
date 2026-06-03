@@ -2,7 +2,7 @@
 
 ## Status
 
-`TASK-011` UI redesign plus the follow-up cleanup pass are complete. The dashboard is a Next.js app in `dashboard/` and is designed for Vercel hosting.
+`TASK-012` HSGP season-window zoom is complete on top of the `TASK-011` UI redesign and cleanup pass. The dashboard is a Next.js app in `dashboard/` and is designed for Vercel hosting.
 
 ## What Is Done
 
@@ -14,7 +14,7 @@
 - Compact filter bar with six visible fields (Crop, Extreme event, Rotation regime, State, Map layer, Selected entity), removable filter chips, and an advanced sheet drawer for map view coordinates.
 - Real U.S. Albers choropleth Corn Belt map (d3-geo + `us-atlas/states-albers-10m.json`) with hover tooltips, click-to-select state paths, in-card layer selector, info popover for source/caveat detail, and a selection context block.
 - Pill-style tab bar with Lucide icons for the four research lanes.
-- Phenology panel with tone-coded HSGP metric tiles and a Recharts NDVI seasonality chart (credible-interval band, posterior line, dashed empirical line, hover tooltips, peak summary cards).
+- Phenology panel with tone-coded HSGP metric tiles and a Recharts NDVI seasonality chart (credible-interval band, posterior line, dashed empirical line, hover tooltips, brush zoom, season-window presets, custom DOY inputs, and selected-span peak summary cards).
 - Rotation panel with three-class summary cards, Markov/threshold caveat band, and a geographic rotation summaries table that shows the top 5 rows by default with a "Show N more" / "Show less" toggle.
 - Extremes panel with event selector, URL-state-compatible crop/state filters, anomaly summary tone cards, and state x crop anomaly table.
 - Prediction panel with headline test-metric cards, ablation chart, SHAP feature ranking, regime-stratified metrics, and confusion matrix.
@@ -58,13 +58,16 @@ python scripts\validate-task-statuses.py
 python scripts\check-required-artifacts.py
 ```
 
-Last QA run on 2026-06-02 (post `TASK-011` cleanup):
+Latest QA run on 2026-06-03 (post `TASK-012` HSGP season-window zoom):
 
-- `npm run test` passed (10 files, 37 tests).
+- `npx vitest run src/features/phenology/__tests__/season-window.test.ts src/features/phenology/__tests__/phenology-panel.test.tsx` passed (2 files, 9 tests).
+- `npm run test` passed (11 files, 42 tests).
 - `npm run typecheck` passed.
 - `npm run lint` passed.
 - `npm run build` passed.
 - Workflow artifact validators passed.
+- `npm audit --audit-level=high` exited 0; two moderate Next / PostCSS advisories remain.
+- HTTP smoke at `http://localhost:3000` returned 200 and included the new Season window controls.
 
 ## Known Caveats
 
@@ -100,3 +103,4 @@ Last QA run on 2026-06-02 (post `TASK-011` cleanup):
 - Generate browser-ready geography for a true vector-tile layer if county/pixel-level fidelity becomes a priority; then add the map library dependency at that point.
 - Add Playwright E2E smoke tests after deployment settings stabilize.
 - Add export / share workflows only after the MVP dashboard has been reviewed.
+- Promote the HSGP season window to URL-backed state if reviewers need shareable deep links into a selected phenology span.

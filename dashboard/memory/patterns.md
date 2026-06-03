@@ -188,12 +188,26 @@ Rotation accepts `selectedEntity`; extremes accepts `selectedEvent`, `selectedCr
 
 **Use when:** A dashboard needs to plot a model posterior with a credible interval and an overlaid empirical series.
 
-**Rule:** Build chart rows keyed by the x-axis value (e.g. day-of-year) and merge posterior / band / empirical fields from multiple normalized series into the same row map. Render with a Recharts `ComposedChart` containing an `Area` for the band (using `dataKey: "band"` with a `[low, high]` tuple), a `Line` for the posterior mean, and a dashed `Line` for the empirical series. Provide a static legend row outside the chart so direct labels are not hover-only.
+**Rule:** Build chart rows keyed by the x-axis value (e.g. day-of-year) and merge posterior / band / empirical fields from multiple normalized series into the same row map. Render with a Recharts `ComposedChart` containing an `Area` for the band (using `dataKey: "band"` with a `[low, high]` tuple), a `Line` for the posterior mean, and a dashed `Line` for the empirical series. Provide a static legend row outside the chart so direct labels are not hover-only. If the chart supports zooming, pair the Recharts `Brush` with non-drag controls such as preset buttons and numeric inputs.
 
 **Example:**
 
 ```text
 `NdviCurveChart` builds `{ dayOfYear, posteriorMean?, band?: [low, high], empirical? }` rows, renders Area + Line + Line, and pairs the chart with peak summary tiles. The wrapping `<div role="img" aria-label="${cropLabel} NDVI phenology curve">` keeps the chart announced as a single accessible image for tests.
+```
+
+---
+
+## Local-First Analytical Zoom Controls
+
+**Use when:** A chart interaction is useful for exploration but not yet important enough to become a shareable dashboard filter.
+
+**Rule:** Keep the zoom window in local component state, treat it as a view transform rather than data filtering, and keep source/caveat text visible. Provide at least one keyboard-accessible path, usually preset buttons plus numeric range inputs, before relying on drag gestures such as a chart brush.
+
+**Example:**
+
+```text
+`NdviCurveChart` stores the selected HSGP season window locally, offers Full season / Green-up / Peak / Senescence presets plus start/end DOY inputs, and syncs those controls with a Recharts `Brush`. If reviewers later need shareable links to selected spans, promote the range into `DashboardFilterState` and URL codecs.
 ```
 
 ---
