@@ -12,7 +12,7 @@
 
 <!-- 0-Intake | 1-Scope | 2-Setup | 3-Development | 4-QA | 5-Delivery | 6-Maintenance -->
 
-**Current:** 3-Development
+**Current:** 4-QA
 
 ## Source Docs
 
@@ -31,7 +31,7 @@
 | Intake capture | done | Dashboard plan imported into `docs/intake.md` |
 | Scope generation | done | `SCOPE.md` and `memory/stack-guidance.md` populated from intake |
 | Task generation | done | `TASKS.md` generated from approved scope |
-| Dashboard build | in-progress | `TASK-000` through `TASK-009` are done; final integration and handover remain |
+| Dashboard build | done | `TASK-000` through `TASK-010` are implemented and committed locally pending user push |
 
 ## Decisions
 
@@ -46,9 +46,9 @@
 ## Last Session
 
 - **Date:** 2026-06-02
-- **What was done:** Completed `TASK-007` rotation panel and `TASK-008` soil moisture extremes panel using parallel Builder agents with QA verification.
-- **What's next:** Run `TASK-010` final integration/handover: wire all panels into the shell, verify URL share/restore, record smoke checks, and update run notes.
-- **Blockers:** Browser-ready geography inputs, Vercel project settings, and full map implementation fidelity are unresolved.
+- **What was done:** Completed `TASK-010` final integration/handover: all panels are wired into the shell, URL share/restore is tested, README/HANDOVER are updated, and HTTP smoke is recorded.
+- **What's next:** User review at `http://localhost:3000`, then push to GitHub and configure Vercel.
+- **Blockers:** Browser-ready geography inputs, Vercel project settings, full map implementation fidelity, and in-app browser screenshot smoke are unresolved.
 
 ## Environment
 

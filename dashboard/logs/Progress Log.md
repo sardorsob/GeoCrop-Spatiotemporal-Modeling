@@ -155,6 +155,40 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-06-02 (0.65 hrs) - Codex QA / Integration
+
+**Work performed:**
+
+- Completed `TASK-010` final shell integration after the integration Builder lane was closed without a handoff.
+- Wired `src/app/page.tsx` to server-load normalized data and render the client shell inside Suspense.
+- Replaced the placeholder shell with URL-backed filters, task tabs, Corn Belt map, selected context, visible data-load status, analytical summary, and all four source-backed task panels.
+- Added integration tests for tab switching, URL share/restore, map selected-entity updates, source/caveat visibility, and missing-source status.
+- Updated README and HANDOVER with run instructions, verification commands, caveats, and next steps.
+
+**Verification:**
+
+- TDD red: `npx vitest run src/components/layout/DashboardShell.test.tsx` failed against the placeholder shell.
+- Focused green: `npx vitest run src/components/layout/DashboardShell.test.tsx` passed.
+- `npm run test` passed: 10 files, 38 tests.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run build` passed after wrapping the search-param client shell in Suspense.
+- `python scripts\validate-task-statuses.py` passed.
+- `python scripts\check-required-artifacts.py` passed.
+- HTTP smoke passed on existing local dev server `http://localhost:3000` for representative extremes, prediction, and rotation URLs.
+
+**Blockers / cuts:**
+
+- In-app browser visual smoke was attempted but failed with `windows sandbox failed: spawn setup refresh`.
+- No Playwright/Puppeteer package is installed, so no screenshot-based desktop/mobile smoke was captured in this environment.
+- Map remains a schematic state-tile fallback until browser-ready geospatial data is produced.
+
+**AI tools used:**
+
+- Codex QA/Orchestrator
+
+---
+
 ## YYYY-MM-DD (0.00 hrs) - Agent / Human
 
 **Work performed:**

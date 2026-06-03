@@ -125,3 +125,17 @@ Pair NDVI curves, ablation rows, SHAP rankings, and confusion matrices with visi
 ```text
 Rotation accepts `selectedEntity`; extremes accepts `selectedEvent`, `selectedCrop`, and `selectedState` with matching callbacks.
 ```
+
+---
+
+## Server-Loaded Client Shell
+
+**Use when:** A Next.js dashboard must read filesystem-backed static artifacts while also supporting interactive URL state.
+
+**Rule:** Load artifacts in the server page, pass normalized data into a client shell, and wrap the client shell in Suspense when it uses `useSearchParams`.
+
+**Example:**
+
+```text
+`page.tsx` calls `loadDashboardData()`, then renders `<DashboardShell data={data} />` inside Suspense; the shell owns filter, map, and tab URL updates.
+```

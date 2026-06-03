@@ -6,10 +6,10 @@
 
 - `package.json` defines the Next.js 16 + React 19 + TypeScript scaffold and verification scripts.
 - `src/app/layout.tsx` defines the root HTML shell and metadata.
-- `src/app/page.tsx` renders `DashboardShell`.
+- `src/app/page.tsx` server-loads normalized dashboard data with `loadDashboardData()` and renders the client shell inside a Suspense boundary for URL search-param support.
 - `src/app/globals.css` imports Tailwind CSS and sets global font/body defaults.
-- `src/components/layout/DashboardShell.tsx` defines the responsive Map Command Center shell with task tabs, main evidence region, selected context rail, layer/filter controls, and analytical summary band.
-- `src/components/layout/DashboardShell.test.tsx` verifies the shell landmarks and four task tabs.
+- `src/components/layout/DashboardShell.tsx` defines the integrated responsive Map Command Center shell with URL-backed filters, task tabs, Corn Belt map, selected context rail, data-load status, analytical summary band, and all Task 1-4 panels.
+- `src/components/layout/DashboardShell.test.tsx` verifies shell integration, URL restore/update behavior, tab switching, source/caveat visibility, map selection state, and data-load errors.
 - `src/lib/data/types.ts` exports dashboard source, phenology, rotation, extremes, prediction, map, and filter types.
 - `src/lib/data/sources.ts` defines the ordered Task 1-4 artifact source registry and typed lookup API.
 - `src/lib/data/source-notes.ts` derives user-facing source notes from the registry.
@@ -55,6 +55,8 @@
 - Phenology and prediction visual components keep essential values, source paths, and caveats visible without hover.
 - Rotation and extremes visual components receive normalized Task 2/3 data via props and expose URL-state-compatible selection/filter props for TASK-010 integration.
 - Rotation consumes `selectedEntity` or `selectedGeographyId`; extremes consumes `selectedEvent`, `selectedCrop`, and `selectedState` plus matching callbacks.
+- TASK-010 wires the server/client boundary: filesystem artifact loading remains in the server page, while URL search params and map/filter interactions live in the client shell.
+- `DashboardShell` preserves unrelated URL params when writing dashboard params and keeps immediate local UI state in sync with representative share URLs.
 
 ## Important Boundaries
 
@@ -68,5 +70,5 @@
 ## Known Caveats
 
 - `npm audit --audit-level=high` reports no high/critical advisories, but npm install/audit reports two moderate advisories in Next/PostCSS with only breaking `npm audit fix --force` remediation suggested.
-- The current dashboard shell still needs TASK-010 integration to wire source-backed map, phenology, rotation, extremes, and prediction components into the main page.
 - The TASK-005 map is a schematic state-tile fallback because browser-ready GeoJSON/TopoJSON has not been produced yet.
+- In-app browser visual smoke is currently blocked in this environment by the browser runtime Windows sandbox setup error. Use HTTP smoke plus automated tests until the runtime is available or Playwright is added.
