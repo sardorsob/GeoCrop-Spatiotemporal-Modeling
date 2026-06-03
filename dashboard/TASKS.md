@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 14 | 14 | 0 | 0 | 0 | 0 | 0 |
+| 15 | 15 | 0 | 0 | 0 | 0 | 0 |
 
 ---
 
@@ -866,4 +866,61 @@
 - Max attempts: 3
 - Attempt log:
   - 2026-06-03: Completed scoped paper reference CTA in-house; no agents needed because the change owned the shell, sheet primitive, public PDF asset, and docs.
+- Status: done
+
+---
+
+## TASK-014
+
+- Feature group: Brand / Polish
+- Title: Add GeoCrop sprout favicon
+- Depends on: TASK-011
+- Assigned agent: Codex QA
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-014
+  - Integration status: done
+- Design source:
+  - User follow-up 2026-06-03 requesting the current plant symbol as the site favicon.
+  - Existing `TopBar` Lucide `Sprout` brand mark.
+- User value: Gives the deployed dashboard a recognizable browser-tab icon that matches the in-app GeoCrop brand mark.
+- User flow:
+  - User opens the dashboard in a browser.
+  - Browser tab displays the GeoCrop sprout favicon.
+- Functional notes:
+  - Create a code-native SVG favicon in `public/favicon.svg`.
+  - Use the same sprout path as the current top-bar mark.
+  - Centralize app metadata in `src/app/site-metadata.ts` and re-export from `layout.tsx`.
+  - Do not generate images or add icon packages.
+- Edge cases:
+  - SVG favicon support is browser-native in modern browsers; no PNG/ICO fallback is added in this pass.
+  - The favicon path must be app-root relative (`/favicon.svg`) for Vercel compatibility.
+- Test cases:
+  1. Metadata advertises `/favicon.svg` for icon, shortcut, and apple icon.
+  2. The favicon SVG exists and includes the sprout path/title.
+- Files to create/modify:
+  - `public/favicon.svg`
+  - `src/app/site-metadata.ts`
+  - `src/app/layout.tsx`
+  - `src/app/__tests__/site-metadata.test.ts`
+  - `README.md`
+  - `HANDOVER.md`
+  - `PROJECT.md`
+  - `TASKS.md`
+  - `logs/Progress Log.md`
+- Acceptance criteria:
+  - [x] Public SVG favicon exists.
+  - [x] Favicon uses the existing sprout mark.
+  - [x] Next metadata points to `/favicon.svg`.
+  - [x] Focused red/green test covers metadata and SVG content.
+  - [x] No generated images or new packages are introduced.
+- QA notes:
+  - TDD red 2026-06-03: `npx vitest run src/app/__tests__/site-metadata.test.ts` failed because `site-metadata.ts` and `public/favicon.svg` did not exist.
+  - Builder/QA 2026-06-03: Added `public/favicon.svg`, centralized metadata in `src/app/site-metadata.ts`, and re-exported metadata from `layout.tsx`.
+  - Focused green 2026-06-03: `npx vitest run src/app/__tests__/site-metadata.test.ts` passed: 1 file, 1 test.
+  - Full QA 2026-06-03: `npm run test` passed: 12 files, 44 tests; `npm run typecheck`, `npm run lint`, `npm run build`, `python scripts\validate-task-statuses.py`, and `python scripts\check-required-artifacts.py` passed. `npm audit --audit-level=high` exited 0 with two moderate Next/PostCSS advisories. HTTP smoke at `http://localhost:3000` returned 200 and linked `/favicon.svg`; `/favicon.svg` returned 200 and included the sprout title. In-app browser smoke was attempted once but blocked by `windows sandbox failed: spawn setup refresh`.
+- Attempts: 1
+- Max attempts: 3
+- Attempt log:
+  - 2026-06-03: Completed scoped favicon polish in-house; no agents needed because the change owned metadata and one public SVG asset.
 - Status: done

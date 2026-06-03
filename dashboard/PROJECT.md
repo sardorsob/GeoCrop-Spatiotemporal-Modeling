@@ -35,6 +35,7 @@
 | UI redesign | done | `TASK-011` replaces flat code-native shell with shadcn-style primitives, Recharts NDVI, d3-geo + us-atlas US choropleth, collapsible Rotation table |
 | HSGP season-window zoom | done | `TASK-012` adds local Full / Green-up / Peak / Senescence / custom DOY zoom controls to the Task 1 NDVI chart |
 | NAFSI paper reader | done | `TASK-013` replaces the old Prediction hero KPI with a `NAFSI 2025 winning paper` CTA, embedded PDF reader, and open/download actions |
+| Sprout favicon | done | `TASK-014` adds a public SVG favicon using the current top-bar plant mark |
 
 ## Decisions
 
@@ -50,11 +51,12 @@
 - 2026-06-02: Completed cleanup pass after QA review: removed orphaned old map/filter components, pruned unused reserved dependencies, moved `d3-geo` into runtime dependencies, added `MapPanel` regression coverage, and linked active tabs to a real `tabpanel`.
 - 2026-06-03: Added Task 1 HSGP season-window zoom as local chart state rather than URL state for the first experiment; presets and numeric DOY inputs provide a keyboard-accessible path while the Recharts brush provides direct plot zoom.
 - 2026-06-03: Added the NAFSI 2025 winning paper as a static public PDF and used browser-native PDF embedding instead of adding a PDF viewer package; Open PDF and Download PDF links are available as fallbacks.
+- 2026-06-03: Added the GeoCrop sprout favicon as a code-native SVG under `public/favicon.svg`; no generated image assets or new packages were used.
 
 ## Last Session
 
 - **Date:** 2026-06-03
-- **What was done:** Added `TASK-013` NAFSI 2025 winning paper reader CTA. The hero strip now replaces the old Prediction Ready KPI with a `NAFSI 2025 winning paper` button that opens an embedded public PDF sheet with Open PDF and Download PDF actions. Full tests, typecheck, lint, build, workflow validators, audit-high, and HTTP smoke passed.
+- **What was done:** Added `TASK-014` GeoCrop sprout favicon. App metadata now points to `/favicon.svg`, and the public SVG uses the same sprout path as the top-bar brand mark. Full tests, typecheck, lint, build, workflow validators, audit-high, and HTTP favicon smoke passed.
 - **What's next:** User review at `http://localhost:3000`, then push to GitHub and configure Vercel. Optional follow-up: promote the HSGP season window to URL-backed state if shareable deep links become important, or add browser-ready vector-tile geography if county/pixel-level fidelity becomes a priority.
 - **Blockers:** Vercel project settings unresolved. In-app browser screenshot smoke remains blocked by `windows sandbox failed: spawn setup refresh`; Chrome MCP extension was also unreachable in the last session.
 

@@ -1,12 +1,6 @@
-import type { Metadata } from "next";
-
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "GeoCrop Interactive Dashboard",
-  description:
-    "Interactive dashboard scaffold for the GeoCrop Spatiotemporal Modeling project."
-};
+export { metadata } from "./site-metadata";
 
 export default function RootLayout({
   children

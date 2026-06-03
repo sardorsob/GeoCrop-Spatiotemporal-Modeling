@@ -2,7 +2,7 @@
 
 ## Status
 
-`TASK-013` NAFSI 2025 winning paper reader CTA is complete on top of the `TASK-011` UI redesign and `TASK-012` HSGP season-window zoom. The dashboard is a Next.js app in `dashboard/` and is designed for Vercel hosting.
+`TASK-014` GeoCrop sprout favicon is complete on top of the `TASK-011` UI redesign, `TASK-012` HSGP season-window zoom, and `TASK-013` paper reader CTA. The dashboard is a Next.js app in `dashboard/` and is designed for Vercel hosting.
 
 ## What Is Done
 
@@ -10,6 +10,7 @@
 - Typed source registry, CSV/JSON loaders, and Task 1-4 normalization.
 - URL-backed dashboard state for tab, map layer, crop, event, rotation regime, selected entity, state, and map view.
 - Sticky `TopBar` with brand mark and live source / task / load-issue badges.
+- Public SVG favicon at `/favicon.svg` using the same sprout mark as the top bar.
 - Hero card with project narrative, three data KPI tiles, and a `NAFSI 2025 winning paper` CTA that opens an embedded PDF reader.
 - Compact filter bar with six visible fields (Crop, Extreme event, Rotation regime, State, Map layer, Selected entity), removable filter chips, and an advanced sheet drawer for map view coordinates.
 - Real U.S. Albers choropleth Corn Belt map (d3-geo + `us-atlas/states-albers-10m.json`) with hover tooltips, click-to-select state paths, in-card layer selector, info popover for source/caveat detail, and a selection context block.
@@ -60,16 +61,15 @@ python scripts\validate-task-statuses.py
 python scripts\check-required-artifacts.py
 ```
 
-Latest QA run on 2026-06-03 (post `TASK-013` paper reader CTA):
+Latest QA run on 2026-06-03 (post `TASK-014` favicon):
 
-- `npx vitest run src/components/layout/DashboardShell.test.tsx` passed (1 file, 3 tests).
-- `npm run test` passed (11 files, 43 tests).
+- `npx vitest run src/app/__tests__/site-metadata.test.ts` passed (1 file, 1 test).
+- `npm run test` passed (12 files, 44 tests).
 - `npm run typecheck` passed.
 - `npm run lint` passed.
 - `npm run build` passed.
 - Workflow artifact validators passed.
-- `npm audit --audit-level=high` exited 0; two moderate Next / PostCSS advisories remain.
-- HTTP smoke at `http://localhost:3000` returned 200 and included the paper CTA; `/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf` returned 200.
+- HTTP smoke at `http://localhost:3000` linked `/favicon.svg`; `/favicon.svg` returned 200.
 
 ## Known Caveats
 

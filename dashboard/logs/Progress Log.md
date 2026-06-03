@@ -4,6 +4,40 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-06-03 (0.15 hrs) - Codex QA Favicon Polish
+
+**Work performed:**
+
+- Added `TASK-014` for the GeoCrop sprout favicon.
+- Added `dashboard/public/favicon.svg` using the same sprout path as the current top-bar brand mark.
+- Centralized site metadata in `src/app/site-metadata.ts` and re-exported it from `layout.tsx`.
+- Added metadata/favicon regression coverage in `src/app/__tests__/site-metadata.test.ts`.
+- Updated README, HANDOVER, PROJECT, TASKS, and this log.
+
+**Verification:**
+
+- TDD red: `npx vitest run src/app/__tests__/site-metadata.test.ts` failed because `site-metadata.ts` and `public/favicon.svg` did not exist.
+- Focused green: `npx vitest run src/app/__tests__/site-metadata.test.ts` passed: 1 file, 1 test.
+- Full suite: `npm run test` passed: 12 files, 44 tests.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run build` passed.
+- `python scripts\validate-task-statuses.py` passed.
+- `python scripts\check-required-artifacts.py` passed.
+- `npm audit --audit-level=high` exited 0; two moderate Next/PostCSS advisories remain.
+- HTTP smoke at `http://localhost:3000` returned 200 and linked `/favicon.svg`; `/favicon.svg` returned 200 and included the sprout title.
+
+**Blockers / cuts:**
+
+- No PNG/ICO fallback was added; this pass uses modern browser SVG favicon support.
+- In-app browser smoke was attempted once but remains blocked by `windows sandbox failed: spawn setup refresh`.
+
+**AI tools used:**
+
+- Codex QA
+
+---
+
 ## 2026-06-03 (0.30 hrs) - Codex QA Paper Reference CTA
 
 **Work performed:**

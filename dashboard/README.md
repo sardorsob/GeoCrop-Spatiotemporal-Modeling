@@ -5,6 +5,7 @@ Next.js dashboard workspace for the GeoCrop Spatiotemporal Modeling project.
 ## What It Shows
 
 - Sticky top bar with brand mark, live source / task / load-issue badges.
+- Browser-tab favicon using the GeoCrop sprout mark.
 - Hero strip with project narrative, three data KPI tiles, and a `NAFSI 2025 winning paper` reference button.
 - Compact filter bar (Crop, Extreme event, Rotation regime, State, Map layer, Selected entity) with removable filter chips and an advanced sheet drawer for map view coordinates.
 - Real U.S. Albers choropleth Corn Belt map with hover tooltips, click-to-select states, in-card layer selector, and an info popover with source/caveat detail.
@@ -36,7 +37,7 @@ python scripts\validate-task-statuses.py
 python scripts\check-required-artifacts.py
 ```
 
-Last QA run on 2026-06-03 (after `TASK-013` paper reader CTA): `npm run test` passed 43/43 in 11 files, `npm run typecheck`, `npm run lint`, and `npm run build` passed. Workflow validators passed. HTTP smoke at `http://localhost:3000` returned 200 and included the paper CTA; the public PDF endpoint returned 200.
+Last QA run on 2026-06-03 (after `TASK-014` favicon): `npm run test` passed 44/44 in 12 files, `npm run typecheck`, `npm run lint`, and `npm run build` passed. Workflow validators passed. HTTP smoke at `http://localhost:3000` linked `/favicon.svg`, and `/favicon.svg` returned 200.
 
 ## Tech Stack
 
