@@ -2,7 +2,7 @@
 
 ## Status
 
-`TASK-012` HSGP season-window zoom is complete on top of the `TASK-011` UI redesign and cleanup pass. The dashboard is a Next.js app in `dashboard/` and is designed for Vercel hosting.
+`TASK-013` NAFSI 2025 winning paper reader CTA is complete on top of the `TASK-011` UI redesign and `TASK-012` HSGP season-window zoom. The dashboard is a Next.js app in `dashboard/` and is designed for Vercel hosting.
 
 ## What Is Done
 
@@ -10,7 +10,7 @@
 - Typed source registry, CSV/JSON loaders, and Task 1-4 normalization.
 - URL-backed dashboard state for tab, map layer, crop, event, rotation regime, selected entity, state, and map view.
 - Sticky `TopBar` with brand mark and live source / task / load-issue badges.
-- Hero card with project narrative and four accent-bar KPI tiles (Phenology crops, Rotation classes, Extreme rows, Prediction status).
+- Hero card with project narrative, three data KPI tiles, and a `NAFSI 2025 winning paper` CTA that opens an embedded PDF reader.
 - Compact filter bar with six visible fields (Crop, Extreme event, Rotation regime, State, Map layer, Selected entity), removable filter chips, and an advanced sheet drawer for map view coordinates.
 - Real U.S. Albers choropleth Corn Belt map (d3-geo + `us-atlas/states-albers-10m.json`) with hover tooltips, click-to-select state paths, in-card layer selector, info popover for source/caveat detail, and a selection context block.
 - Pill-style tab bar with Lucide icons for the four research lanes.
@@ -18,6 +18,7 @@
 - Rotation panel with three-class summary cards, Markov/threshold caveat band, and a geographic rotation summaries table that shows the top 5 rows by default with a "Show N more" / "Show less" toggle.
 - Extremes panel with event selector, URL-state-compatible crop/state filters, anomaly summary tone cards, and state x crop anomaly table.
 - Prediction panel with headline test-metric cards, ablation chart, SHAP feature ranking, regime-stratified metrics, and confusion matrix.
+- Static paper asset under `public/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf` with browser-native PDF embed, Open PDF, and Download PDF actions.
 - Local shadcn-style primitive layer under `src/components/ui/` (Card, Button, Badge, Input, Select, Popover, Sheet) backed by Radix where needed.
 - `cn()` class merge helper at `src/lib/utils.ts`.
 - Component and data tests for all shipped feature lanes, including direct coverage for the new `MapPanel` choropleth selection path.
@@ -28,6 +29,7 @@
 - Vercel project and deployment settings are not configured in this repo.
 - No Playwright E2E suite has been added; manual / HTTP smoke checks are used for handoff.
 - No backend, database, auth, saved views, or notebook / model reruns are included in the MVP.
+- No PDF viewer package has been added; the paper reader uses the browser-native PDF viewer plus direct open/download fallbacks.
 
 ## Run Locally
 
@@ -58,16 +60,16 @@ python scripts\validate-task-statuses.py
 python scripts\check-required-artifacts.py
 ```
 
-Latest QA run on 2026-06-03 (post `TASK-012` HSGP season-window zoom):
+Latest QA run on 2026-06-03 (post `TASK-013` paper reader CTA):
 
-- `npx vitest run src/features/phenology/__tests__/season-window.test.ts src/features/phenology/__tests__/phenology-panel.test.tsx` passed (2 files, 9 tests).
-- `npm run test` passed (11 files, 42 tests).
+- `npx vitest run src/components/layout/DashboardShell.test.tsx` passed (1 file, 3 tests).
+- `npm run test` passed (11 files, 43 tests).
 - `npm run typecheck` passed.
 - `npm run lint` passed.
 - `npm run build` passed.
 - Workflow artifact validators passed.
 - `npm audit --audit-level=high` exited 0; two moderate Next / PostCSS advisories remain.
-- HTTP smoke at `http://localhost:3000` returned 200 and included the new Season window controls.
+- HTTP smoke at `http://localhost:3000` returned 200 and included the paper CTA; `/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf` returned 200.
 
 ## Known Caveats
 

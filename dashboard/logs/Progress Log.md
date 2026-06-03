@@ -4,6 +4,42 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-06-03 (0.30 hrs) - Codex QA Paper Reference CTA
+
+**Work performed:**
+
+- Added `TASK-013` for the NAFSI 2025 winning paper reader CTA.
+- Copied `NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf` into `dashboard/public/papers/` for Vercel-safe static serving.
+- Replaced the old Prediction Ready hero KPI with a `NAFSI 2025 winning paper` button.
+- Added a Sheet-based paper reader with browser-native PDF embed plus Open PDF and Download PDF actions.
+- Updated Sheet title/description wrappers to Radix dialog primitives for accessible dialog naming.
+- Updated README, HANDOVER, PROJECT, TASKS, and memory patterns.
+
+**Verification:**
+
+- TDD red: `npx vitest run src/components/layout/DashboardShell.test.tsx` failed because the `NAFSI 2025 winning paper` button did not exist.
+- Focused green: `npx vitest run src/components/layout/DashboardShell.test.tsx` passed: 1 file, 3 tests.
+- Full suite: `npm run test` passed: 11 files, 43 tests.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run build` passed.
+- `python scripts\validate-task-statuses.py` passed.
+- `python scripts\check-required-artifacts.py` passed.
+- `npm audit --audit-level=high` exited 0; two moderate Next/PostCSS advisories remain.
+- HTTP smoke at `http://localhost:3000` returned 200 and included `NAFSI 2025 winning paper`.
+- HTTP smoke for `/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf` returned 200 and 6,403,041 bytes.
+
+**Blockers / cuts:**
+
+- No PDF viewer package was added. The sheet uses browser-native PDF embedding with Open/Download fallbacks; a PDF.js/react-pdf viewer can be added later if annotation, page thumbnails, or custom paging become necessary.
+- In-app browser smoke was attempted once but remains blocked by `windows sandbox failed: spawn setup refresh`.
+
+**AI tools used:**
+
+- Codex QA
+
+---
+
 ## 2026-06-03 (0.35 hrs) - Codex QA HSGP Season Window
 
 **Work performed:**

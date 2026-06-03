@@ -212,6 +212,20 @@ Rotation accepts `selectedEntity`; extremes accepts `selectedEvent`, `selectedCr
 
 ---
 
+## Public Static PDF Reference
+
+**Use when:** A deployed dashboard needs to show a paper, report, or other static PDF from the repo.
+
+**Rule:** Copy the PDF into `public/` and reference it with an app-root URL such as `/papers/file.pdf`; do not link to parent repo paths because Vercel cannot serve them. Prefer browser-native PDF embedding plus explicit Open and Download links before adding a PDF viewer dependency.
+
+**Example:**
+
+```text
+`DashboardShell.PaperReferenceCard` opens a Sheet with `<iframe src="/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf">`, plus Open PDF and Download PDF anchor actions.
+```
+
+---
+
 ## Compact-View Disclosure For Long Tables
 
 **Use when:** A panel includes a ranked or long table where the first few rows carry most of the analytical signal.

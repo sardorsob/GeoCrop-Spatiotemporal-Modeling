@@ -466,4 +466,29 @@ describe("DashboardShell", () => {
       "state:IA"
     );
   });
+
+  it("opens the NAFSI winning paper reference from the hero KPI", () => {
+    render(<DashboardShell data={dashboardData} />);
+
+    const paperButton = screen.getByRole("button", {
+      name: "NAFSI 2025 winning paper"
+    });
+
+    expect(screen.queryByText("Held-out diagnostics")).not.toBeInTheDocument();
+
+    fireEvent.click(paperButton);
+
+    const dialog = screen.getByRole("dialog", {
+      name: "NAFSI 2025 winning paper"
+    });
+    const paperPath = "/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf";
+
+    expect(
+      within(dialog).getByTitle("NAFSI 2025 winning paper PDF")
+    ).toHaveAttribute("src", paperPath);
+    expect(within(dialog).getByRole("link", { name: "Open PDF" }))
+      .toHaveAttribute("href", paperPath);
+    expect(within(dialog).getByRole("link", { name: "Download PDF" }))
+      .toHaveAttribute("download", "NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf");
+  });
 });

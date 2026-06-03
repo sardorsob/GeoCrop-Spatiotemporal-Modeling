@@ -2,13 +2,32 @@
 
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { AlertTriangle, Leaf, Repeat, ShieldAlert, Target, CheckCircle2 } from "lucide-react";
+import {
+  AlertTriangle,
+  Award,
+  CheckCircle2,
+  Download,
+  ExternalLink,
+  Leaf,
+  Repeat,
+  ShieldAlert,
+  Target
+} from "lucide-react";
 
 import { CompactFilterBar } from "@/components/filters/CompactFilterBar";
 import { MapPanel } from "@/components/map/MapPanel";
 import { TopBar } from "@/components/layout/TopBar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { ExtremesPanel } from "@/features/extremes/ExtremesPanel";
 import type { CornBeltMapSelectionContext } from "@/features/map/map-selection";
@@ -36,6 +55,12 @@ const TAB_META: Record<DashboardTab, { label: string; status: string; icon: Reac
   extremes: { label: "Extremes", status: "Stress windows", icon: ShieldAlert },
   prediction: { label: "Prediction", status: "Model diagnostics", icon: Target }
 };
+
+const PAPER_REFERENCE = {
+  title: "NAFSI 2025 winning paper",
+  fileName: "NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf",
+  href: "/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf"
+} as const;
 
 export function DashboardShell({ data }: DashboardShellProps) {
   const router = useRouter();
@@ -246,14 +271,70 @@ function Hero({ data }: { readonly data: NormalizedDashboardData }) {
           detail="State × crop"
           accent="amber"
         />
-        <KpiCard
-          label="Prediction"
-          value={data.task4.testMetrics ? "Ready" : "Missing"}
-          detail="Held-out diagnostics"
-          accent={data.task4.testMetrics ? "sky" : "rose"}
-        />
+        <PaperReferenceCard />
       </div>
     </section>
+  );
+}
+
+function PaperReferenceCard() {
+  return (
+    <Card className="relative overflow-hidden">
+      <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-400 to-sky-600" />
+      <CardContent className="flex h-full flex-col justify-between gap-3 py-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-sky-700">
+            First-place paper
+          </p>
+          <p className="mt-2 text-sm font-medium leading-5 text-slate-600">
+            Read or download the project reference.
+          </p>
+        </div>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button className="w-full justify-start whitespace-normal text-left" size="sm" type="button">
+              <Award className="size-4" aria-hidden />
+              {PAPER_REFERENCE.title}
+            </Button>
+          </SheetTrigger>
+          <SheetContent
+            aria-label={PAPER_REFERENCE.title}
+            className="flex w-[min(100vw,980px)] flex-col sm:max-w-5xl"
+          >
+            <SheetHeader>
+              <SheetTitle>{PAPER_REFERENCE.title}</SheetTitle>
+              <SheetDescription>
+                Predictive Modeling for Agricultural Resilience. Open the PDF in a new tab, download it,
+                or read it directly in the embedded viewer.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="flex flex-wrap gap-2 border-b border-slate-100 px-6 py-3">
+              <Button asChild variant="outline" size="sm">
+                <a href={PAPER_REFERENCE.href} target="_blank" rel="noreferrer">
+                  <ExternalLink className="size-4" aria-hidden />
+                  Open PDF
+                </a>
+              </Button>
+              <Button asChild variant="outline" size="sm">
+                <a href={PAPER_REFERENCE.href} download={PAPER_REFERENCE.fileName}>
+                  <Download className="size-4" aria-hidden />
+                  Download PDF
+                </a>
+              </Button>
+            </div>
+            <div className="min-h-0 flex-1 p-4 sm:p-6">
+              <div className="flex h-[72vh] min-h-[440px] overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                <iframe
+                  className="h-full w-full"
+                  src={PAPER_REFERENCE.href}
+                  title={`${PAPER_REFERENCE.title} PDF`}
+                />
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </CardContent>
+    </Card>
   );
 }
 

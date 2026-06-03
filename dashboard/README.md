@@ -5,7 +5,7 @@ Next.js dashboard workspace for the GeoCrop Spatiotemporal Modeling project.
 ## What It Shows
 
 - Sticky top bar with brand mark, live source / task / load-issue badges.
-- Hero strip with project narrative and four accent-bar KPI tiles.
+- Hero strip with project narrative, three data KPI tiles, and a `NAFSI 2025 winning paper` reference button.
 - Compact filter bar (Crop, Extreme event, Rotation regime, State, Map layer, Selected entity) with removable filter chips and an advanced sheet drawer for map view coordinates.
 - Real U.S. Albers choropleth Corn Belt map with hover tooltips, click-to-select states, in-card layer selector, and an info popover with source/caveat detail.
 - Pill-style task tabs for the four research lanes.
@@ -13,6 +13,7 @@ Next.js dashboard workspace for the GeoCrop Spatiotemporal Modeling project.
 - Task 2 rotation class summaries and a collapsible Geographic rotation summaries table (compact 5-row view by default with a "Show N more" / "Show less" toggle).
 - Task 3 soil-moisture flood/drought anomaly summaries and a state x crop anomaly table.
 - Task 4 prediction diagnostics, ablation, SHAP, regime-stratified metrics, and confusion matrix.
+- Embedded NAFSI 2025 winning paper reader with Open PDF and Download PDF actions.
 - Visible source paths, denominators, dates, caveats, and load-error states throughout.
 
 ## Local Development
@@ -35,7 +36,7 @@ python scripts\validate-task-statuses.py
 python scripts\check-required-artifacts.py
 ```
 
-Last QA run on 2026-06-03 (after `TASK-012` HSGP season-window zoom): `npm run test` passed 42/42 in 11 files, `npm run typecheck`, `npm run lint`, and `npm run build` passed. Workflow validators passed. HTTP smoke at `http://localhost:3000` returned 200 and included the new Season window controls.
+Last QA run on 2026-06-03 (after `TASK-013` paper reader CTA): `npm run test` passed 43/43 in 11 files, `npm run typecheck`, `npm run lint`, and `npm run build` passed. Workflow validators passed. HTTP smoke at `http://localhost:3000` returned 200 and included the paper CTA; the public PDF endpoint returned 200.
 
 ## Tech Stack
 
@@ -53,6 +54,7 @@ Last QA run on 2026-06-03 (after `TASK-012` HSGP season-window zoom): `npm run t
 - Target host: Vercel.
 - No runtime database, auth, or secrets are required for the MVP.
 - Parent `../artifacts/tables/` CSV/JSON files are the dashboard source of truth.
+- The paper PDF is served as a static asset from `public/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf`.
 - Large Parquet/GeoTIFF artifacts are intentionally not shipped to the browser.
 
 ## Known Caveats

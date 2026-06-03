@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 13 | 13 | 0 | 0 | 0 | 0 | 0 |
+| 14 | 14 | 0 | 0 | 0 | 0 | 0 |
 
 ---
 
@@ -798,4 +798,72 @@
 - Max attempts: 3
 - Attempt log:
   - 2026-06-03: Completed scoped HSGP season-window zoom enhancement in-house; no agents needed because the change owned one chart path and its tests/docs.
+- Status: done
+
+---
+
+## TASK-013
+
+- Feature group: Reference / Handoff
+- Title: Add NAFSI 2025 winning paper reader CTA
+- Depends on: TASK-011
+- Assigned agent: Codex QA
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-013
+  - Integration status: done
+- Design source:
+  - User follow-up 2026-06-03 requesting a button for the NAFSI 2025 winning paper.
+  - Existing `NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf` repo-root artifact.
+  - `TASK-011` hero KPI redesign.
+- User value: Lets dashboard reviewers read, open, and download the winning paper directly from the dashboard without leaving the Vercel-hosted app context.
+- User flow:
+  - User lands on the dashboard.
+  - User clicks `NAFSI 2025 winning paper` in the hero KPI strip.
+  - A paper reader sheet opens with embedded PDF preview plus Open PDF and Download PDF links.
+- Functional notes:
+  - Copy the existing PDF into `dashboard/public/papers/` so Vercel serves it as a static asset.
+  - Use browser-native PDF embedding with an `iframe`; do not add a PDF viewer dependency in this pass.
+  - Replace the old Prediction Ready / Held-out diagnostics KPI with a first-place paper CTA.
+  - Keep the Prediction tab itself unchanged.
+  - Upgrade the local Sheet title/description wrappers to Radix dialog title/description primitives for accessible dialog naming.
+- Edge cases:
+  - Browser-native PDF preview may vary by browser; Open PDF and Download PDF links remain available.
+  - The paper asset must be served from `public/`, not parent repo paths, for Vercel compatibility.
+  - Existing task tab labels and prediction diagnostics panel remain unchanged.
+- Test cases:
+  1. Dashboard shell renders the `NAFSI 2025 winning paper` button.
+  2. Old `Held-out diagnostics` hero detail is gone.
+  3. Clicking the button opens a named dialog.
+  4. Dialog contains the PDF iframe.
+  5. Dialog contains Open PDF and Download PDF links pointed at the public paper asset.
+- Files to create/modify:
+  - `public/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf`
+  - `src/components/layout/DashboardShell.tsx`
+  - `src/components/layout/DashboardShell.test.tsx`
+  - `src/components/ui/sheet.tsx`
+  - `README.md`
+  - `HANDOVER.md`
+  - `PROJECT.md`
+  - `TASKS.md`
+  - `memory/patterns.md`
+  - `logs/Progress Log.md`
+- Acceptance criteria:
+  - [x] Hero KPI strip includes a visible `NAFSI 2025 winning paper` button.
+  - [x] Clicking the button opens a readable embedded PDF sheet.
+  - [x] Open PDF and Download PDF actions are available.
+  - [x] PDF is served from `dashboard/public/papers/`.
+  - [x] No new PDF viewer dependency is added.
+  - [x] Prediction tab remains available and unchanged.
+  - [x] Focused red/green test covers the paper reader behavior.
+  - [x] Typecheck passes.
+- QA notes:
+  - TDD red 2026-06-03: `npx vitest run src/components/layout/DashboardShell.test.tsx` failed because no `NAFSI 2025 winning paper` button existed.
+  - Builder/QA 2026-06-03: Copied the paper PDF into `public/papers/`, added a hero paper reference card, embedded the PDF in a Sheet with Open/Download links, and updated Sheet title/description primitives for dialog accessibility.
+  - Focused green 2026-06-03: `npx vitest run src/components/layout/DashboardShell.test.tsx` passed: 1 file, 3 tests.
+  - Full QA 2026-06-03: `npm run test` passed: 11 files, 43 tests; `npm run typecheck`, `npm run lint`, `npm run build`, `python scripts\validate-task-statuses.py`, and `python scripts\check-required-artifacts.py` passed. `npm audit --audit-level=high` exited 0 with two moderate Next/PostCSS advisories. HTTP smoke at `http://localhost:3000` returned 200 and included `NAFSI 2025 winning paper`; the public PDF endpoint returned 200 and 6,403,041 bytes. In-app browser smoke was attempted once but blocked by `windows sandbox failed: spawn setup refresh`.
+- Attempts: 1
+- Max attempts: 3
+- Attempt log:
+  - 2026-06-03: Completed scoped paper reference CTA in-house; no agents needed because the change owned the shell, sheet primitive, public PDF asset, and docs.
 - Status: done
