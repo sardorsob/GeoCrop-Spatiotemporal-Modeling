@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 11 | 3 | 0 | 0 | 0 | 0 | 8 |
+| 11 | 4 | 0 | 1 | 0 | 0 | 6 |
 
 ---
 
@@ -138,7 +138,7 @@
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-002
-  - Integration status: not-started
+  - Integration status: done
 - Design source:
   - `SCOPE.md` feature "Artifact Data Registry And Normalization"
   - `memory/stack-guidance.md` data guidance
@@ -170,17 +170,20 @@
   - `src/lib/data/__tests__/normalize.test.ts`
   - `src/lib/format/number.ts`
 - Acceptance criteria:
-  - [ ] All scoped CSV/JSON artifact groups have loader/normalizer coverage.
-  - [ ] Normalizers return typed success/error states.
-  - [ ] Tests cover representative rows for Tasks 1-4.
-  - [ ] Source path/date/caveat metadata is preserved in normalized outputs.
-  - [ ] Typecheck passes.
-  - [ ] No browser bundle includes raw Parquet/GeoTIFF files.
+  - [x] All scoped CSV/JSON artifact groups have loader/normalizer coverage.
+  - [x] Normalizers return typed success/error states.
+  - [x] Tests cover representative rows for Tasks 1-4.
+  - [x] Source path/date/caveat metadata is preserved in normalized outputs.
+  - [x] Typecheck passes.
+  - [x] No browser bundle includes raw Parquet/GeoTIFF files.
 - QA notes:
-- Attempts: 0
+  - Builder handoff 2026-06-02: Added static CSV/JSON filesystem loaders, dashboard data assembly, typed normalizers for Task 1-4 artifacts, numeric parsing helpers, and representative artifact tests. Normalizers handle observed source-header aliases such as `n_obs`, `RMSE`, `doy`, `pct_of_valid`, `GEOID`, `NAMELSAD`, `frac_obs_z_gt_1`, `mean_abs_shap`, and `N_pixels`.
+  - QA approval 2026-06-02: Verified loaders return typed success/error states, missing-source cases do not throw, row counts/source metadata are preserved, and no raw Parquet/GeoTIFF files are introduced. Fresh verification passed: `npm run test`, `npm run typecheck`, `npm run lint`, and `npm run build`.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-- Status: pending
+  - 2026-06-02: Started TASK-002 in parallel Builder lane; dependencies satisfied by TASK-001; scoped to data loading, normalization, fixtures/tests, and number formatting.
+- Status: done
 
 ---
 
@@ -251,7 +254,7 @@
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-004
-  - Integration status: not-started
+  - Integration status: in-progress
 - Design source:
   - `SCOPE.md` data flow and shareability requirements
   - `memory/stack-guidance.md` state guidance
@@ -289,10 +292,11 @@
   - [ ] Typecheck passes.
   - [ ] No analytical state is stored only in localStorage.
 - QA notes:
-- Attempts: 0
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-- Status: pending
+  - 2026-06-02: Started TASK-004 in parallel Builder lane; dependencies satisfied by TASK-001; scoped to URL/state helpers plus filter UI.
+- Status: in-progress
 
 ---
 

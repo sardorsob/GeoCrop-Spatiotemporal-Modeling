@@ -55,3 +55,17 @@ Build `sourceNotesById` from `artifactSources.map(...)` so registry changes prop
 ```text
 Use semantic regions, CSS grid placeholders, inline React markup, and source/caveat text instead of generated images.
 ```
+
+---
+
+## Artifact Header Aliases
+
+**Use when:** Normalizing exported GeoCrop CSV/JSON artifacts into dashboard contracts.
+
+**Rule:** Normalize against observed source headers and registry-friendly aliases together; exported tables may use research/table labels such as `RMSE`, `doy`, `pct_of_valid`, `GEOID`, or `mean_abs_shap`.
+
+**Example:**
+
+```text
+Read Task 1 day-of-year from `day_of_year` or `doy`, and read Task 2 percent valid from `percent_of_valid` or `pct_of_valid`.
+```

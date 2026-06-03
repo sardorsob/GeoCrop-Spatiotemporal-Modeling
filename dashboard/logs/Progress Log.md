@@ -37,6 +37,34 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-06-02 (0.35 hrs) - Codex QA + Builder Agent
+
+**Work performed:**
+
+- Completed `TASK-002` static artifact loaders and normalized dashboard data.
+- Added typed CSV/JSON loading for scoped source registry entries.
+- Added Task 1-4 normalizers with observed source-header alias handling.
+- Added number parsing helpers and representative artifact tests.
+
+**Verification:**
+
+- `npm run test` passed.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run build` passed.
+
+**Blockers / cuts:**
+
+- Loader is server/test filesystem-oriented; later UI integration must avoid importing it into client components.
+- Browser-ready GeoJSON remains unavailable, so map work still needs a fallback strategy.
+
+**AI tools used:**
+
+- Codex QA/Orchestrator
+- Builder agent Schrodinger for `TASK-002`
+
+---
+
 ## YYYY-MM-DD (0.00 hrs) - Agent / Human
 
 **Work performed:**

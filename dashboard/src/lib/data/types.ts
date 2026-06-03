@@ -68,6 +68,11 @@ export type MapLayerId =
 export interface DataPointSource {
   readonly sourceId: ArtifactSourceId;
   readonly rowCount?: number;
+  readonly path?: string;
+  readonly label?: string;
+  readonly caveat?: string;
+  readonly dateStamp?: string;
+  readonly denominator?: string;
 }
 
 export interface PhenologySeries {
