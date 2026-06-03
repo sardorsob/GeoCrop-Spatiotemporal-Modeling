@@ -24,6 +24,14 @@
 - `src/lib/state/__tests__/url-state.test.ts` verifies defaults, stable serialization, invalid param warnings, and unrelated-param preservation.
 - `src/components/filters/FilterBar.tsx` renders accessible controls for task, layer, crop, event, regime, selected entity, and map view.
 - `src/components/filters/ActiveFilterChips.tsx` renders visible active-filter chips and removal controls.
+- `src/components/map/CornBeltMap.tsx` renders the TASK-005 code-native Corn Belt fallback map surface with selectable state tiles, layer controls, legends, source text, and fallback limitations.
+- `src/components/map/MapLayerControl.tsx` and `src/components/map/MapLegend.tsx` provide reusable controls/legend blocks for map layers.
+- `src/features/map/map-layers.ts` defines map layer metadata, legends, source labels, and caveats for rotation, extremes, prediction, and agreement views.
+- `src/features/map/map-selection.ts` defines schematic fallback geographies and selected-map context records for downstream panels.
+- `src/features/phenology/PhenologyPanel.tsx` composes the TASK-006 phenology tab from model metric cards, NDVI curve, crop control, and source notes.
+- `src/features/phenology/NdviCurveChart.tsx` and `src/features/phenology/PhenologyMetrics.tsx` render Task 1 evidence with code-native SVG and visible uncertainty/caveat text.
+- `src/features/prediction/PredictionPanel.tsx` composes the TASK-009 prediction diagnostics tab from headline metrics, ablation, SHAP, regime metrics, and confusion matrix views.
+- `src/features/prediction/AblationChart.tsx`, `ShapFeatureChart.tsx`, `RegimeMetricsChart.tsx`, and `ConfusionMatrix.tsx` render Task 4 diagnostic evidence with visible source/caveat context.
 - `src/lib/scaffold/home-copy.ts` stores minimal scaffold copy for the landing page.
 - `src/lib/scaffold/home-copy.test.ts` verifies the scaffold title and four research lanes.
 - `next.config.ts` pins `turbopack.root` to the dashboard folder so local builds do not infer a parent lockfile as the workspace root.
@@ -38,6 +46,9 @@
 - Loader outputs preserve source id, path, label, caveat, date stamp, denominator, row count, and typed load errors.
 - Normalizers account for observed artifact header aliases instead of assuming registry-friendly column names.
 - TASK-004 adds URL-backed dashboard state helpers. Defaults are omitted from serialized URLs, invalid params produce warning objects, and incoming state is normalized before use.
+- TASK-005, TASK-006, and TASK-009 consume normalized source contracts through component props; they do not load filesystem artifacts directly.
+- Map selections are represented as typed context records so later integration can synchronize selected geography, map layer, and panel evidence through URL-backed state.
+- Phenology and prediction visual components keep essential values, source paths, and caveats visible without hover.
 
 ## Important Boundaries
 
@@ -45,9 +56,11 @@
 - The current shell does not include backend, database, auth, MapLibre, D3, Observable Plot, or shadcn/ui yet.
 - Dashboard visual assets are code-native only for now; do not use image generation or `gpt-image-2`.
 - Analytical dashboard state is URL-backed; do not store active filters, map layer, selected entity, or analytical tab only in localStorage.
+- Feature panels should receive normalized data as props and stay client-safe; server filesystem loading remains in `src/lib/data/dashboard-data.ts` and related loaders.
 - Generated folders `dashboard/node_modules/`, `dashboard/.next/`, and `dashboard/tsconfig.tsbuildinfo` are ignored.
 
 ## Known Caveats
 
 - `npm audit --audit-level=high` reports no high/critical advisories, but npm install/audit reports two moderate advisories in Next/PostCSS with only breaking `npm audit fix --force` remediation suggested.
-- The current dashboard shell still uses placeholder evidence blocks; source-backed charts and maps consume normalized data in later feature tasks.
+- The current dashboard shell still needs TASK-010 integration to wire source-backed map, phenology, and prediction components into the main page.
+- The TASK-005 map is a schematic state-tile fallback because browser-ready GeoJSON/TopoJSON has not been produced yet.

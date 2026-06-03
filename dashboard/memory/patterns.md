@@ -83,3 +83,31 @@ Read Task 1 day-of-year from `day_of_year` or `doy`, and read Task 2 percent val
 ```text
 Serialize non-default `tab`, `mapLayer`, filters, selected entity, and map view; normalize bad values to defaults or omissions with warnings.
 ```
+
+---
+
+## Schematic Map Fallback
+
+**Use when:** Geospatial source artifacts exist, but browser-ready GeoJSON, TopoJSON, or vector tiles are not available.
+
+**Rule:** Render a clearly labeled schematic substrate with selectable regions, direct legends, visible source text, and an explicit precision caveat so the UI does not imply county, raster, or field-level geometry.
+
+**Example:**
+
+```text
+Use state tiles for Corn Belt orientation, emit typed selection context, and state that fine-grained map interaction waits on browser-ready geography.
+```
+
+---
+
+## Source-Visible Visual Panels
+
+**Use when:** Rendering research metrics, model diagnostics, uncertainty, or caveat-heavy evidence.
+
+**Rule:** Keep headline values, sources, denominators, and caveats visible in the panel itself; do not make essential interpretation depend on hover.
+
+**Example:**
+
+```text
+Pair NDVI curves, ablation rows, SHAP rankings, and confusion matrices with visible source cards and fallback messages for missing source slices.
+```

@@ -31,7 +31,7 @@
 | Intake capture | done | Dashboard plan imported into `docs/intake.md` |
 | Scope generation | done | `SCOPE.md` and `memory/stack-guidance.md` populated from intake |
 | Task generation | done | `TASKS.md` generated from approved scope |
-| Dashboard build | in-progress | `TASK-000` through `TASK-004` core scaffold/data/state lanes done; map and panels are next |
+| Dashboard build | in-progress | `TASK-000` through `TASK-006` and `TASK-009` are done; rotation, extremes, and final integration remain |
 
 ## Decisions
 
@@ -46,8 +46,8 @@
 ## Last Session
 
 - **Date:** 2026-06-02
-- **What was done:** Completed `TASK-002` static artifact loading/normalization and `TASK-004` URL-backed dashboard state using Builder agents with QA verification.
-- **What's next:** Start unlocked visual feature lanes: `TASK-005` map fallback, `TASK-006` phenology panel, and `TASK-009` prediction diagnostics.
+- **What was done:** Completed `TASK-005` map fallback, `TASK-006` phenology panel, and `TASK-009` prediction diagnostics using parallel Builder agents with QA verification.
+- **What's next:** Complete `TASK-007` rotation panel and `TASK-008` extremes panel in parallel, then run `TASK-010` final integration/handover.
 - **Blockers:** Browser-ready geography inputs, Vercel project settings, and full map implementation fidelity are unresolved.
 
 ## Environment

@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 11 | 5 | 0 | 0 | 0 | 0 | 6 |
+| 11 | 8 | 0 | 0 | 0 | 0 | 3 |
 
 ---
 
@@ -311,7 +311,7 @@
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-005
-  - Integration status: not-started
+  - Integration status: done
 - Design source:
   - `SCOPE.md` feature "Corn Belt Map Surface"
   - `memory/stack-guidance.md` map guidance
@@ -343,17 +343,20 @@
   - `src/features/map/map-selection.ts`
   - `public/maps/**` if static map assets are copied
 - Acceptance criteria:
-  - [ ] Main map surface renders with at least one source-backed layer or explicit fallback.
-  - [ ] Layer control covers rotation, extremes, prediction/agreement statuses.
-  - [ ] Legend and source/caveat text are visible without hover.
-  - [ ] Mobile touch/tap path works or fallback limitation is documented.
-  - [ ] Typecheck passes.
-  - [ ] Implementation does not ship raw Parquet/GeoTIFF files.
+  - [x] Main map surface renders with at least one source-backed layer or explicit fallback.
+  - [x] Layer control covers rotation, extremes, prediction/agreement statuses.
+  - [x] Legend and source/caveat text are visible without hover.
+  - [x] Mobile touch/tap path works or fallback limitation is documented.
+  - [x] Typecheck passes.
+  - [x] Implementation does not ship raw Parquet/GeoTIFF files.
 - QA notes:
-- Attempts: 0
+  - Builder handoff 2026-06-02: Added code-native Corn Belt fallback map surface, map layer controls, legend, layer metadata, and selection context helpers. The map visibly documents that no browser-ready GeoJSON/TopoJSON exists and uses schematic state tiles rather than implying pixel or county precision.
+  - QA approval 2026-06-02: Verified layer metadata covers all `MapLayerId` values, legends/source/caveats are visible without hover, state tile selection emits layer/geography context, mobile/touch limitation is visible, and no raw Parquet/GeoTIFF files are introduced. Fresh verification passed: `npm run test`, `npm run typecheck`, `npm run lint`, and `npm run build`.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-- Status: pending
+  - 2026-06-02: Started TASK-005 in parallel Builder lane; dependencies satisfied by TASK-002, TASK-003, and TASK-004; scoped to map surface, layer controls, legends, and fallback strategy.
+- Status: done
 
 ---
 
@@ -366,7 +369,7 @@
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-006
-  - Integration status: not-started
+  - Integration status: done
 - Design source:
   - `SCOPE.md` feature "Phenology Panel"
   - `../artifacts/reports/neurips_2024.tex` Task 1 results
@@ -395,17 +398,20 @@
   - `src/features/phenology/phenology-copy.ts`
   - `src/features/phenology/__tests__/phenology-panel.test.tsx`
 - Acceptance criteria:
-  - [ ] Phenology tab renders with source-backed Task 1 values.
-  - [ ] NDVI curve or documented static fallback appears.
-  - [ ] HSGP uncertainty/caveat text is visible.
-  - [ ] Essential values are not hover-only.
-  - [ ] Mobile layout remains legible.
-  - [ ] Typecheck passes.
+  - [x] Phenology tab renders with source-backed Task 1 values.
+  - [x] NDVI curve or documented static fallback appears.
+  - [x] HSGP uncertainty/caveat text is visible.
+  - [x] Essential values are not hover-only.
+  - [x] Mobile layout remains legible.
+  - [x] Typecheck passes.
 - QA notes:
-- Attempts: 0
+  - Builder handoff 2026-06-02: Added phenology panel, NDVI SVG curve chart, HSGP metric cards, source-note cards, crop selector, copy constants, and component tests. The curve shows posterior, empirical NDVI, uncertainty band where available, and peak labels; missing series show documented static fallback paths.
+  - QA approval 2026-06-02: Verified Task 1 metrics, NDVI curve/fallback, HSGP uncertainty/caveat text, visible essential values, crop control, and empty state. Removed unused import found during lint QA. Fresh verification passed: `npm run test`, `npm run typecheck`, `npm run lint`, and `npm run build`.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-- Status: pending
+  - 2026-06-02: Started TASK-006 in parallel Builder lane; dependencies satisfied by TASK-002, TASK-003, and TASK-004; scoped to phenology panel and NDVI curve visualization.
+- Status: done
 
 ---
 
@@ -556,17 +562,20 @@
   - `src/features/prediction/prediction-copy.ts`
   - `src/features/prediction/__tests__/prediction-panel.test.tsx`
 - Acceptance criteria:
-  - [ ] Prediction tab renders headline test metrics.
-  - [ ] Ablation, SHAP, and regime-stratified views are source-backed.
-  - [ ] Confusion matrix renders from source or explicit documented fallback.
-  - [ ] Corn/soy confusion and irregular-rotation caveats are visible.
-  - [ ] Mobile layout remains legible.
-  - [ ] Typecheck passes.
+  - [x] Prediction tab renders headline test metrics.
+  - [x] Ablation, SHAP, and regime-stratified views are source-backed.
+  - [x] Confusion matrix renders from source or explicit documented fallback.
+  - [x] Corn/soy confusion and irregular-rotation caveats are visible.
+  - [x] Mobile layout remains legible.
+  - [x] Typecheck passes.
 - QA notes:
-- Attempts: 0
+  - Builder handoff 2026-06-02: Added prediction diagnostics panel, ablation chart/table, SHAP feature ranking, regime metrics chart, confusion matrix, copy constants, and component tests. The panel renders headline test metrics, source/caveat text, corn/soy confusion context, and irregular-rotation caveat from normalized Task 4 data props.
+  - QA approval 2026-06-02: Verified headline OA/macro F1, ablation rows/order, SHAP top-N labels, regime caveat, confusion matrix from source JSON, and empty state. Fresh verification passed: `npm run test`, `npm run typecheck`, `npm run lint`, and `npm run build`. Documentation was corrected because this task was dispatched in the same parallel wave but had not been marked in-progress before the Builder returned.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-- Status: pending
+  - 2026-06-02: Started TASK-009 in parallel Builder lane; dependencies satisfied by TASK-002, TASK-003, and TASK-004; scoped to prediction diagnostics panel and charts.
+- Status: done
 
 ---
 

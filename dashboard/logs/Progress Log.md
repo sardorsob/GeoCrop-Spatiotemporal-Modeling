@@ -92,6 +92,39 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-06-02 (0.50 hrs) - Codex QA + Builder Agents
+
+**Work performed:**
+
+- Completed `TASK-005` code-native Corn Belt fallback map surface with layer controls, legends, schematic selectable state tiles, and source/caveat text.
+- Completed `TASK-006` phenology panel with Task 1 metric cards, NDVI SVG curve, crop selector, HSGP uncertainty copy, source notes, and empty state.
+- Completed `TASK-009` prediction diagnostics panel with headline test metrics, ablation view, SHAP ranking, regime metrics, confusion matrix, source notes, and visible model caveats.
+- Updated task QA notes, architecture memory, and reusable visualization patterns for source-visible panels and schematic map fallbacks.
+
+**Verification:**
+
+- `npm run test` passed.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run build` passed.
+- `python scripts\validate-task-statuses.py` passed.
+- `python scripts\check-required-artifacts.py` passed.
+
+**Blockers / cuts:**
+
+- Feature components are built and tested, but TASK-010 still needs to wire them into the dashboard shell.
+- Browser-ready geography is still unavailable, so TASK-005 intentionally ships a schematic fallback rather than MapLibre or county geometry.
+- Rotation and extremes panels remain pending for the next parallel Builder wave.
+
+**AI tools used:**
+
+- Codex QA/Orchestrator
+- Builder agent Singer for `TASK-005`
+- Builder agent Anscombe for `TASK-006`
+- Builder agent Dewey for `TASK-009`
+
+---
+
 ## YYYY-MM-DD (0.00 hrs) - Agent / Human
 
 **Work performed:**
