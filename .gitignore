@@ -69,3 +69,7 @@ dashboard/dev-agentic-workflow-kit/
 dashboard/node_modules/
 dashboard/.next/
 dashboard/tsconfig.tsbuildinfo
+
+# Generated local outputs / dependency installs
+outputs/
+**/node_modules/
