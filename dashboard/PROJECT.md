@@ -6,13 +6,16 @@
 - **Owner / Client:** Sardor Sobirov / GeoCrop project
 - **Repo:** `dashboard/` workspace inside `GeoCrop-Spatiotemporal-Modeling`
 - **Primary stack:** Next.js, React, TypeScript, Vercel
-- **Primary user:** Agricultural analysts and data science reviewers
+- **Primary user:** First-time research visitors, agricultural analysts, and data science reviewers
 
 ## Phase
 
 <!-- 0-Intake | 1-Scope | 2-Setup | 3-Development | 4-QA | 5-Delivery | 6-Maintenance -->
 
-**Current:** 4-QA
+**Current:** 1-Scope — Narrative Atlas v2 mockup/spec review
+
+The implemented dashboard remains the completed v1 baseline. The active work is
+an approval-gated redesign initiative; no v2 implementation has started.
 
 ## Source Docs
 
@@ -23,6 +26,8 @@
 - `../artifacts/figures/` - figure and map assets
 - `SCOPE.md` - canonical scope after intake
 - `TASKS.md` - executable task list after scope parsing
+- `docs/design/2026-08-19-narrative-atlas-mockups.md` - three layout directions and selected composition
+- `docs/superpowers/specs/2026-08-19-geocrop-website-redesign-design.md` - review-ready v2 design specification
 
 ## Features
 
@@ -36,6 +41,7 @@
 | HSGP season-window zoom | done | `TASK-012` adds local Full / Green-up / Peak / Senescence / custom DOY zoom controls to the Task 1 NDVI chart |
 | NAFSI paper reader | done | `TASK-013` replaces the old Prediction hero KPI with a `NAFSI 2025 winning paper` CTA, embedded PDF reader, and open/download actions |
 | Sprout favicon | done | `TASK-014` adds a public SVG favicon using the current top-bar plant mark |
+| Website redesign v2 | review-ready | Narrative Atlas product frame approved; Chaptered Evidence Canvas + Evidence Lab mockups, v2 scope/spec, and `TASK-015`–`TASK-022` are ready for review; implementation has not started |
 
 ## Decisions
 
@@ -52,13 +58,19 @@
 - 2026-06-03: Added Task 1 HSGP season-window zoom as local chart state rather than URL state for the first experiment; presets and numeric DOY inputs provide a keyboard-accessible path while the Recharts brush provides direct plot zoom.
 - 2026-06-03: Added the NAFSI 2025 winning paper as a static public PDF and used browser-native PDF embedding instead of adding a PDF viewer package; Open PDF and Download PDF links are available as fallbacks.
 - 2026-06-03: Added the GeoCrop sprout favicon as a code-native SVG under `public/favicon.svg`; no generated image assets or new packages were used.
+- 2026-08-19: Opened an approval-gated website redesign phase. Planning may update context files and inspect the live UI, but application code, tests, dependencies, data, and generated assets remain untouched until the design is approved.
+- 2026-08-19: Use Superpowers brainstorming as the primary design process, with Ponytail, cartographic, and web-data-visualization guidance as supporting constraints. Do not stack a second full interview process while the same design tree is being resolved.
+- 2026-08-19: Treat the paper and dated artifacts as the evidence authority. The current hardcoded map categories are a v1 placeholder, not scientific state results to carry into v2.
+- 2026-08-19: Use Narrative Atlas as the v2 product structure, with a Chaptered Evidence Canvas in Story and a sibling Evidence Lab in Explore. “Atlas” describes a collection of evidence plates; maps lead only rotation and extremes.
+- 2026-08-19: Share task-specific figure components and selectors between Story and Explore. Keep the current stack and add no dependency unless an implementation task proves a concrete gap.
+- 2026-08-19: Preserve `TASK-000`–`TASK-014` as v1 history and append eight pending v2 tasks (`TASK-015`–`TASK-022`). No v2 task may start before mockup/spec review.
 
 ## Last Session
 
-- **Date:** 2026-06-03
-- **What was done:** Added `TASK-014` GeoCrop sprout favicon. App metadata now points to `/favicon.svg`, and the public SVG uses the same sprout path as the top-bar brand mark. Full tests, typecheck, lint, build, workflow validators, audit-high, and HTTP favicon smoke passed.
-- **What's next:** User review at `http://localhost:3000`, then push to GitHub and configure Vercel. Optional follow-up: promote the HSGP season window to URL-backed state if shareable deep links become important, or add browser-ready vector-tile geography if county/pixel-level fidelity becomes a priority.
-- **Blockers:** Vercel project settings unresolved. In-app browser screenshot smoke remains blocked by `windows sandbox failed: spawn setup refresh`; Chrome MCP extension was also unreachable in the last session.
+- **Date:** 2026-08-19
+- **What was done:** Converted the approved Narrative Atlas frame into three code-native layout mockups, selected the Chaptered Evidence Canvas + Evidence Lab balance, wrote the review-ready design spec, synchronized v2 scope and stack guidance, and appended eight pending implementation tasks. No application code was changed and no application tests were run.
+- **What's next:** User reviews the mockups and design spec. If the selected balance holds, begin `TASK-015` visual grammar and `TASK-016` evidence contracts in parallel, then follow the documented dependency graph.
+- **Blockers:** Detailed mockup/spec review is still required before implementation. Content inconsistencies in rotation thresholds, challenge chronology, award wording, and the paper's repository link remain copy gates; the scope defines safe fallback wording and behavior.
 
 ## Environment
 

@@ -9,7 +9,10 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 15 | 15 | 0 | 0 | 0 | 0 | 0 |
+| 23 | 15 | 0 | 0 | 0 | 0 | 8 |
+
+`TASK-015` through `TASK-022` are the pending Narrative Atlas v2 graph. They may
+not move to `in-progress` until the user has reviewed the mockup/spec package.
 
 ---
 
@@ -924,3 +927,488 @@
 - Attempt log:
   - 2026-06-03: Completed scoped favicon polish in-house; no agents needed because the change owned metadata and one public SVG asset.
 - Status: done
+
+---
+
+## TASK-015
+
+- Feature group: Narrative System
+- Title: Establish the Narrative Atlas visual grammar and story primitives
+- Depends on: TASK-014
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-015
+  - Integration status: pending
+- Design source:
+  - `SCOPE.md` sections 2, 3, 7, and 8
+  - `docs/design/2026-08-19-narrative-atlas-mockups.md`
+  - `docs/superpowers/specs/2026-08-19-geocrop-website-redesign-design.md`
+- User value: Gives Story and Explore one distinctive, accessible visual language without introducing a second UI stack.
+- User flow:
+  - User sees one consistent GeoCrop identity across Story, Explore, and Paper.
+  - User can identify the current act and move to its analytical view.
+  - Reduced-motion, keyboard, and mobile users receive the same hierarchy.
+- Functional notes:
+  - Add Story/Explore switching, act navigation, figure framing, evidence captions, and act headers as small reusable primitives.
+  - Implement warm field-notebook/satellite-atlas tokens in the existing Tailwind v4 theme.
+  - Keep crop, anomaly, focus, neutral, type, rule, and surface roles explicit.
+  - Use ordinary scrolling and CSS/native interaction; do not add a motion or design-system dependency.
+  - Do not alter task data or task-specific figures in this task.
+- Edge cases:
+  - Long act titles and caveats at 320 px.
+  - JavaScript unavailable before hydration.
+  - `prefers-reduced-motion: reduce`.
+  - Story/Explore control reachable and understandable by keyboard and screen reader.
+- Test cases:
+  1. Story primitives expose named headings, navigation, figures, captions, and source slots.
+  2. Mode controls expose a single selected state and valid destination.
+  3. Reduced-motion styling disables nonessential transitions.
+  4. Primitives render without task data.
+- Files to create/modify:
+  - `src/app/globals.css`
+  - `src/components/layout/TopBar.tsx`
+  - `src/components/story/ActHeader.tsx`
+  - `src/components/story/ActNavigator.tsx`
+  - `src/components/story/EvidenceCaption.tsx`
+  - `src/components/story/FigureFrame.tsx`
+  - `src/components/story/StoryModeToggle.tsx`
+  - `src/components/story/__tests__/story-primitives.test.tsx`
+- Acceptance criteria:
+  - [ ] Existing tokens are extended into the approved visual grammar without generated imagery or new dependencies.
+  - [ ] Reusable semantic primitives cover four acts, evidence captions, source/denominator notes, and Story/Explore switching.
+  - [ ] Crop, anomaly, focus, and neutral roles are distinct and documented in code.
+  - [ ] Focus, reduced-motion, and 320 px behavior are defined.
+  - [ ] Task data and task-specific visualizations remain unchanged.
+  - [ ] Focused tests, typecheck, and lint pass.
+- Attempts: 0
+- Max attempts: 3
+- Status: pending
+
+---
+
+## TASK-016
+
+- Feature group: Evidence Contracts
+- Title: Repair scientific normalization and add v2 evidence selectors
+- Depends on: TASK-014
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-016
+  - Integration status: pending
+- Design source:
+  - `SCOPE.md` section 5
+  - Paper-generation phenology grouping workflow
+  - Dated Task 2 and Task 3 source tables
+- User value: Ensures every redesigned chart and map is driven by deterministic, traceable research values rather than row order or placeholders.
+- User flow:
+  - User sees paper-faithful HSGP intervals and measured state/county results.
+  - Exact values, ranks, domains, and denominators agree across Story and Explore.
+- Functional notes:
+  - Reuse the Task 1–3 inputs already registered in `sources.ts`, loaded by
+    `loaders.ts`, and assembled by `dashboard-data.ts`; this task changes their
+    normalized representation and selectors, not ingestion. If implementation
+    discovers an actual loader/source gap, stop and update task ownership before
+    editing those files.
+  - Aggregate empirical Q25/Q75 by crop and DOY across years, matching the paper-generation notebook.
+  - Deterministically aggregate rounded posterior duplicates to one crop/DOY row while retaining posterior IQR and 90% interval.
+  - Canonicalize all 13 Task 2 states, county five-digit GEOIDs, and Task 3 state codes.
+  - Add typed selectors for rotation map values, event map values, ranks, denominators, and shared domains.
+  - Do not create a Task 4 geography selector.
+- Edge cases:
+  - Multiple posterior rows sharing one rounded DOY.
+  - Missing interval values in one contributing row.
+  - County FIPS with leading zero.
+  - State names with no supported code.
+  - Empty event/crop slice.
+- Test cases:
+  1. Empirical duplicate DOYs aggregate across years rather than overwrite.
+  2. Posterior duplicate DOYs aggregate deterministically and preserve both interval levels.
+  3. Task 2 exposes 13 canonical states and zero-padded county GEOIDs.
+  4. Task 3 selectors produce matched event domains centered on zero.
+  5. Unsupported Task 4 geography cannot be requested through the selector types.
+- Files to create/modify:
+  - `src/lib/data/types.ts`
+  - `src/lib/data/normalize.ts`
+  - `src/lib/data/selectors.ts`
+  - `src/lib/data/__tests__/normalize.test.ts`
+  - `src/lib/data/__tests__/selectors.test.ts`
+- Acceptance criteria:
+  - [ ] Phenology normalization has no last-write-wins path for repeated integer DOYs.
+  - [ ] Empirical and posterior outputs match the paper's aggregation semantics and retain required intervals.
+  - [ ] Task 2 state/county and Task 3 state identities are canonical and joinable.
+  - [ ] Selectors return source-backed values, rank where meaningful, denominator, and shared domains.
+  - [ ] No selector manufactures Task 4 geography.
+  - [ ] Focused tests, typecheck, and lint pass.
+- Attempts: 0
+- Max attempts: 3
+- Status: pending
+
+---
+
+## TASK-017
+
+- Feature group: Evidence Map
+- Title: Replace the pseudo-data map with a shared task-specific evidence map
+- Depends on: TASK-015, TASK-016
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-017
+  - Integration status: pending
+- Design source:
+  - `SCOPE.md` section 6
+  - `docs/superpowers/specs/2026-08-19-geocrop-website-redesign-design.md` section 5
+- User value: Provides an intuitive geographic lens whose colors and detail are always tied to measured research values.
+- User flow:
+  - User sees the 13-state study region instead of a mostly empty national map.
+  - Hover/focus previews evidence; click, keyboard activation, or tap pins it.
+  - Task 2 users may inspect county detail; Task 3 users remain at honest state grain.
+- Functional notes:
+  - Remove the hardcoded ten-state category registry and missing-state Minnesota fallback.
+  - Render numeric Task 2 state/county and Task 3 state fields through typed selectors.
+  - Focus the Albers frame on the study region and add a quiet locator only where helpful.
+  - Add a bounded evidence lens containing metric, unit, rank, denominator, source, and caveat.
+  - Keep full legend meaning and exact-value alternatives available without hover.
+- Edge cases:
+  - Study state with no value for the selected crop/event.
+  - County geometry with no matching source row.
+  - Tooltip collision at map edges.
+  - Touch without hover.
+  - Escape/reset after pinned selection.
+- Test cases:
+  1. No hardcoded fallback categories or cloned missing-state values remain.
+  2. Task 2 state and county joins use real source values.
+  3. Task 3 renders state values on a fixed source-derived scale.
+  4. Keyboard and pointer paths pin and clear the same evidence.
+  5. No Task 1 or Task 4 map layer is offered.
+- Files to create/modify:
+  - `src/components/map/MapPanel.tsx`
+  - `src/components/map/UsChoropleth.tsx`
+  - `src/components/map/EvidenceLens.tsx`
+  - `src/components/map/map-geometry.ts`
+  - `src/components/map/__tests__/MapPanel.test.tsx`
+  - `src/components/map/__tests__/map-geometry.test.ts`
+  - `src/features/map/map-layers.ts`
+  - `src/features/map/map-selection.ts`
+- Acceptance criteria:
+  - [ ] Every mapped fill comes from a numeric Task 2 or Task 3 source field.
+  - [ ] The main frame focuses on all 13 study states.
+  - [ ] County detail exists only for Task 2 and never implies pixel/field precision.
+  - [ ] Preview, pin, keyboard, touch, Escape, and reset paths are equivalent.
+  - [ ] Evidence lens and complete legend remain source- and caveat-visible.
+  - [ ] Unsupported prediction/agreement layers are removed with a safe legacy-state fallback.
+  - [ ] Focused tests, typecheck, and lint pass.
+- Attempts: 0
+- Max attempts: 3
+- Status: pending
+
+---
+
+## TASK-018
+
+- Feature group: Act I / Phenology
+- Title: Rebuild phenology as a paper-faithful three-crop HSGP comparator
+- Depends on: TASK-015, TASK-016
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-018
+  - Integration status: pending
+- Design source:
+  - `SCOPE.md` Act I and phenology evidence contract
+  - `../artifacts/figures/task1/hsgp_phenology_crops.png`
+  - `../artifacts/reports/neurips_2024.tex` Task 1 results
+- User value: Makes the seasonal model understandable and visually faithful to the paper while allowing close inspection in Explore.
+- User flow:
+  - Story shows corn, soybean, and winter wheat together on aligned seasonal axes.
+  - User reads peaks, growth stages, empirical spread, and posterior uncertainty directly.
+  - Explore offers crop focus and season-window controls without hiding comparison.
+- Functional notes:
+  - Replace the single-crop default with three aligned small multiples.
+  - Render posterior mean, posterior IQR, 90% interval, and empirical Q25/Q75 boundaries.
+  - Add direct peak timing/value and crop-stage annotations.
+  - Remove the visually dominant default brush; reuse valid season-window helpers in a compact Explore disclosure.
+  - Keep the shared scale honest and visibly labeled.
+- Edge cases:
+  - Crop missing one interval field.
+  - Sparse custom season window.
+  - Very narrow mobile viewport.
+  - SSR/container width before hydration.
+- Test cases:
+  1. All three crops render simultaneously in Story.
+  2. Both posterior interval levels and empirical spatial interval are present.
+  3. Peaks and stage annotations are readable without tooltip.
+  4. Explore season-window controls clamp safely and do not remove comparison context.
+  5. Missing data renders a named source/fallback state.
+- Files to create/modify:
+  - `src/features/phenology/PhenologyPanel.tsx`
+  - `src/features/phenology/NdviCurveChart.tsx`
+  - `src/features/phenology/PhenologyMetrics.tsx`
+  - `src/features/phenology/phenology-copy.ts`
+  - `src/features/phenology/season-window.ts`
+  - `src/features/phenology/__tests__/phenology-panel.test.tsx`
+  - `src/features/phenology/__tests__/season-window.test.ts`
+- Acceptance criteria:
+  - [ ] Story displays three aligned crop plots with paper-faithful uncertainty semantics.
+  - [ ] Direct labels, seasonal context, stage windows, and peak annotations carry the main reading.
+  - [ ] A focused y-domain is explicitly labeled and includes a visible
+    truncation/range note so the chart cannot be mistaken for a zero-based NDVI
+    scale.
+  - [ ] The large default brush is removed and advanced controls live in Explore.
+  - [ ] Mobile stacks crops without horizontal overflow or clipped essential labels.
+  - [ ] Empty, source, and caveat states remain explicit.
+  - [ ] Focused tests, typecheck, and lint pass.
+- Attempts: 0
+- Max attempts: 3
+- Status: pending
+
+---
+
+## TASK-019
+
+- Feature group: Act II / Rotation
+- Title: Build the rotation memory explanation and measured geography chapter
+- Depends on: TASK-015, TASK-016, TASK-017
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-019
+  - Integration status: pending
+- Design source:
+  - `SCOPE.md` Act II and rotation evidence contract
+  - Dated Task 2 class, state, county, transition, and sensitivity artifacts
+- User value: Explains what the three rotation classes mean before revealing where measured patterns occur.
+- User flow:
+  - User reads schematic decade sequences and the overall composition.
+  - User inspects measured state/county regular share on the evidence map.
+  - Ranking, pinned geography, and discrete sensitivity choices remain coordinated.
+- Functional notes:
+  - Add a 100-cell proportional field using dated overall shares.
+  - Add labeled schematic sequence strips that are never presented as observed fields.
+  - Use the shared map for measured state/county values.
+  - Coordinate state/county selection with ranking and evidence lens.
+  - Show actual discrete sensitivity rows; do not interpolate a continuous response.
+- Edge cases:
+  - County outside the study table.
+  - Equal ranks.
+  - Schematic sequence mistaken for a sample.
+  - Source threshold disagreement.
+- Test cases:
+  1. Composition totals and labels trace to the dated class artifact.
+  2. Sequence examples are visibly marked schematic.
+  3. Pinned map geography updates ranking/detail consistently.
+  4. Sensitivity controls emit only source-supported values.
+  5. Irregular copy remains neutral and caveated.
+- Files to create/modify:
+  - `src/features/rotation/RotationPanel.tsx`
+  - `src/features/rotation/RotationClassChart.tsx`
+  - `src/features/rotation/RotationGeoRanking.tsx`
+  - `src/features/rotation/RotationSequenceStrip.tsx`
+  - `src/features/rotation/ThresholdComparison.tsx`
+  - `src/features/rotation/rotation-copy.ts`
+  - `src/features/rotation/__tests__/rotation-panel.test.tsx`
+- Acceptance criteria:
+  - [ ] Story explains the rule, composition, and geography in that order.
+  - [ ] Overall and geographic values come from dated Task 2 artifacts.
+  - [ ] State/county selection, ranking, and evidence lens agree.
+  - [ ] Sensitivity uses discrete source rows only.
+  - [ ] “Irregular” is defined without judgment and source conflicts remain caveated.
+  - [ ] Focused tests, typecheck, and lint pass.
+- Attempts: 0
+- Max attempts: 3
+- Status: pending
+
+---
+
+## TASK-020
+
+- Feature group: Act III / Extremes
+- Title: Build the paired flood and drought evidence chapter
+- Depends on: TASK-015, TASK-016, TASK-017
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-020
+  - Integration status: pending
+- Design source:
+  - `SCOPE.md` Act III and extremes evidence contract
+  - Dated 2019 flood and 2022 drought state × crop artifacts
+- User value: Lets readers compare wet and dry events in a stable geographic frame without confusing anomaly magnitude with certainty.
+- User flow:
+  - User sees 2019 and 2022 maps side by side with one crop and scale.
+  - Pinning a state reveals mean z, NIG measure, denominator, and caveat.
+  - Explore retains an exact state × crop table.
+- Functional notes:
+  - Present both events in matched Corn Belt frames with a fixed zero-centered diverging scale.
+  - Apply the same visible crop choice to both maps.
+  - Distinguish magnitude from confidence in visual labels and copy.
+  - Keep exact table access and source notes.
+- Edge cases:
+  - State/crop combination absent in one event.
+  - Diverging domain with asymmetric extremes.
+  - Small screen where paired maps must stack.
+  - NIG value missing while mean z exists.
+- Test cases:
+  1. Both events render with identical domain and crop context.
+  2. Pinned state detail names event, crop, mean z, NIG measure, and denominator.
+  3. Missing combinations render as no-data without substitution.
+  4. Mobile stacks maps while preserving comparison labels.
+  5. Exact table remains keyboard accessible.
+- Files to create/modify:
+  - `src/features/extremes/ExtremesPanel.tsx`
+  - `src/features/extremes/EventSelector.tsx`
+  - `src/features/extremes/EventMapComparison.tsx`
+  - `src/features/extremes/AnomalySummaryChart.tsx`
+  - `src/features/extremes/AnomalyTable.tsx`
+  - `src/features/extremes/extremes-copy.ts`
+  - `src/features/extremes/__tests__/extremes-panel.test.tsx`
+- Acceptance criteria:
+  - [ ] Flood and drought use matched frames and one fixed scale centered on zero.
+  - [ ] The active crop is visible and applies to both events.
+  - [ ] Magnitude and confidence remain visually and verbally distinct.
+  - [ ] Pinned evidence includes values, denominator, source, and limitation.
+  - [ ] Exact values remain available in a compact table.
+  - [ ] Focused tests, typecheck, and lint pass.
+- Attempts: 0
+- Max attempts: 3
+- Status: pending
+
+---
+
+## TASK-021
+
+- Feature group: Act IV / Prediction
+- Title: Build the model-evidence and rotation-regime conclusion chapter
+- Depends on: TASK-015, TASK-016
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-021
+  - Integration status: pending
+- Design source:
+  - `SCOPE.md` Act IV and prediction evidence contract
+  - Task 4 ablation, SHAP, confusion, regime, split, and test artifacts
+- User value: Shows what the model learned, where it fails, and why repeated crop history is easier to predict.
+- User flow:
+  - User follows CDL, NDVI, and SMAP into LightGBM.
+  - User sees incremental contributions, important feature families, major errors, and regime performance.
+  - Caveats prevent the result from being mistaken for a pre-plant or field-scale forecast.
+- Functional notes:
+  - Add a compact data-bearing feature-source braid.
+  - Redesign ablation around incremental contribution.
+  - Group SHAP features by source family.
+  - Directly annotate the corn/soy confusion and three regime accuracies.
+  - Do not add a geographic prediction layer.
+- Edge cases:
+  - Feature name without recognized family.
+  - Ablation rows in unexpected order.
+  - Confusion cell with zero denominator.
+  - Metric label too long on mobile.
+- Test cases:
+  1. Source braid names CDL, NDVI, SMAP, and LightGBM.
+  2. Ablation uses source values and computes/labels increments consistently.
+  3. SHAP grouping preserves every source row.
+  4. Confusion and regime views expose direct labels without hover.
+  5. Concurrent-season and sample-design caveats remain visible.
+- Files to create/modify:
+  - `src/features/prediction/PredictionPanel.tsx`
+  - `src/features/prediction/FeatureSourceBraid.tsx`
+  - `src/features/prediction/AblationChart.tsx`
+  - `src/features/prediction/ShapFeatureChart.tsx`
+  - `src/features/prediction/RegimeMetricsChart.tsx`
+  - `src/features/prediction/ConfusionMatrix.tsx`
+  - `src/features/prediction/prediction-copy.ts`
+  - `src/features/prediction/__tests__/prediction-panel.test.tsx`
+- Acceptance criteria:
+  - [ ] Story connects source families to model behavior and the closing regime result.
+  - [ ] Ablation, SHAP, confusion, and regime values trace to Task 4 artifacts.
+  - [ ] Major corn/soy error and rotation-regime differences are directly annotated.
+  - [ ] No unsupported geographic prediction layer appears.
+  - [ ] Pre-plant, sample, and spatial-resolution caveats are visible.
+  - [ ] Focused tests, typecheck, and lint pass.
+- Attempts: 0
+- Max attempts: 3
+- Status: pending
+
+---
+
+## TASK-022
+
+- Feature group: Story / Explore Integration
+- Title: Integrate Narrative Atlas, responsive behavior, compatibility, and handoff
+- Depends on: TASK-017, TASK-018, TASK-019, TASK-020, TASK-021
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-022
+  - Integration status: pending
+- Design source:
+  - `SCOPE.md` delivery criteria
+  - `docs/design/2026-08-19-narrative-atlas-mockups.md`
+  - `docs/superpowers/specs/2026-08-19-geocrop-website-redesign-design.md`
+- User value: Delivers one coherent Story-to-Explore website that remains shareable, accessible, scientifically honest, and maintainable.
+- User flow:
+  - User lands in Story and reads all four acts.
+  - User enters Explore from any act with task context preserved.
+  - User shares/restores a supported analytical state.
+  - Mobile, keyboard, touch, pointer, and reduced-motion users can reach the same evidence.
+- Functional notes:
+  - Compose all Story acts and the task-specific Explore workspace in the existing route.
+  - Remove the universal map and first-screen global control wall.
+  - Retire `CompactFilterBar` as a global surface; delete it if no focused reuse
+    remains, or reduce it to task-local controls only.
+  - Add `view` state while preserving valid v1 `tab` and filter URLs.
+  - Normalize removed legacy map layers to a visible warning and safe default.
+  - Keep Paper as the existing drawer/action rather than a URL mode. Use neutral
+    “GeoCrop research paper” copy until award/year wording is verified, and do
+    not expose the unrelated repository link from the paper source.
+  - Update dashboard documentation and handover only after implementation checks pass.
+  - Do not introduce new feature scope during integration.
+- Edge cases:
+  - Legacy URL with unsupported map layer.
+  - Missing one task artifact group.
+  - 320 px/390 px viewport.
+  - Reduced motion.
+  - Keyboard-only map pin and dialog flow.
+  - Source or award copy conflict still unresolved.
+- Test cases:
+  1. Default route renders Story with all four acts and no global map/control wall.
+  2. Every act links to the matching Explore tab.
+  3. Valid v1 URLs normalize; unsupported layers warn visibly.
+  4. Story and Explore share source-backed task components.
+  5. Desktop and mobile smoke cover overflow, sizing warnings, focus, touch, and reduced motion.
+- Files to create/modify:
+  - `src/app/page.tsx`
+  - `src/components/layout/DashboardShell.tsx`
+  - `src/components/layout/DashboardShell.test.tsx`
+  - `src/components/filters/CompactFilterBar.tsx` (delete or repurpose for task-local controls; no global use)
+  - `src/lib/state/dashboard-state.ts`
+  - `src/lib/state/url-state.ts`
+  - `src/lib/state/__tests__/url-state.test.ts`
+  - `README.md`
+  - `HANDOVER.md`
+  - `PROJECT.md`
+  - `memory/architecture.md`
+  - `memory/patterns.md`
+  - `memory/decisions.md`
+  - `memory/stack-guidance.md`
+  - `logs/Overview.md`
+  - `logs/Progress Log.md`
+  - `logs/Handoff Notes.md`
+- Acceptance criteria:
+  - [ ] Story is the default and communicates all four acts; Explore remains task-specific and shareable.
+  - [ ] HSGP remains a lead narrative figure rather than being subordinated to maps.
+  - [ ] Universal map and global six-control wall are removed.
+  - [ ] Paper remains a drawer/action with neutral verified copy and no unrelated
+    repository link.
+  - [ ] Existing valid v1 URLs normalize safely and unsupported legacy layers warn.
+  - [ ] Source, denominator, uncertainty, and limitation text appears beside each qualified claim.
+  - [ ] Desktop and 320–390 px mobile have no horizontal overflow, clipped essential labels, or negative-size chart warnings.
+  - [ ] Pointer, keyboard, touch, and reduced-motion paths expose equivalent evidence.
+  - [ ] No backend, new dependency, generated image, unsupported data, or unrelated cleanup is introduced.
+  - [ ] Full test, typecheck, lint, build, workflow validation, audit, and manual browser smoke gates pass.
+- Attempts: 0
+- Max attempts: 3
+- Status: pending

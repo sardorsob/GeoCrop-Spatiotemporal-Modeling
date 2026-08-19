@@ -1,343 +1,279 @@
 # Scope
 
-> Canonical contract for the GeoCrop Interactive Dashboard.
+> Canonical v2 contract for the GeoCrop Narrative Atlas website redesign. The
+> delivered v1 dashboard remains the implementation baseline until the pending
+> v2 tasks pass review.
 
-## 1. Project Overview
+## 1. Project overview
 
-**Name:** GeoCrop Interactive Dashboard
+**Name:** GeoCrop Narrative Atlas
 
-**Description:** A source-backed web dashboard that turns the GeoCrop
-Spatiotemporal Modeling paper and generated artifacts into an interactive
-agricultural resilience visualization for the U.S. Corn Belt.
+**Description:** A source-backed interactive research story and analytical
+explorer for GeoCrop's Corn Belt phenology, rotation, climate-extreme, and crop-
+prediction results.
+
+**Approved product direction:** Narrative Atlas — Story → Explore.
+
+**Selected composition:** Chaptered Evidence Canvas for Story plus an Evidence
+Lab for task-specific exploration.
 
 **Goals:**
 
-- Present the four GeoCrop research tasks as one coherent analytical workspace:
-  NDVI phenology, crop rotation, soil moisture extremes, and crop prediction.
-- Use existing artifact tables and figures first, without rerunning notebooks in
-  the web app.
-- Make geographic, crop, event, rotation-regime, and model-layer comparisons
-  explorable.
-- Preserve methods, denominators, date stamps, and caveats so users do not
-  overread the model results.
-- Deploy cleanly to Vercel as a portfolio-quality dashboard.
-
-**Users:**
-
-- Agricultural analysts inspecting Corn Belt patterns by state, crop, event,
-  and model layer.
-- Data science reviewers evaluating methodology, evidence, limitations, and
-  model performance.
-- Future maintainers continuing the dashboard from durable workflow artifacts.
-
-## 2. System Architecture
-
-**Frontend:** Next.js application with TypeScript. The initial user experience is
-the Map Command Center: a map-led dashboard with guided task tabs and
-coordinated analytical panels.
+- Tell the paper as one four-act research story rather than four equal-weight
+  dashboard tabs.
+- Give every result its appropriate lead form: HSGP chart, sequence/map,
+  paired maps, or model diagnostics.
+- Repair the evidence integrity of the current HSGP and map presentations.
+- Preserve exact values, sources, denominators, uncertainty, and limitations at
+  the point where claims appear.
+- Retain the useful v1 data, state, accessibility, and component foundations.
+- Deliver an authored, artistic experience without unsupported data or
+  unnecessary technical complexity.
+
+**Primary reading paths:**
 
-**Backend:** None for MVP. Use static build-time or client-side data ingestion
-from normalized artifact JSON derived from parent-repo CSV/JSON inputs.
+- First-time visitors, judges, and portfolio reviewers enter through Story.
+- Agricultural analysts and data-science reviewers continue into Explore.
+- Paper readers use the existing embedded paper/source surface.
 
-**Database:** None for MVP.
+## 2. Product and route architecture
+
+The website remains a single Next.js route at `/` with two experience modes and
+one reference action:
 
-**Auth:** None for MVP.
+- **Story:** default when no `view` parameter exists; shows all four acts.
+- **Explore:** `view=explore`; uses the existing `tab` parameter for the active
+  task and task-local controls.
+- **Paper:** a top-bar action that opens the existing paper reader drawer with
+  open/download actions. It is not a URL mode or a third application state.
 
-**External services:** Vercel for hosting. No external APIs are required for the
-first milestone.
+Each Story act ends with “Explore this evidence,” linking to
+`?view=explore&tab=<task>` while preserving compatible task context. Existing
+valid v1 task URLs normalize into Explore. Unsupported legacy map layers produce
+a visible warning and a safe task default.
 
-**Data flow:**
+Story uses ordinary document scroll and section navigation. It must not use
+scroll-jacking, parallax, or an animation-dependent reading path.
 
-1. Parent GeoCrop artifacts remain the source of truth.
-2. Dashboard-side data adapter reads source CSV/JSON inputs or generated
-   normalized JSON.
-3. Components consume typed, dashboard-friendly data contracts.
-4. URL search params preserve meaningful dashboard state: active tab, map layer,
-   state, crop, event, rotation regime, selected entity, and map view when
-   practical.
+## 3. Story spine
 
-**Important boundaries:**
+### Opening — A landscape seen at three scales
 
-- Do not train models, tune models, or rerun notebooks inside the dashboard.
-- Do not introduce server persistence until a later scope explicitly requires
-  saved views or collaboration.
-- Do not make unsupported claims beyond the paper and artifacts.
-- Treat image maps as fallbacks unless true browser-safe spatial layers are
-  prepared.
+- Lead with the research thesis, not artifact-row KPIs.
+- Compare CDL 30 m, MODIS NDVI 250 m, and SMAP 9 km as a data-bearing resolution
+  braid.
+- Introduce the 13-state study region and the four acts.
 
-## 3. Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| Frontend | Next.js, React, TypeScript |
-| Styling | Tailwind CSS plus small design-token conventions |
-| UI primitives | shadcn/ui only for useful controls and panels |
-| Charts | Observable Plot or D3 for analytical charts |
-| Maps | MapLibre GL JS for interactive map surfaces; static image/SVG fallback for MVP if source geospatial layers are not browser-ready |
-| Data processing | Build-time/static artifact normalization from CSV/JSON into typed JSON |
-| State | URL search params for shareable state; localStorage only for user preferences if needed |
-| Backend | None for MVP |
-| Database | None for MVP |
-| Auth | None |
-| Testing | Vitest for data transforms and component logic; Playwright later for dashboard smoke tests |
-| Deployment | Vercel |
-
-## 4. Design / References
-
-| Type | Path or URL | Notes |
-|------|-------------|-------|
-| Intake | `docs/intake.md` | Source input for scope |
-| Paper | `../artifacts/reports/neurips_2024.tex` | Research narrative and figure references |
-| Project README | `../README.md` | Artifact inventory and key result summary |
-| Tables | `../artifacts/tables/` | Primary source data for MVP |
-| Figures | `../artifacts/figures/` | Static figure/map fallbacks and design references |
-| Visual companion | `../.superpowers/` | Temporary local brainstorming output; ignored and not required for repo |
-
-**Primary design direction:** Map Command Center with guided analytical tabs.
-
-**Fallback design direction:** Interactive Paper if presentation/reviewer flow
-becomes more important than open exploration.
-
-**Color roles:**
-
-- Neutral context: light map/background tones and charcoal text.
-- Corn: orange.
-- Soybean: green.
-- Winter wheat: purple.
-- Wet/dry anomaly: blue/red only.
-- Selection/focus: high-contrast outline or accent independent of data colors.
-
-## 5. Feature Breakdown
-
-### Feature: Dashboard Shell And Navigation
-
-**Description:** Main Next.js dashboard surface with project title, source/caveat
-status, global filters, and task tabs.
-
-**Screens / Pages / Modules:**
-
-- `/` dashboard route.
-- Optional methodology/source drawer within the dashboard.
-- Optional `/about` route if scope later needs a separate explanatory page.
-
-**API / Data / Contracts:**
-
-- URL params for active tab, selected layer, state, crop, event, rotation regime,
-  and selected entity.
-
-**Data Models:**
-
-- `DashboardFilterState`
-- `DashboardTab`
-- `LayerId`
-- `SourceManifest`
-
-**Depends on features:** none
-
-### Feature: Artifact Data Registry And Normalization
-
-**Description:** Typed source registry and adapters for parent-repo artifact
-tables/JSON. Normalized outputs should be small enough for Vercel/browser use.
-
-**Screens / Pages / Modules:**
-
-- Data source registry module.
-- Task-specific data adapters for Tasks 1-4.
-- Source/caveat metadata module.
-
-**API / Data / Contracts:**
-
-- Reads CSV/JSON source artifacts from `../artifacts/tables/`.
-- Produces typed dashboard data objects.
-- Records source path, date stamp, denominator, and caveat for visible views.
-
-**Data Models:**
-
-- `PhenologySeries`
-- `RotationSummary`
-- `AnomalySummary`
-- `PredictionMetrics`
-- `FeatureImportanceRow`
-- `SourceNote`
-
-**Depends on features:** none
-
-### Feature: Corn Belt Map Surface
-
-**Description:** Primary evidence substrate for geography-first exploration.
-Layer switching should support available rotation, anomaly, prediction, and
-agreement views.
-
-**Screens / Pages / Modules:**
-
-- Map panel.
-- Layer control.
-- Legend and caveat block.
-- Selected geography detail.
-
-**API / Data / Contracts:**
-
-- MVP may use state/county summary GeoJSON or static map fallback images.
-- Future tasks may add browser-ready tiles or vector layers.
-
-**Data Models:**
-
-- `MapLayer`
-- `MapSelection`
-- `MapLegendItem`
-- `GeoSummary`
-
-**Depends on features:** Artifact Data Registry And Normalization
-
-### Feature: Phenology Panel
-
-**Description:** Shows HSGP NDVI seasonal curves and Task 1 model quality.
-
-**Screens / Pages / Modules:**
-
-- Phenology tab or bottom-panel module.
-- NDVI curve chart.
-- Model evaluation metric strip.
-
-**API / Data / Contracts:**
-
-- `model_evaluation.csv`
-- `hsgp_posterior_phenology.csv`
-- `empirical_ndvi_by_crop.csv`
-
-**Data Models:**
-
-- `PhenologySeries`
-- `PhenologyModelEvaluation`
-
-**Depends on features:** Artifact Data Registry And Normalization
-
-### Feature: Rotation Panel
-
-**Description:** Shows regular rotation, monoculture, and irregular class
-patterns with state/county summaries and uncertainty caveats.
-
-**Screens / Pages / Modules:**
-
-- Rotation tab.
-- Class proportion chart.
-- State/county ranking.
-- Rotation source/caveat note.
-
-**API / Data / Contracts:**
-
-- `task2__areal_stats_by_class__20260412.csv`
-- `task2__areal_stats_by_county__20260412.csv`
-- `task2__areal_stats_by_region__20260412.csv`
-- `task2__markov_transition_probs.csv`
-- `task2__threshold_sensitivity_grid.csv`
-
-**Data Models:**
-
-- `RotationClassSummary`
-- `RotationGeoSummary`
-- `MarkovTransition`
-
-**Depends on features:** Artifact Data Registry And Normalization, Corn Belt Map
-Surface
-
-### Feature: Extremes Panel
-
-**Description:** Shows 2019 Midwest flood and 2022 Plains drought anomaly
-statistics by state and crop, including NIG P(drought) interpretation.
-
-**Screens / Pages / Modules:**
-
-- Extremes tab.
-- Event selector.
-- State x crop anomaly table/chart.
-- Event timeline or small multiple.
-
-**API / Data / Contracts:**
-
-- `task3__midwest_flood_2019__anomaly_stats_by_state_crop__20260412.csv`
-- `task3__plains_drought_2022__anomaly_stats_by_state_crop__20260412.csv`
-
-**Data Models:**
-
-- `ExtremeEventId`
-- `AnomalyStateCropSummary`
-
-**Depends on features:** Artifact Data Registry And Normalization, Corn Belt Map
-Surface
-
-### Feature: Prediction Panel
-
-**Description:** Shows LightGBM Task 4 prediction results, ablation, SHAP, regime
-performance, and confusion/error evidence.
-
-**Screens / Pages / Modules:**
-
-- Prediction tab.
-- Metric cards.
-- Ablation chart.
-- SHAP feature ranking.
-- Regime-stratified performance chart.
-- Confusion matrix.
-
-**API / Data / Contracts:**
-
-- `task4_ablation_results.csv`
-- `task4_regime_stratified_metrics.csv`
-- `task4_shap_feature_importance.csv`
-- `task4_split_summary.csv`
-- `task4__test_metrics__20260413.json`
-
-**Data Models:**
-
-- `AblationResult`
-- `RegimeMetric`
-- `ShapFeature`
-- `PredictionTestMetrics`
-
-**Depends on features:** Artifact Data Registry And Normalization
-
-## 6. Out of Scope
-
-- Rerunning notebooks as part of the web app.
-- Model training, model tuning, or live inference.
-- Auth, payments, multi-user collaboration, or remote saved views.
-- Live remote sensing data streams.
-- Real-time crop forecasting.
-- Database-backed persistence.
-- Claims not supported by existing GeoCrop artifacts.
-- Full pixel-level raster interaction unless a task explicitly prepares
-  browser-safe spatial data.
-
-## 7. Non-Functional Requirements
-
-- Security: no secrets expected for MVP; no credentials committed; static
-  artifact data only.
-- Performance: dashboard should load acceptably on Vercel; avoid shipping large
-  Parquet/GeoTIFF files directly to the browser.
-- Accessibility: essential values visible without hover; keyboard-accessible
-  filters/tabs; color encodings must not be the only channel.
-- Responsive behavior: mobile portrait must show the main evidence map before
-  or alongside controls; controls should collapse into a bottom sheet/drawer.
-- Error handling: missing source artifacts should produce visible source/error
-  states, not blank panels.
-- Testing: Vitest for data normalization; smoke tests/manual verification for
-  desktop and mobile viewports; Playwright later when UI stabilizes.
-- Shareability: meaningful dashboard state should be URL-backed.
-- Maintainability: Builders work only from task-owned files and QA updates
-  memory after done tasks.
-
-## 8. Gaps / Assumptions
-
-- `ASSUMPTION:` `dashboard/` is tracked as a folder in the parent GeoCrop repo,
-  not as a nested git repo, unless the user later requests a separate repo.
-- `ASSUMPTION:` Next.js + TypeScript + Vercel is the approved stack direction.
-- `ASSUMPTION:` MVP starts from CSV/JSON summary artifacts plus static map
-  fallbacks before attempting pixel-level raster interaction.
-- `ASSUMPTION:` No backend, database, or auth is required for the first
-  milestone.
-- `UNKNOWN:` Whether state/county GeoJSON boundaries are already available in
-  browser-ready form or need to be generated.
-- `UNKNOWN:` Whether generated visual concept images should be copied into
-  dashboard docs/assets as formal references.
-- `UNKNOWN:` Final deployment project settings on Vercel.
+### Act I — See the season
+
+- Lead with aligned HSGP small multiples for corn, soybean, and winter wheat.
+- Show posterior mean, posterior IQR, posterior 90% interval, empirical spatial
+  Q25–Q75 boundaries, shared seasonal context, stage windows, and direct peak
+  labels.
+- Keep crop focus and season-window controls in Explore; no large default brush.
+- Do not place a map beside or above the lead phenology figure.
+
+### Act II — Read the land's memory
+
+- Explain regular, monoculture, and irregular using clearly labeled schematic
+  decade sequence strips.
+- Show overall shares as a 100-cell composition field using dated Task 2 values.
+- Then show measured regular-share geography across the 13 states and counties.
+- Define irregular neutrally as outside the strict alternation template.
+- Use only discrete source-supported threshold sensitivity values.
+
+### Act III — Watch the system under stress
+
+- Compare the 2019 flood and 2022 drought in matched Corn Belt frames.
+- Use the same fixed diverging mean-z scale centered on zero.
+- Keep the same crop selection visible in both frames.
+- Distinguish anomaly magnitude from NIG-based confidence and retain the exact
+  state × crop table in Explore.
+
+### Act IV — Predict what comes next
+
+- Show CDL, NDVI, and SMAP feeding LightGBM.
+- Lead through incremental ablation, grouped SHAP importance, an annotated
+  corn/soy confusion matrix, and rotation-regime accuracy.
+- Do not call the result a pre-plant forecast.
+- Do not add a prediction choropleth without browser-safe geographic evidence.
+
+### Closing synthesis
+
+Close on the evidence-backed interpretation that predictability is highest where
+crop history repeats and lower for irregular histories. Keep model limitations
+and coarse SMAP resolution alongside that conclusion.
+
+## 4. Explore workspace
+
+Explore keeps task tabs but removes the universal map and global six-control
+wall. Controls belong to the active task.
+
+| Task | Lead evidence | Supported controls | Supporting evidence |
+|------|---------------|--------------------|---------------------|
+| Phenology | Three-crop HSGP comparator | crop focus, season window | metrics, exact values, source |
+| Rotation | Numeric regular-share map | geography, metric, discrete threshold | sequences, composition, ranking |
+| Extremes | Paired event maps | crop, pinned state | exact table, magnitude/confidence notes |
+| Prediction | Diagnostic evidence stack | feature or metric focus | ablation, SHAP, matrix, regime strip |
+
+Story and Explore must share the same normalized selectors and visualization
+components. Story changes composition and annotations, not data or chart logic.
+
+## 5. Evidence contracts
+
+### Phenology
+
+- Aggregate empirical Q25/Q75 by crop and day of year across years, matching the
+  paper-generation workflow.
+- Deterministically aggregate posterior rows that collide after integer DOY
+  rounding.
+- Preserve posterior IQR and 90% interval fields.
+- Never stitch repeated annual observations into one last-write-wins line.
+
+### Rotation
+
+- Use the 13-state Task 2 region table and county table as measured sources.
+- Join counties by five-digit GEOID.
+- Overall shares use the dated artifact values: 27.36% regular, 3.90%
+  monoculture, 68.74% irregular across 2,084,112 eligible pixels.
+- Root README percentages are not used while they conflict with the artifacts.
+
+### Extremes
+
+- Use state × crop summaries at state grain.
+- Create shared source-derived domains for the paired event comparison.
+- Keep mean z, NIG measure, denominator, and baseline caveat distinct.
+
+### Prediction
+
+- Use the existing ablation, SHAP, confusion, regime, split, and test metric
+  artifacts.
+- Surface the class-balanced 2023 test design and 1,000-pixel SHAP sample.
+- Do not manufacture geographic prediction summaries.
+
+Every displayed claim must retain a source path, date or version where known,
+denominator where applicable, units, and an interpretation caveat.
+
+## 6. Map contract
+
+- Use installed `d3-geo`, `topojson-client`, and `us-atlas` geometry.
+- Focus the primary frame on the 13-state study region in Albers projection.
+- Use numeric source fields and a complete labeled legend.
+- Permit state/county drill-down only for Task 2.
+- Use state grain for Task 3.
+- Do not map Tasks 1 or 4.
+- Hover/focus previews and click/Enter/Space/tap pins.
+- Escape and a visible reset clear the pinned state.
+- The evidence lens shows metric, unit, rank where meaningful, denominator,
+  source, and caveat.
+- Essential values remain visible through direct labels, a pinned inspector, or
+  an exact table; hover is optional.
+- Do not simulate raster magnification or field-level detail.
+
+The v1 hardcoded ten-state category registry and missing-state value fallback
+must be removed.
+
+## 7. Visual and interaction design
+
+**Art direction:** Field notebook meets satellite atlas.
+
+- Warm paper/soil neutrals and charcoal ink form the base.
+- Crop colors remain consistent across all figures.
+- Wet/dry uses one color-vision-safe diverging family.
+- Selection uses a non-data high-contrast outline.
+- Data-derived sequence cells, uncertainty bands, coordinate rules, and scale
+  marks provide texture.
+- Editorial typography carries claims; a legible sans carries controls, axes,
+  values, and caveats.
+- Cards are limited to bounded summaries and inspectors.
+
+Allowed motion verbs are reveal, compare, accumulate, and pin. Motion does not
+loop, hijack scrolling, or carry essential meaning. Reduced motion renders the
+same evidence states immediately.
+
+Generated imagery, generic gradient haze, decorative particles, fake 3D, and
+ornamental scientific graphics without evidence meaning are prohibited.
+
+## 8. Responsive and accessibility requirements
+
+- Support 320 px and wider without document-level horizontal overflow.
+- Mobile order is claim → primary visual → direct annotations → local controls
+  disclosure → source/caveat → next act.
+- Stack HSGP crop panels vertically with shared seasonal context.
+- Use a portrait-focused Corn Belt map and tap-to-pin detail sheet.
+- Maintain 44–48 px touch targets.
+- Every hover path has keyboard and touch equivalents.
+- Direct labels and visible summaries carry essential evidence.
+- Preserve semantic heading, region, tab, dialog, form-label, and live-status
+  relationships even if v1 accessible names change with the design.
+- Return focus to the affected visual after a control sheet closes.
+- Honor `prefers-reduced-motion`.
+- Eliminate negative-size chart warnings, clipped tooltips, and labels that
+  overlap at supported widths.
+
+## 9. Technology and architecture
+
+| Layer | Approved technology |
+|-------|---------------------|
+| Framework | Next.js 16, React 19, TypeScript 5.9 |
+| Styling | Tailwind CSS v4 and existing design tokens |
+| UI | Existing local shadcn-style/Radix-backed primitives |
+| Charts | Recharts plus code-native HTML/SVG where simpler |
+| Maps | D3 Geo, TopoJSON Client, `us-atlas` state/county geometry |
+| Data | Static CSV/JSON artifact loading and typed normalization |
+| State | URL search parameters for shareable analytical state |
+| Testing | Vitest, Testing Library, build checks, desktop/mobile smoke |
+| Hosting | Vercel |
+
+No new dependency is planned. No backend, database, auth, external API, live
+data, notebook execution, or browser delivery of raw Parquet/GeoTIFF is needed.
+
+## 10. Content conflict policy
+
+- Use dated artifacts for rotation values.
+- Use neutral “GeoCrop research paper” wording until award and competition-year
+  claims are verified from an authoritative source.
+- Do not expose conflicting edit-distance or eligibility thresholds as settled
+  method copy. Exact sensitivity rows may be shown with a discrepancy caveat.
+- Do not link to the unrelated repository currently present in the paper source.
+- Do not imply field precision from 9 km SMAP or the common analysis grid.
+- Missing data produces a named empty state. It never substitutes another
+  geography or an invented category.
+
+## 11. Out of scope
+
+- Rerunning notebooks, training, tuning, or live inference.
+- Auth, payments, collaboration, saved remote views, or persistence services.
+- Live remote-sensing feeds or real-time forecasting.
+- Pixel/field interaction without a prepared browser-safe artifact.
+- A Task 4 geographic layer synthesized from aggregate metrics.
+- A new chart, map, state, or UI framework.
+- Generated images or decorative media.
+- Separate Story and Explore chart implementations.
+- Unrelated refactoring, README correction outside dashboard handoff needs, or
+  paper/source-data changes.
+
+## 12. Delivery criteria
+
+- Story communicates all four acts and their main findings without requiring
+  control interaction.
+- HSGP visual meaning matches the paper's three-crop comparison and uncertainty
+  grammar.
+- All map fills are numeric, source-backed, and geographically honest.
+- Story-to-Explore handoff preserves act context and valid URL state.
+- Sources, denominators, uncertainty, and limitations appear beside claims.
+- Mouse, keyboard, touch, and reduced-motion paths expose equivalent evidence.
+- Desktop and 320–390 px mobile have no horizontal overflow or chart sizing
+  warnings.
+- All focused and integration verification gates pass before v2 delivery.
+- No new backend, dependency, generated image, unsupported data, or unrelated
+  cleanup is introduced.
+
+## 13. Design references
+
+- `docs/intake.md`
+- `docs/design/2026-08-19-narrative-atlas-mockups.md`
+- `docs/superpowers/specs/2026-08-19-geocrop-website-redesign-design.md`
+- `../artifacts/reports/neurips_2024.tex`
+- `../artifacts/tables/`
+- `../artifacts/figures/`

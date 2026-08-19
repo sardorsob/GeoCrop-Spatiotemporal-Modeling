@@ -4,6 +4,106 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-08-19 — Narrative Atlas mockups, v2 scope, and task graph
+
+**Work performed:**
+
+- Interpreted the user's Narrative Atlas approval as a request to balance an
+  authored story with the existing analytical dashboard rather than make every
+  chapter map-led.
+- Created three code-native layout directions: Ribbon Chapters, Atlas + Lab,
+  and Evidence Desk. Selected Atlas + Lab, with a Chaptered Evidence Canvas in
+  Story and an Evidence Lab in Explore.
+- Created a second detailed mockup showing the HSGP comparator as the full Act I
+  evidence stage and the Story/Explore handoff.
+- Added durable text wireframes at
+  `docs/design/2026-08-19-narrative-atlas-mockups.md`.
+- Wrote the review-ready design specification at
+  `docs/superpowers/specs/2026-08-19-geocrop-website-redesign-design.md`.
+- Replaced the stale v1 Map Command Center scope with the canonical v2 Narrative
+  Atlas scope and synchronized `memory/stack-guidance.md`.
+- Preserved completed `TASK-000`–`TASK-014` and appended eight pending v2 tasks,
+  `TASK-015`–`TASK-022`, with dependencies, owned files, acceptance criteria,
+  test cases, and verification expectations.
+- Updated project, decision, overview, progress, and handoff context. No
+  application source, data, dependency, test, generated image, or final v1
+  handover file was changed.
+
+**Design resolution:**
+
+- “Atlas” means a collection of evidence plates. Phenology is chart-led;
+  rotation and extremes are map-led; prediction is diagnostic-chart-led.
+- Story and Explore will share the same task-specific selectors and figure
+  components to avoid duplicated logic.
+- The existing stack is sufficient; no new dependency is planned.
+
+**Verification:**
+
+- Rendered both in-conversation HTML mockup fragments into standalone preview
+  wrappers to catch malformed fragment structure.
+- Reviewed the context-only diff, task counts/statuses, spec placeholder scan,
+  and cross-document references.
+- No application tests, typecheck, lint, build, audit, or app smoke were run;
+  this was a design/documentation phase.
+
+**AI tools and skills used:**
+
+- Codex with parallel read-only design/task critique
+- Superpowers brainstorming
+- Ponytail scope control
+- Web visualization and browser-inspection guidance
+
+---
+
+## 2026-08-19 — Website redesign v2 planning audit
+
+**Work performed:**
+
+- Followed the repository's personal workflow with Superpowers brainstorming as
+  the single primary design process, supported by Ponytail scope control,
+  cartography/geovisualization guidance, and meaning-preserving web data
+  visualization guidance.
+- Read the dashboard context, paper source, relevant checked-in tables and
+  figures, current map and phenology implementation, and local design workflow
+  references for dashboards, maps, scrollytelling, exploratory graphics, and
+  art-directed visual stories.
+- Inspected the live dashboard at desktop and 390 px mobile widths, including
+  default/hover/pinned map states and the HSGP season view. Captured temporary
+  planning screenshots under `/tmp`; no design asset was added to the repo.
+- Identified that the current map uses hardcoded categories for 10 states rather
+  than measured study values, and that the HSGP chart overwrites same-DOY rows
+  while omitting available empirical and posterior interval fields.
+- Established a paper-led four-act story spine: Phenology → Rotation → Extremes
+  → Prediction.
+- Compared three product directions and recorded Editorial Story → Analytical
+  Explorer as the provisional recommendation, with “field notebook meets
+  satellite atlas” as the provisional art direction.
+- Updated planning/context documents only. Preserved the delivered v1 scope,
+  source, tests, packages, data, generated assets, task history, and handover.
+
+**Verification:**
+
+- No tests, lint, typecheck, build, audit, or implementation verification was
+  run, by explicit user instruction.
+- Reviewed repository status and the context-only diff to confirm the planning
+  boundary.
+
+**Open approval gate:**
+
+- User approval or revision of the product direction, audience priority, art
+  direction, and interaction emphasis is required before writing the formal
+  design spec or changing canonical v2 scope.
+
+**AI tools and skills used:**
+
+- Codex repository and live-browser inspection
+- Superpowers brainstorming
+- Ponytail scope control
+- GeoAI cartography/geovisualization
+- Meaning-preserving web data visualization
+
+---
+
 ## 2026-06-03 (0.15 hrs) - Codex QA Favicon Polish
 
 **Work performed:**

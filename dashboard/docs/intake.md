@@ -239,3 +239,213 @@ For the first build milestone:
 - UNKNOWN: What deployment target should be used?
 - UNKNOWN: Should generated design concept images be copied into the dashboard
   docs/assets folder as formal references?
+
+---
+
+## Website redesign intake — 2026-08-19
+
+This section is the authoritative intake for a second design phase. It augments
+the original v1 intake above; it does not retroactively change the delivered v1
+baseline.
+
+### Request and phase boundary
+
+The website needs a complete visual and storytelling redesign. The current
+macro layout is a useful starting point, but the individual visualizations,
+interactions, and narrative progression feel generic, uneven, and insufficiently
+faithful to the paper. The Hilbert Space Gaussian Process (HSGP) phenology view
+and the map are the highest-priority examples.
+
+This session is planning and context work only. It may inspect the running site
+and capture temporary screenshots, but it must not change application code,
+tests, dependencies, data artifacts, generated assets, or production design
+files. It must not run tests. Canonical v2 scope, a formal design specification,
+and implementation tasks remain gated on design approval.
+
+### Settled direction and constraints
+
+- Preserve the current layout where it helps orientation; redesign its visual
+  language, information hierarchy, visualization grammar, and interactions.
+- Treat the paper and checked-in result artifacts as the evidence authority.
+  Artistic expression may clarify evidence but must not manufacture geography,
+  precision, values, or model certainty.
+- Make the website tell a coherent research story rather than present four
+  equal-weight dashboard tabs without narrative context.
+- Use interaction to reveal meaning: hover/focus may preview, click/tap may pin,
+  and zoom may expose supported geographic detail. Essential evidence must have
+  a visible, keyboard-accessible, and touch-accessible path that does not depend
+  on hover.
+- Retain source, denominator, caveat, uncertainty, responsive, and reduced-motion
+  expectations unless the approved v2 scope deliberately strengthens them.
+- Continue the repository rule against generated imagery. Temporary screenshots,
+  text wireframes, code-native visual motifs, and data-derived graphics are
+  appropriate planning references.
+- Prefer the existing application stack and source pipeline unless a later
+  approved design requirement demonstrates a concrete gap.
+
+### Evidence audit
+
+The redesign cannot be solved as a styling pass because two lead visuals have
+meaning-level problems:
+
+- The current national map hardcodes categorical labels for only 10 states. It
+  is not a visualization of the paper's measured state summaries, and the
+  research artifacts cover 13 study states. The national frame also devotes
+  most of the visual area to no-data states. Selecting an unregistered state can
+  inherit Minnesota's values under a different label, and the resulting
+  `selectedEntity` does not consistently coordinate the task panels. These are
+  evidence-integrity and interaction-contract failures, not styling defects.
+- The current HSGP chart shows one crop at a time, keys rows by rounded day of
+  year, discards empirical year, and can overwrite repeated empirical and
+  posterior observations. The empirical artifact has 535 rows per crop but only
+  211 unique day-of-year values, so the rendered dashed line is not a valid
+  single seasonal series. The chart also omits the empirical Q25–Q75 spatial
+  band and posterior IQR fields that help explain the paper's result. Its fixed
+  0–1 axis, jagged comparison line, and large brush flatten the phenology story
+  and do not resemble the paper's three-panel comparison.
+- Mobile inspection at a 390 px viewport found horizontal overflow, dense
+  controls before the active evidence, and source/caveat cards wider than the
+  viewport. The chart also emits negative-width/height warnings during live
+  rendering. These are recorded as redesign risks, not implementation work for
+  this phase.
+- Task 2 has real state- and county-level summary tables, including 13-state
+  rotation statistics. Task 3 has real state-by-crop flood and drought
+  summaries. Task 4 does not currently have an equivalent browser-ready
+  geographic table, so a uniform prediction map would overstate the available
+  evidence.
+- State geometry is already available through `us-atlas`, including county
+  boundaries. No browser-ready GeoJSON, vector-tile, or pixel-level layer is
+  currently checked in. A future map must stop at the honest grain of each
+  result unless an explicit preprocessing task is approved.
+
+### Paper-led story spine
+
+The paper naturally supports four acts:
+
+1. **See the season — Phenology.** Learn the recurring seasonal signal and how
+   the HSGP models it with calibrated uncertainty.
+2. **Read the land's memory — Rotation.** Move from a single season to a decade
+   of crop sequences and the distinction between regular, monoculture, and
+   irregular rotation.
+3. **Watch the system under stress — Extremes.** Contrast the 2019 flood and
+   2022 drought while distinguishing anomaly magnitude from confidence under a
+   short baseline.
+4. **Predict what comes next — Model.** Show how land-use history, NDVI, and soil
+   moisture contribute to 2023 crop prediction, where the model succeeds, and
+   where irregular regimes remain difficult.
+
+The evidence anchors for this story include 2.08 million eligible Task 2 pixels
+(27.36% regular, 3.90% monoculture, 68.74% irregular), Task 4 accuracy of 79.2%
+and macro F1 of 0.791, a 1.7 percentage-point NDVI ablation gain, and markedly
+lower accuracy for irregular rotations. These values must be revalidated against
+their dated artifacts when final copy is approved.
+
+### Candidate product directions
+
+1. **Narrative Atlas: editorial story → analytical explorer (approved product
+   frame; selected working layout).** Make the guided four-act story the default experience
+   and offer an “Explore this evidence” handoff into task-specific controls.
+   This best serves a first visit without discarding the analytical value and
+   URL-backed state of v1. Its editorial thesis is: *The Corn Belt has a rhythm,
+   a memory, and a breaking point. Three satellite records reveal how crops
+   grow, how fields repeat, how weather interrupts, and why some landscapes are
+   easier to read than others.*
+2. **Refined Map Command Center.** Keep the current dashboard structure and
+   replace the pseudo-data map and weak charts with honest task-specific
+   graphics. This is the smallest structural change but tells a weaker story.
+3. **Interactive paper.** Build a tightly authored scrollytelling interpretation
+   of the paper. This makes the strongest linear narrative but reduces the
+   analyst's ability to compare and inspect results freely.
+
+Approval update on 2026-08-19: proceed with Narrative Atlas, but balance the
+authored story with the existing analytical value. The design package therefore
+uses a Chaptered Evidence Canvas inside Story and a sibling Evidence Lab inside
+Explore. “Atlas” names the collection of evidence plates; it does not force a
+map into every chapter. The HSGP comparator leads Act I, rotation and extremes
+earn map-led acts, and prediction remains chart-led. The detailed mockups and
+task graph are reviewable without beginning implementation.
+
+### Provisional creative direction
+
+The recommended visual language is **field notebook meets satellite atlas**:
+warm paper/soil neutrals, ink-like greens, disciplined crop and anomaly colors,
+editorial typography for the narrative, and clean analytical typography for
+controls. Data-derived crop sequences, contour lines, raster cells, and seasonal
+curves can supply texture and rhythm. Avoid generic gradients, glow effects,
+decorative particles, fake 3D, or motion without explanatory purpose.
+
+Provisional lead visuals:
+
+- Open with a compact, data-bearing braid of CDL (30 m), NDVI (250 m), and SMAP
+  (9 km) that introduces how three observation scales feed the four acts.
+- Rebuild phenology as three vertically aligned crop panels on shared seasonal
+  axes, with the empirical spatial IQR, posterior uncertainty, direct crop
+  labels, seasonal-stage annotations, and optional crop focus. Move custom DOY
+  controls out of the default reading path.
+- Explain rotation first with decade-long crop-sequence strips and a 100-cell
+  composition field, clearly labeled as a proportional graphic rather than
+  geography. Follow it with a real county/state map using measured rotation
+  shares and discrete, source-supported threshold comparisons.
+- Compare the 2019 wet and 2022 dry events in stable, paired Corn Belt frames
+  with one fixed diverging scale and a state/crop evidence lens showing value,
+  denominator, and uncertainty.
+- Tell the prediction result through an evidence braid into LightGBM, incremental
+  ablation bars, grouped feature importance, an annotated corn/soy confusion
+  matrix, and direct comparison of rotation-regime accuracy. Use a map only if a
+  truthful geographic prediction artifact is prepared.
+- Replace the universal map with task-specific geography. Focus the main map on
+  the 13-state study region with a quiet national locator. Hover/focus previews a
+  state or county and opens an anchored “evidence lens”; click/tap pins it. The
+  lens may reveal counties only where county data exists and must never imply
+  field-level precision.
+- Compose mobile as a sibling experience: insight and main evidence first,
+  controls in a disclosure or bottom sheet, tap/focus instead of hover, and a
+  compact pinned-detail sheet for maps. Reduced motion shows the same key states
+  without animation.
+
+### Success criteria for an approved v2 design
+
+- A first-time visitor can state the four-part research story and the main result
+  of each act without opening every control.
+- The HSGP view is recognizably faithful to the paper's comparison and uncertainty
+  semantics while remaining legible and exploratory.
+- Every mapped color is traceable to a measured field and honest geographic
+  grain; no placeholder category is presented as scientific evidence.
+- Interaction produces insight rather than decoration and has equivalent mouse,
+  keyboard, and touch paths.
+- Desktop and mobile have intentional reading orders with no horizontal overflow
+  and no essential information hidden behind hover.
+- Sources, denominators, uncertainty, limitations, and data freshness remain
+  visible at the moment a claim is made.
+- The result feels authored and distinctive while reusing the existing stack and
+  avoiding unsupported complexity.
+
+### Open decisions requiring approval or source resolution
+
+- Review and revise the selected Chaptered Evidence Canvas + Evidence Lab layout
+  before implementation begins.
+- Confirm the priority audience among portfolio/judging visitors, agricultural
+  analysts, and data-science reviewers; the hybrid assumes the first group enters
+  through Story and the latter groups continue into Explore.
+- Approve the “field notebook meets satellite atlas” art direction and desired
+  motion intensity.
+- Confirm the first-screen claim and how prominently the challenge/award identity
+  should appear.
+- Decide whether state comparison, crop comparison, or method explanation is the
+  primary exploratory interaction after the guided story.
+- Resolve conflicting rotation percentages in the root README versus the paper
+  and dated artifacts.
+- Define “irregular” explicitly as outside the strict alternation template, not
+  as disorder, failure, or poor farm management.
+- Resolve the paper's internal mismatch between edit-distance ceilings of 2 and
+  3 and eligibility thresholds of 7 and 5 years before presenting an interactive
+  rule explainer.
+- Resolve inconsistent NeurIPS 2024, NAFSI 2025, and Spring 2026 labels before
+  redesign copy repeats an unsupported chronology or award claim.
+- Correct or deliberately contextualize the unrelated repository link embedded
+  in the paper source.
+- Do not describe Task 4 as a pre-plant forecast: its NDVI and SMAP inputs include
+  the concurrent growing season. Surface that the 2023 test set is class-balanced
+  at 125,000 pixels per class and that SHAP uses a 1,000-pixel subsample wherever
+  those results are interpreted.
+- Do not imply field-level fidelity from 9 km SMAP or the common analysis grid.
