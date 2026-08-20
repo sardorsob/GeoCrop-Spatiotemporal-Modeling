@@ -2,9 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import { parseDashboardNumber } from "../../format/number";
 import { loadDashboardData } from "../dashboard-data";
-import { loadArtifactSource } from "../loaders";
+import { loadArtifactSource, type LoadedCsvArtifact, type RawArtifactRow } from "../loaders";
+import { normalizeDashboardData } from "../normalize";
 import { getArtifactSource } from "../sources";
-import type { ArtifactSource } from "../types";
+import type { ArtifactSource, ArtifactSourceId } from "../types";
 
 describe("static artifact loaders", () => {
   it("loads CSV and JSON artifacts with row counts and source metadata", async () => {
@@ -98,18 +99,90 @@ describe("normalized dashboard data", () => {
       credibleInterval05: 0.65582,
       credibleInterval95: 0.72564
     });
+    expect(empirical?.points.find((point) => point.dayOfYear === 105)).toMatchObject({
+      dayOfYear: 105,
+      empiricalQ25Ndvi: expect.any(Number),
+      empiricalQ75Ndvi: expect.any(Number),
+      nPixels: expect.any(Number)
+    });
+  });
+
+  it("aggregates repeated empirical and rounded posterior DOYs without last-write-wins", () => {
+    const data = normalizeDashboardData([
+      loadedCsv("task1-hsgp-posterior-phenology", [
+        {
+          crop: "corn",
+          doy: "100",
+          posterior_mean: "0.4",
+          posterior_iqr_25: "0.3",
+          posterior_iqr_75: "0.5",
+          ci_05: "0.2",
+          ci_95: "0.6"
+        },
+        {
+          crop: "corn",
+          doy: "100",
+          posterior_mean: "0.6",
+          posterior_iqr_25: "0.5",
+          posterior_iqr_75: "0.7",
+          ci_05: "",
+          ci_95: "0.8"
+        }
+      ]),
+      loadedCsv("task1-empirical-ndvi-by-crop", [
+        {
+          crop: "corn",
+          year: "2018",
+          doy: "105",
+          mean_ndvi: "0.4",
+          q25_ndvi: "0.2",
+          q75_ndvi: "0.6",
+          n_pixels: "100"
+        },
+        {
+          crop: "corn",
+          year: "2019",
+          doy: "105",
+          mean_ndvi: "0.6",
+          q25_ndvi: "0.4",
+          q75_ndvi: "0.8",
+          n_pixels: "300"
+        }
+      ])
+    ]);
+
+    const posterior = data.task1.phenologySeries.find(
+      (series) => series.source.sourceId === "task1-hsgp-posterior-phenology"
+    );
+    const empirical = data.task1.phenologySeries.find(
+      (series) => series.source.sourceId === "task1-empirical-ndvi-by-crop"
+    );
+
+    expect(posterior?.points).toEqual([
+      {
+        dayOfYear: 100,
+        posteriorMean: 0.5,
+        posteriorIqr25: 0.4,
+        posteriorIqr75: 0.6,
+        credibleInterval05: 0.2,
+        credibleInterval95: 0.7
+      }
+    ]);
+    expect(empirical?.points).toHaveLength(1);
     expect(empirical?.points[0]).toMatchObject({
       dayOfYear: 105,
-      empiricalMeanNdvi: 0.6626256103515625,
-      nPixels: 4287444
+      empiricalMeanNdvi: 0.5,
+      empiricalQ75Ndvi: 0.7,
+      nPixels: 400
     });
+    expect(empirical?.points[0].empiricalQ25Ndvi).toBeCloseTo(0.3);
   });
 
   it("normalizes representative Task 2 rotation summaries with alias headers and matrix CSVs", async () => {
     const data = await loadDashboardData();
     const classSummary = data.task2.classSummaries.find((row) => row.rotationClass === "regular");
     const county = data.task2.geographySummaries.find((row) => row.geographyId === "17001");
-    const region = data.task2.geographySummaries.find((row) => row.geographyId === "Illinois");
+    const region = data.task2.geographySummaries.find((row) => row.geographyId === "IL");
     const transition = data.task2.markovTransitions.find(
       (row) => row.fromCrop === "corn" && row.toCrop === "soybean"
     );
@@ -128,17 +201,31 @@ describe("normalized dashboard data", () => {
       geographyId: "17001",
       geographyName: "Adams County",
       geographyKind: "county",
+      stateCode: "IL",
       stateFips: "17",
       countyFips: "001",
       nPixels: 3805,
       pctRegular: 36.43
     });
     expect(region).toMatchObject({
-      geographyId: "Illinois",
+      geographyId: "IL",
       geographyName: "Illinois",
-      geographyKind: "region",
+      geographyKind: "state",
+      stateCode: "IL",
+      stateFips: "17",
       nPixels: 293524
     });
+    expect(
+      data.task2.geographySummaries.filter((row) => row.geographyKind === "state")
+    ).toHaveLength(13);
+    expect(
+      data.task2.geographySummaries.some((row) => row.geographyName.includes("outside"))
+    ).toBe(false);
+    expect(
+      data.task2.geographySummaries
+        .filter((row) => row.geographyKind === "county")
+        .every((row) => /^\d{5}$/.test(row.geographyId))
+    ).toBe(true);
     expect(transition).toMatchObject({
       fromCrop: "corn",
       toCrop: "soybean",
@@ -162,6 +249,7 @@ describe("normalized dashboard data", () => {
 
     expect(flood).toMatchObject({
       eventId: "midwest_flood_2019",
+      stateCode: "IL",
       meanZ: 0.8235,
       maxZ: 2.2511,
       fractionObservedZGreaterThan1: 0.4706,
@@ -172,6 +260,7 @@ describe("normalized dashboard data", () => {
     });
     expect(drought).toMatchObject({
       eventId: "plains_drought_2022",
+      stateCode: "IL",
       meanZ: -0.7645,
       fractionPDroughtBelow0p1: 0.1557
     });
@@ -217,3 +306,26 @@ describe("normalized dashboard data", () => {
     });
   });
 });
+
+function loadedCsv(
+  sourceId: ArtifactSourceId,
+  rows: readonly RawArtifactRow[]
+): LoadedCsvArtifact {
+  const source = getArtifactSource(sourceId);
+
+  return {
+    status: "success",
+    sourceId,
+    taskId: source.taskId,
+    path: source.path,
+    absolutePath: source.path,
+    format: "csv",
+    label: source.label,
+    caveat: source.caveat,
+    dateStamp: source.dateStamp,
+    denominator: source.denominator,
+    source,
+    rowCount: rows.length,
+    rows
+  };
+}

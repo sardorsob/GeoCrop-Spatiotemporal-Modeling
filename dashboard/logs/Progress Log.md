@@ -4,6 +4,49 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-08-19 — TASK-016 scientific evidence contracts
+
+**Work performed:**
+
+- Replaced row-order phenology output with deterministic crop + DOY grouping.
+- Matched the paper notebook's across-year empirical mean workflow for Q25/Q75,
+  retained posterior IQR and 90% intervals, and ignored missing contributors
+  rather than turning them into zero.
+- Canonicalized all 13 study states to USPS/FIPS identities, normalized county
+  GEOIDs to five digits, and removed non-study `outside` rows from geographic
+  evidence.
+- Added typed Task 2 rotation and Task 3 event-map selectors with numeric
+  values, ranks, denominators, source metadata, and one crop-specific domain
+  shared across flood and drought.
+- Added compile-time guard coverage proving Task 4 cannot be passed to either
+  geographic selector.
+
+**Verification:**
+
+- TDD red: duplicate-DOY, canonical geography, and missing-selector assertions
+  failed against the v1 normalization path.
+- Focused green: 2 files and 11 tests passed.
+- Checker full suite: 14 files and 52 tests passed.
+- `npm run typecheck`, `npm run lint`, and `git diff --check` passed.
+- Data-quality pass reconciled the implementation with the paper notebook's
+  `groupby("doy").mean()` empirical interval workflow and raw artifact grains.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- No Task 4 geography selector or synthetic raster/pixel evidence was added.
+- Loader/source registration remained unchanged because all required artifacts
+  were already present and correctly registered.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- Data-quality and analytical-validation guidance
+
+---
+
 ## 2026-08-19 — TASK-015 Narrative Atlas visual grammar
 
 **Work performed:**

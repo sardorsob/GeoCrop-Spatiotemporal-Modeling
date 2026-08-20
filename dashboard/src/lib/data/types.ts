@@ -58,6 +58,21 @@ export type ExtremeEventId = "midwest_flood_2019" | "plains_drought_2022";
 
 export type GeographyKind = "state" | "county" | "region" | "pixel";
 
+export type StudyStateCode =
+  | "IA"
+  | "IL"
+  | "IN"
+  | "KS"
+  | "KY"
+  | "MI"
+  | "MN"
+  | "MO"
+  | "ND"
+  | "NE"
+  | "OH"
+  | "SD"
+  | "WI";
+
 export type MapLayerId =
   | "rotation-class"
   | "rotation-regular-probability"
@@ -117,6 +132,7 @@ export interface RotationGeoSummary {
   readonly geographyId: string;
   readonly geographyName: string;
   readonly geographyKind: GeographyKind;
+  readonly stateCode?: StudyStateCode;
   readonly stateFips?: string;
   readonly countyFips?: string;
   readonly nPixels: number;
@@ -146,6 +162,7 @@ export interface RotationThresholdSensitivity {
 export interface AnomalyStateCropSummary {
   readonly eventId: ExtremeEventId;
   readonly state: string;
+  readonly stateCode?: StudyStateCode;
   readonly crop: CropId;
   readonly meanZ: number;
   readonly maxZ: number;

@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 23 | 16 | 0 | 0 | 0 | 0 | 7 |
+| 23 | 17 | 0 | 0 | 0 | 0 | 6 |
 
 `TASK-015` through `TASK-022` are the pending Narrative Atlas v2 graph. They may
 not move to `in-progress` until the user has reviewed the mockup/spec package.
@@ -1041,19 +1041,21 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - `src/lib/data/__tests__/normalize.test.ts`
   - `src/lib/data/__tests__/selectors.test.ts`
 - Acceptance criteria:
-  - [ ] Phenology normalization has no last-write-wins path for repeated integer DOYs.
-  - [ ] Empirical and posterior outputs match the paper's aggregation semantics and retain required intervals.
-  - [ ] Task 2 state/county and Task 3 state identities are canonical and joinable.
-  - [ ] Selectors return source-backed values, rank where meaningful, denominator, and shared domains.
-  - [ ] No selector manufactures Task 4 geography.
-  - [ ] Focused tests, typecheck, and lint pass.
+  - [x] Phenology normalization has no last-write-wins path for repeated integer DOYs.
+  - [x] Empirical and posterior outputs match the paper's aggregation semantics and retain required intervals.
+  - [x] Task 2 state/county and Task 3 state identities are canonical and joinable.
+  - [x] Selectors return source-backed values, rank where meaningful, denominator, and shared domains.
+  - [x] No selector manufactures Task 4 geography.
+  - [x] Focused tests, typecheck, and lint pass.
 - QA notes:
-  - Pending implementation and independent checker pass.
-- Attempts: 0
+  - TDD red 2026-08-19: Focused normalization tests exposed duplicate DOY rows, missing canonical state codes, and missing selectors; the selector suite failed module resolution because `selectors.ts` did not exist.
+  - Builder green 2026-08-19: Aggregated empirical/posterior rows by crop + DOY with missing-value-safe means and summed empirical pixel denominators; canonicalized 13 study states, five-digit county GEOIDs, and Task 3 state codes; added typed rotation/event map evidence selectors with ranks, denominators, sources, and zero-centered event domains.
+  - Checker pass 2026-08-19: Data-quality review reconciled the paper notebook's crop/DOY mean workflow and verified outside-study rows are not selectable; Ponytail review found no removable dependency or speculative layer (`Lean already. Ship.`). Focused tests passed 2 files/11 tests, full tests passed 14 files/52 tests, and typecheck, lint, and `git diff --check` passed.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-  - No attempts yet.
-- Status: pending
+  - 2026-08-19: Started evidence-contract repair with source-grain profiling and paper/notebook aggregation reconciliation.
+- Status: done
 
 ---
 

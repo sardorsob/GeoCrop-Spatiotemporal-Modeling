@@ -41,7 +41,7 @@ v2 task graph is now executing sequentially with one task commit at a time.
 | HSGP season-window zoom | done | `TASK-012` adds local Full / Green-up / Peak / Senescence / custom DOY zoom controls to the Task 1 NDVI chart |
 | NAFSI paper reader | done | `TASK-013` replaces the old Prediction hero KPI with a `NAFSI 2025 winning paper` CTA, embedded PDF reader, and open/download actions |
 | Sprout favicon | done | `TASK-014` adds a public SVG favicon using the current top-bar plant mark |
-| Website redesign v2 | in progress | `TASK-015` establishes the shared warm-atlas grammar and semantic Story/Explore primitives; evidence normalization begins in `TASK-016` |
+| Website redesign v2 | in progress | `TASK-015`–`TASK-016` establish the shared visual grammar and deterministic evidence contracts; the honest task-specific map begins in `TASK-017` |
 
 ## Decisions
 
@@ -68,8 +68,8 @@ v2 task graph is now executing sequentially with one task commit at a time.
 ## Last Session
 
 - **Date:** 2026-08-19
-- **What was done:** Completed `TASK-015` on the isolated Narrative Atlas branch: added semantic act/figure/evidence/mode primitives, extended the Tailwind theme into the approved warm field-notebook grammar, and added focus, narrow-screen, and reduced-motion behavior without changing task data or adding dependencies.
-- **What's next:** Execute `TASK-016` to repair phenology aggregation and add deterministic evidence selectors before any redesigned map or task figure consumes those values.
+- **What was done:** Completed `TASK-016`: replaced repeated-DOY row order behavior with deterministic paper-faithful aggregation, preserved both posterior intervals, canonicalized the 13 study states and county GEOIDs, and added typed Task 2/3 map evidence selectors with source, rank, denominator, and matched event domains.
+- **What's next:** Execute `TASK-017` using these contracts to replace the hardcoded pseudo-data map with a focused, source-backed evidence map.
 - **Blockers:** No implementation blocker. Content inconsistencies in rotation thresholds, challenge chronology, award wording, and the paper's repository link remain final-copy gates; the scope defines safe fallback wording and behavior.
 
 ## Environment

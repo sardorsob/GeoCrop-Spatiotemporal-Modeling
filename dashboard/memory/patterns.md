@@ -16,6 +16,27 @@ TBD
 
 ---
 
+## Aggregate At The Evidence Grain Before Rendering
+
+**Use when:** Exported chart rows contain repeated display keys because time,
+posterior grids, rounding, or another hidden dimension is finer than the visual
+grain.
+
+**Rule:** Group by the explicit evidence key before building chart rows. Average
+defined interval/value contributors according to the paper workflow, sum true
+count denominators, sort the output key, and preserve every uncertainty level.
+Never let map insertion order or a last-write-wins object decide the result.
+
+**Example:**
+
+```text
+Task 1 groups rows by crop + integer DOY, averages empirical Q25/Q75 across
+years and rounded posterior duplicates, sums empirical pixel counts, and keeps
+posterior IQR plus 90% bounds.
+```
+
+---
+
 ## Semantic Evidence Figure Primitives
 
 **Use when:** Story and analytical views need to share an evidence hierarchy
