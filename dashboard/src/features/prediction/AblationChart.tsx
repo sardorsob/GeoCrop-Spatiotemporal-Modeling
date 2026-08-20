@@ -1,97 +1,126 @@
-import type { AblationResult, DataPointSource } from "@/lib/data/types";
+import type { AblationResult } from "@/lib/data/types";
 
-import { formatCount, formatPercent } from "./prediction-copy";
+import {
+  formatFeatureLabel,
+  formatPercent,
+  formatPercentagePointDelta,
+  predictionCopy
+} from "./prediction-copy";
 
 interface AblationChartProps {
   readonly results: readonly AblationResult[];
 }
 
+const CONFIGURATIONS = [
+  { id: "A", label: "CDL only" },
+  { id: "B", label: "CDL + NDVI", referenceId: "A", referenceLabel: "CDL" },
+  { id: "C", label: "CDL + SMAP", referenceId: "A", referenceLabel: "CDL" },
+  { id: "D", label: "Full model", referenceId: "B", referenceLabel: "CDL + NDVI" }
+] as const;
+
 export function AblationChart({ results }: AblationChartProps) {
   if (results.length === 0) {
     return (
-      <section className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
-        <h3 className="text-base font-semibold text-slate-950">Ablation comparison</h3>
-        <p className="mt-2 text-sm text-slate-600">No ablation results are available.</p>
+      <section className="rounded-xl border border-rule bg-paper p-4 sm:p-5">
+        <h3 className="font-display text-xl font-semibold text-ink">Incremental ablation</h3>
+        <p className="mt-2 text-sm text-muted-foreground">No ablation results are available.</p>
       </section>
     );
   }
 
-  const sortedResults = [...results].sort((left, right) => right.macroF1 - left.macroF1);
-  const source = sortedResults[0]?.source;
+  const resultById = new Map(results.map((result) => [result.ablationId.toUpperCase(), result]));
+  const knownIds = new Set<string>(CONFIGURATIONS.map((configuration) => configuration.id));
+  const rows = [
+    ...CONFIGURATIONS.flatMap((configuration) => {
+      const result = resultById.get(configuration.id);
+      return result ? [{ configuration, result }] : [];
+    }),
+    ...results
+      .filter((result) => !knownIds.has(result.ablationId.toUpperCase()))
+      .map((result) => ({
+        configuration: { id: result.ablationId, label: formatFeatureLabel(result.name) },
+        result
+      }))
+  ];
+  const source = rows[0]?.result.source;
 
   return (
-    <section className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+    <section
+      aria-label="Incremental ablation evidence"
+      className="min-w-0 rounded-xl border border-rule bg-paper p-4 sm:p-5"
+    >
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h3 className="text-base font-semibold text-slate-950">Ablation comparison</h3>
-          <p className="mt-1 text-sm text-slate-600">
-            Rows are sorted by macro F1 so the strongest scoped feature set stays first.
+        <div className="max-w-2xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+            What each source adds
+          </p>
+          <h3 className="mt-1 font-display text-xl font-semibold text-ink">
+            Incremental ablation
+          </h3>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            {predictionCopy.ablationBranchCaveat}
           </p>
         </div>
-        <SourcePill source={source} />
+        <span className="shrink-0 rounded-full border border-rule bg-muted/45 px-3 py-1 text-xs text-muted-foreground">
+          2022 validation · 500,000 pixels
+        </span>
       </div>
 
-      <div className="mt-4 overflow-x-auto">
-        <table aria-label="Ablation comparison" className="min-w-[44rem] w-full border-collapse text-sm">
-          <thead>
-            <tr className="border-b border-slate-200 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <th className="py-2 pr-3" scope="col">Model</th>
-              <th className="px-3 py-2" scope="col">Features</th>
-              <th className="px-3 py-2" scope="col">Overall accuracy</th>
-              <th className="px-3 py-2" scope="col">Macro F1</th>
-              <th className="px-3 py-2" scope="col">Corn F1</th>
-              <th className="px-3 py-2" scope="col">Soybean F1</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {sortedResults.map((result) => (
-              <tr key={result.ablationId || result.name}>
-                <th className="py-3 pr-3 text-left font-semibold text-slate-900" scope="row">
-                  <span className="block">{result.name}</span>
-                  <span className="mt-1 block text-xs font-medium text-slate-500">
-                    {result.ablationId}
-                  </span>
-                </th>
-                <td className="px-3 py-3 text-slate-700">{formatCount(result.nFeatures)}</td>
-                <td className="px-3 py-3 text-slate-700">{formatPercent(result.overallAccuracy)}</td>
-                <td className="px-3 py-3">
-                  <MetricBar value={result.macroF1} />
-                </td>
-                <td className="px-3 py-3 text-slate-700">{formatPercent(result.f1Corn)}</td>
-                <td className="px-3 py-3 text-slate-700">{formatPercent(result.f1Soybean)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="mt-4 grid gap-3 lg:grid-cols-4">
+        {rows.map(({ configuration, result }) => {
+          const reference = "referenceId" in configuration
+            ? resultById.get(configuration.referenceId)
+            : undefined;
+          const delta = reference
+            ? (result.overallAccuracy - reference.overallAccuracy) * 100
+            : undefined;
+
+          return (
+            <article
+              aria-label={`${configuration.label} ablation result`}
+              className="min-w-0 rounded-lg border border-rule bg-muted/30 p-4"
+              key={configuration.id}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">
+                    Configuration {configuration.id}
+                  </p>
+                  <h4 className="mt-1 font-semibold text-ink">{configuration.label}</h4>
+                </div>
+                <span className="rounded-full border border-rule bg-paper px-2 py-0.5 text-[10px] tabular-nums text-muted-foreground">
+                  {result.nFeatures} features
+                </span>
+              </div>
+              <p className="mt-4 font-mono text-2xl font-semibold tabular-nums text-ink">
+                {formatPercent(result.overallAccuracy)} accuracy
+              </p>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-rule/60" aria-hidden="true">
+                <span
+                  className="block h-full rounded-full bg-primary"
+                  style={{ width: `${Math.max(0, Math.min(100, result.overallAccuracy * 100))}%` }}
+                />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-primary">
+                {delta === undefined || !("referenceLabel" in configuration)
+                  ? "Baseline"
+                  : `${formatPercentagePointDelta(delta)} vs ${configuration.referenceLabel}`}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Macro F1 · {formatPercent(result.macroF1)}
+              </p>
+            </article>
+          );
+        })}
       </div>
+
+      {source ? (
+        <div className="mt-4 border-t border-rule pt-3 text-xs leading-5 text-muted-foreground">
+          <p className="font-semibold text-ink">{source.label ?? source.sourceId}</p>
+          {source.path ? <p className="mt-1 break-all font-mono">{source.path}</p> : null}
+          {source.caveat ? <p className="mt-1">{source.caveat}</p> : null}
+        </div>
+      ) : null}
     </section>
-  );
-}
-
-function MetricBar({ value }: { readonly value: number }) {
-  const width = Math.max(0, Math.min(100, value * 100));
-
-  return (
-    <div className="grid min-w-28 gap-1">
-      <span className="font-semibold text-slate-950">{formatPercent(value)}</span>
-      <span className="h-2 w-full overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-        <span
-          className="block h-full rounded-full bg-emerald-600"
-          style={{ width: `${width}%` }}
-        />
-      </span>
-    </div>
-  );
-}
-
-function SourcePill({ source }: { readonly source?: DataPointSource }) {
-  if (!source) {
-    return null;
-  }
-
-  return (
-    <p className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
-      {source.label ?? source.sourceId}
-    </p>
   );
 }

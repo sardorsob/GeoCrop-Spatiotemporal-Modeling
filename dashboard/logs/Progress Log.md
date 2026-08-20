@@ -4,6 +4,59 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-08-19 — TASK-021 model-evidence and rotation-regime conclusion
+
+**Work performed:**
+
+- Opened Act IV with a data-bearing source braid: CDL 30 m / 19 features, NDVI
+  250 m / 15 features, and SMAP 9 km / 4 features feeding the 38-feature,
+  four-class LightGBM model.
+- Rebuilt ablation around stable A–D configuration ids and explicit references:
+  NDVI and SMAP each compare with CDL, while the full model compares with
+  CDL+NDVI; alternative branch lifts are never presented as additive.
+- Grouped all 38 real SHAP rows into CDL, NDVI, SMAP, or Other/context on one
+  magnitude scale; expanded CDL name routing after real-data inspection and
+  retained unknown feature names rather than dropping or forcing them.
+- Rebuilt the confusion matrix from its exported dimension, removing the false
+  fifth/oats row for the real four-class result, printing count plus safe row
+  share, and directly annotating the two corn/soy directions and combined count.
+- Reframed rotation performance as the closing evidence: 95.5% monoculture,
+  87.4% regular, and 70.9% irregular accuracy with denominators, supporting F1,
+  a 24.6-point gap, and a non-causal comparison caveat.
+- Added visible concurrent-season, class-balanced 2023 test, 1,000-pixel SHAP,
+  native-resolution/common-grid, and no-geographic-layer limitations.
+- Repaired a matrix-driven mobile min-content leak and one long source-path
+  overflow while keeping the matrix itself intentionally scrollable.
+
+**Verification:**
+
+- TDD red: 6 of 7 focused tests failed against the v1 sorted tables.
+- Focused green: 1 file and 7 tests passed.
+- Checker full suite: 15 files and 65 tests passed.
+- `npm run typecheck`, `npm run lint -- --quiet`, both workflow validators, and
+  `git diff --check` passed.
+- Browser Use verified four real ablations, all 38 SHAP rows, four confusion
+  classes, and no page overflow at desktop. At 320px, document width equaled
+  viewport width and the 608px matrix stayed inside a 254px internal scroller.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- Final Story/Explore composition, removal of the v1 universal map/filter wall,
+  mode routing, and whole-app handoff remain owned by `TASK-022`.
+- No prediction map, pre-plant claim, fifth class, hidden SHAP row, generated
+  image, new dependency, or causal regime claim was added.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- Web data-visualization and statistical uncertainty guidance
+- Browser Use desktop/mobile visual inspection
+
+---
+
 ## 2026-08-19 — TASK-020 paired flood and drought evidence chapter
 
 **Work performed:**

@@ -390,3 +390,24 @@ selector derives the same crop-wide `[-maxAbs, +maxAbs]` mean-z domain for each;
 both maps highlight one pinned state, while their cards separately report NIG
 posterior percentile and pixel-week denominator.
 ```
+
+---
+
+## Branch-Aware Ablation Story
+
+**Use when:** An experiment contains alternative feature branches plus a full
+model, and array order or a simple sorted leaderboard would imply false
+additivity.
+
+**Rule:** Identify configurations by their stable source id, attach each derived
+delta to an explicit reference configuration, and print that reference beside
+the delta. Preserve the absolute metric and feature count. Never sum lifts from
+alternative branches.
+
+**Example:**
+
+```text
+`AblationChart` orders A–D by `ablationId`: B (CDL+NDVI) and C (CDL+SMAP)
+are each compared with A (CDL), while D (full) is compared with B. The visible
+labels are `+1.74 pp vs CDL`, `+0.07 pp vs CDL`, and `−0.07 pp vs CDL + NDVI`.
+```

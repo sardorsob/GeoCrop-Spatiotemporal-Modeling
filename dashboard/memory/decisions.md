@@ -121,3 +121,25 @@ baseline.
 
 **Impact:** One pin drives both maps. Missing event/state/crop or NIG values stay
 no-data, and the complete event × state × crop table is an Explore disclosure.
+
+## 2026-08-19 — Make Task 4 a diagnostic conclusion, not a forecast map
+
+**Context:** Task 4 combines three feature sources at different native scales,
+evaluates alternative ablations, computes SHAP on a 1,000-pixel subsample, and
+reports four-class test and rotation-regime results. Its NDVI and SMAP features
+include the concurrent growing season, and browser-safe geographic aggregates
+are not exported.
+
+**Decision:** Tell Act IV from feature sources to model behavior to error mode to
+regime context. Treat CDL+NDVI and CDL+SMAP as alternative branches from CDL,
+compare the full model to CDL+NDVI, retain every SHAP row in a source family,
+and render only the four confusion classes present in the matrix. Do not add a
+prediction choropleth or call this a pre-plant forecast.
+
+**Reason:** This mirrors the experiment rather than manufacturing an additive
+feature story, a fifth class, geographic precision, or operational timing the
+artifacts do not support.
+
+**Impact:** The close names the 95.5% / 87.4% / 70.9% regime accuracies and their
+unequal denominators, while class balance, SHAP sample, SMAP 9 km resolution,
+the common ~557 m grid, and concurrent-season timing stay adjacent.

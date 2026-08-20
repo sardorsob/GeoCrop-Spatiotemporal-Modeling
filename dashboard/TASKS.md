@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 23 | 21 | 0 | 0 | 0 | 0 | 2 |
+| 23 | 22 | 0 | 0 | 0 | 0 | 1 |
 
 `TASK-015` through `TASK-022` are the approved Narrative Atlas v2 graph. They
 execute sequentially with one verified task commit at a time.
@@ -1320,7 +1320,7 @@ execute sequentially with one verified task commit at a time.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-021
-  - Integration status: pending
+  - Integration status: done
 - Design source:
   - `SCOPE.md` Act IV and prediction evidence contract
   - Task 4 ablation, SHAP, confusion, regime, split, and test artifacts
@@ -1356,19 +1356,21 @@ execute sequentially with one verified task commit at a time.
   - `src/features/prediction/prediction-copy.ts`
   - `src/features/prediction/__tests__/prediction-panel.test.tsx`
 - Acceptance criteria:
-  - [ ] Story connects source families to model behavior and the closing regime result.
-  - [ ] Ablation, SHAP, confusion, and regime values trace to Task 4 artifacts.
-  - [ ] Major corn/soy error and rotation-regime differences are directly annotated.
-  - [ ] No unsupported geographic prediction layer appears.
-  - [ ] Pre-plant, sample, and spatial-resolution caveats are visible.
-  - [ ] Focused tests, typecheck, and lint pass.
+  - [x] Story connects source families to model behavior and the closing regime result.
+  - [x] Ablation, SHAP, confusion, and regime values trace to Task 4 artifacts.
+  - [x] Major corn/soy error and rotation-regime differences are directly annotated.
+  - [x] No unsupported geographic prediction layer appears.
+  - [x] Pre-plant, sample, and spatial-resolution caveats are visible.
+  - [x] Focused tests, typecheck, and lint pass.
 - QA notes:
-  - Pending implementation and independent checker pass.
-- Attempts: 0
+  - Builder handoff 2026-08-19: Rebuilt Act IV as a source-to-conclusion evidence stack: a data-bearing CDL/NDVI/SMAP braid into LightGBM; configuration-stable ablation cards with source-derived percentage-point references; all SHAP source rows grouped without hiding unknown features; a four-class count-plus-row-share matrix with direct corn/soy cross-confusion annotations; and a denominator-aware 95.5% / 87.4% / 70.9% rotation-regime close. Concurrent-season, class-balanced test, 1,000-pixel SHAP, native-resolution/common-grid, and no-geographic-layer limitations remain visible.
+  - Checker pass 2026-08-19: TDD red failed 6 of 7 tests against v1; focused green passed 7 tests. Full suite passed 15 files / 65 tests, with typecheck, lint, workflow validation, and diff checks clean. Browser Use verified all four real ablations, 38 SHAP rows, a four-class matrix, and no desktop overflow; the 320px document width equals the viewport while the matrix alone owns an intentional internal scroller. Ponytail review: `Lean already. Ship.`
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-  - No attempts yet.
-- Status: pending
+  - 2026-08-19: Started from the dated Task 4 ablation, SHAP, test, split, and regime artifacts plus the paper's concurrent-season and resolution limitations. The conclusion will distinguish the alternative B/C ablations from the full model rather than treating their lifts as additive.
+  - 2026-08-19: Completed the source braid, incremental ablation, lossless SHAP family grouping, annotated confusion, regime conclusion, limitation ledger, mobile containment repair, and full checker pass without a new dependency or unsupported map.
+- Status: done
 
 ---
 
