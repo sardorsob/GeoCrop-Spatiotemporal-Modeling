@@ -41,7 +41,7 @@ v2 task graph is now executing sequentially with one task commit at a time.
 | HSGP season-window zoom | done | `TASK-012` adds local Full / Green-up / Peak / Senescence / custom DOY zoom controls to the Task 1 NDVI chart |
 | NAFSI paper reader | done | `TASK-013` replaces the old Prediction hero KPI with a `NAFSI 2025 winning paper` CTA, embedded PDF reader, and open/download actions |
 | Sprout favicon | done | `TASK-014` adds a public SVG favicon using the current top-bar plant mark |
-| Website redesign v2 | in progress | `TASK-015`–`TASK-016` establish the shared visual grammar and deterministic evidence contracts; the honest task-specific map begins in `TASK-017` |
+| Website redesign v2 | in progress | `TASK-015`–`TASK-017` establish the shared grammar, deterministic evidence contracts, and honest Task 2/3 evidence map; Act I HSGP work begins in `TASK-018` |
 
 ## Decisions
 
@@ -68,8 +68,8 @@ v2 task graph is now executing sequentially with one task commit at a time.
 ## Last Session
 
 - **Date:** 2026-08-19
-- **What was done:** Completed `TASK-016`: replaced repeated-DOY row order behavior with deterministic paper-faithful aggregation, preserved both posterior intervals, canonicalized the 13 study states and county GEOIDs, and added typed Task 2/3 map evidence selectors with source, rank, denominator, and matched event domains.
-- **What's next:** Execute `TASK-017` using these contracts to replace the hardcoded pseudo-data map with a focused, source-backed evidence map.
+- **What was done:** Completed `TASK-017`: removed the hardcoded fallback registry and Task 4 map claims, focused the Albers frame on 13 study states, added honest Task 2 state/county and Task 3 state fills, and implemented a source-visible evidence lens with pointer, keyboard, touch, Escape, reset, legend, and exact-value paths.
+- **What's next:** Execute `TASK-018` to rebuild Act I as the paper-faithful three-crop HSGP comparator.
 - **Blockers:** No implementation blocker. Content inconsistencies in rotation thresholds, challenge chronology, award wording, and the paper's repository link remain final-copy gates; the scope defines safe fallback wording and behavior.
 
 ## Environment

@@ -1,157 +1,118 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { geoPath } from "d3-geo";
-import { feature } from "topojson-client";
-import statesTopo from "us-atlas/states-albers-10m.json";
-import type { Feature, FeatureCollection, Geometry } from "geojson";
 
+import type { MapEvidenceValue } from "@/lib/data/selectors";
 import { cn } from "@/lib/utils";
 
-interface StateGeoProps {
-  readonly name: string;
-}
+import {
+  STUDY_VIEW_BOX,
+  getStudyCountyFeatures,
+  getStudyStateFeatures
+} from "./map-geometry";
 
-interface UsChoroplethProps {
-  readonly values: Readonly<Record<string, number | undefined>>;
-  readonly stateCodeByName?: Readonly<Record<string, string>>;
+export interface UsChoroplethProps {
+  readonly values: readonly MapEvidenceValue[];
+  readonly geographyKind: "state" | "county";
   readonly colorScale: (value: number | undefined) => string;
-  readonly selectedState?: string;
-  readonly onSelect?: (stateCode: string, stateName: string) => void;
-  readonly format?: (value: number) => string;
+  readonly selectedId?: string;
+  readonly previewId?: string;
+  readonly onPreview?: (geographyId: string, geographyName: string) => void;
+  readonly onPreviewEnd?: () => void;
+  readonly onPin?: (geographyId: string, geographyName: string) => void;
+  readonly formatValue: (value: number) => string;
   readonly className?: string;
 }
 
-const WIDTH = 975;
-const HEIGHT = 610;
-
-const STATE_NAME_TO_CODE: Readonly<Record<string, string>> = {
-  Alabama: "AL", Alaska: "AK", Arizona: "AZ", Arkansas: "AR", California: "CA",
-  Colorado: "CO", Connecticut: "CT", Delaware: "DE", "District of Columbia": "DC",
-  Florida: "FL", Georgia: "GA", Hawaii: "HI", Idaho: "ID", Illinois: "IL",
-  Indiana: "IN", Iowa: "IA", Kansas: "KS", Kentucky: "KY", Louisiana: "LA",
-  Maine: "ME", Maryland: "MD", Massachusetts: "MA", Michigan: "MI", Minnesota: "MN",
-  Mississippi: "MS", Missouri: "MO", Montana: "MT", Nebraska: "NE", Nevada: "NV",
-  "New Hampshire": "NH", "New Jersey": "NJ", "New Mexico": "NM", "New York": "NY",
-  "North Carolina": "NC", "North Dakota": "ND", Ohio: "OH", Oklahoma: "OK",
-  Oregon: "OR", Pennsylvania: "PA", "Rhode Island": "RI", "South Carolina": "SC",
-  "South Dakota": "SD", Tennessee: "TN", Texas: "TX", Utah: "UT", Vermont: "VT",
-  Virginia: "VA", Washington: "WA", "West Virginia": "WV", Wisconsin: "WI",
-  Wyoming: "WY"
-};
-
 export function UsChoropleth({
   values,
-  stateCodeByName = STATE_NAME_TO_CODE,
+  geographyKind,
   colorScale,
-  selectedState,
-  onSelect,
-  format = (v) => v.toFixed(2),
+  selectedId,
+  previewId,
+  onPreview,
+  onPreviewEnd,
+  onPin,
+  formatValue,
   className
 }: UsChoroplethProps) {
-  const [hovered, setHovered] = useState<{ name: string; code: string; value?: number; x: number; y: number } | null>(null);
-
-  const features = useMemo(() => {
-    const collection = feature(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      statesTopo as any,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (statesTopo as any).objects.states
-    ) as unknown as FeatureCollection<Geometry, StateGeoProps>;
-    return collection.features;
-  }, []);
-
-  const pathGen = useMemo(() => geoPath(), []);
+  const path = useMemo(() => geoPath(), []);
+  const features =
+    geographyKind === "state" ? getStudyStateFeatures() : getStudyCountyFeatures();
+  const valuesById = useMemo(
+    () => new Map(values.map((value) => [value.geographyId, value])),
+    [values]
+  );
 
   return (
-    <div className={cn("relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50 to-white", className)}>
-      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="h-auto w-full" aria-label="US states choropleth map">
-        <defs>
-          <filter id="state-shadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000" floodOpacity="0.18" />
-          </filter>
-        </defs>
-        <g>
-          {features.map((f) => {
-            const name = f.properties?.name ?? "";
-            const code = stateCodeByName[name] ?? "";
-            const value = code ? values[code] : undefined;
-            const fill = colorScale(value);
-            const isSelected = selectedState === code;
-            const isHovered = hovered?.code === code;
-            const d = pathGen(f as Feature<Geometry, StateGeoProps>) ?? "";
+    <div className={cn("relative min-w-0 overflow-hidden rounded-2xl bg-field/45", className)}>
+      <svg
+        aria-label={`Corn Belt ${geographyKind} choropleth`}
+        className="block h-auto min-h-72 w-full"
+        preserveAspectRatio="xMidYMid meet"
+        role="group"
+        viewBox={`${STUDY_VIEW_BOX.x} ${STUDY_VIEW_BOX.y} ${STUDY_VIEW_BOX.width} ${STUDY_VIEW_BOX.height}`}
+      >
+        {features.map((mapFeature) => {
+          const { geographyId, name } = mapFeature.properties;
+          const evidence = valuesById.get(geographyId);
+          const isSelected = selectedId === geographyId;
+          const isPreviewed = previewId === geographyId;
+          const isInteractive = geographyKind === "state" || evidence !== undefined;
+          const featureName = evidence?.geographyName ?? name;
 
-            return (
-              <path
-                key={(f.id as string) ?? name}
-                d={d}
-                fill={fill}
-                stroke={isSelected ? "#0f172a" : "#ffffff"}
-                strokeWidth={isSelected ? 2 : 1}
-                role={code ? "button" : undefined}
-                aria-label={code ? `Select ${name}` : undefined}
-                tabIndex={code ? 0 : undefined}
-                style={{
-                  cursor: code ? "pointer" : "default",
-                  transition: "filter 0.15s ease, stroke 0.15s ease",
-                  filter: isSelected || isHovered ? "url(#state-shadow)" : undefined,
-                  opacity: hovered && !isHovered && !isSelected ? 0.85 : 1,
-                  outline: "none"
-                }}
-                onClick={() => code && onSelect?.(code, name)}
-                onKeyDown={(e) => {
-                  if (code && (e.key === "Enter" || e.key === " ")) {
-                    e.preventDefault();
-                    onSelect?.(code, name);
-                  }
-                }}
-                onMouseMove={(e) => {
-                  const rect = e.currentTarget.ownerSVGElement?.getBoundingClientRect();
-                  if (!rect) return;
-                  setHovered({ name, code, value, x: e.clientX - rect.left, y: e.clientY - rect.top });
-                }}
-                onMouseLeave={() => setHovered(null)}
-              />
-            );
-          })}
-        </g>
-        {features.map((f) => {
-          const name = f.properties?.name ?? "";
-          const code = stateCodeByName[name] ?? "";
-          if (!code) return null;
-          const centroid = pathGen.centroid(f as Feature<Geometry, StateGeoProps>);
-          if (!centroid || Number.isNaN(centroid[0])) return null;
-          const isSelected = selectedState === code;
           return (
-            <text
-              key={`label-${code}`}
-              x={centroid[0]}
-              y={centroid[1]}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className={cn(
-                "pointer-events-none select-none font-semibold",
-                isSelected ? "fill-slate-950" : "fill-slate-700"
-              )}
-              style={{ fontSize: 11, paintOrder: "stroke", stroke: "#ffffff", strokeWidth: 2.5, strokeLinejoin: "round" }}
+            <path
+              aria-label={isInteractive ? `Select ${featureName}` : undefined}
+              d={path(mapFeature) ?? ""}
+              data-geography-id={geographyId}
+              fill={colorScale(evidence?.value)}
+              key={geographyId}
+              onBlur={onPreviewEnd}
+              onClick={() => isInteractive && onPin?.(geographyId, featureName)}
+              onFocus={() => isInteractive && onPreview?.(geographyId, featureName)}
+              onKeyDown={(event) => {
+                if (isInteractive && (event.key === "Enter" || event.key === " ")) {
+                  event.preventDefault();
+                  onPin?.(geographyId, featureName);
+                }
+              }}
+              onMouseEnter={() => isInteractive && onPreview?.(geographyId, featureName)}
+              onMouseLeave={onPreviewEnd}
+              role={isInteractive ? "button" : undefined}
+              stroke={isSelected || isPreviewed ? "#d97722" : "#fffdf7"}
+              strokeWidth={isSelected ? 3 : isPreviewed ? 2.2 : geographyKind === "state" ? 1.2 : 0.35}
+              tabIndex={isInteractive && (geographyKind === "state" || evidence) ? 0 : undefined}
             >
-              {code}
-            </text>
+              {evidence ? <title>{`${featureName}: ${formatValue(evidence.value)}`}</title> : null}
+            </path>
           );
         })}
-      </svg>
 
-      {hovered && (
-        <div
-          className="pointer-events-none absolute z-10 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-lg"
-          style={{ left: hovered.x + 12, top: hovered.y + 12 }}
-        >
-          <p className="font-semibold text-slate-900">{hovered.name}</p>
-          <p className="mt-0.5 text-slate-500">
-            {hovered.value !== undefined ? format(hovered.value) : "No data"}
-          </p>
-        </div>
-      )}
+        {geographyKind === "state"
+          ? features.map((mapFeature) => {
+              const centroid = path.centroid(mapFeature);
+              const { geographyId, stateCode } = mapFeature.properties;
+
+              return (
+                <text
+                  aria-hidden="true"
+                  className="pointer-events-none fill-ink font-sans text-[11px] font-bold"
+                  key={`label-${geographyId}`}
+                  paintOrder="stroke"
+                  stroke="#fffdf7"
+                  strokeWidth={2.5}
+                  textAnchor="middle"
+                  x={centroid[0]}
+                  y={centroid[1]}
+                >
+                  {stateCode}
+                </text>
+              );
+            })
+          : null}
+      </svg>
     </div>
   );
 }

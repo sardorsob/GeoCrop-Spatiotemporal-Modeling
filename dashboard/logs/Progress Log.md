@@ -4,6 +4,51 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-08-19 — TASK-017 honest Task 2/3 evidence map
+
+**Work performed:**
+
+- Replaced the ten-state hardcoded category registry with source-backed numeric
+  Task 2 and Task 3 evidence.
+- Cropped the installed Albers atlas geometry to all 13 canonical study states
+  and added Task 2 county geometry joined by five-digit GEOID.
+- Added a sequential regular-share ramp, one fixed crop-specific diverging
+  event domain centered on zero, and a separate neutral no-data fill.
+- Added a bounded evidence lens with value, unit, rank, denominator, artifact
+  path/date, and caveat, plus a complete legend and exact-value list.
+- Unified hover/focus preview and click/Enter/Space/tap pin behavior; Escape and
+  the visible reset clear the same state.
+- Removed Task 4 map offerings and visibly normalizes unsupported legacy layer
+  IDs to the measured Task 2 regular-share layer.
+
+**Verification:**
+
+- TDD red: focused tests failed against the v1 nationwide pseudo-data map and
+  missing study geometry/lens modules.
+- Focused green: 2 files and 8 tests passed.
+- Checker full suite: 15 files and 57 tests passed.
+- `npm run typecheck`, `npm run lint`, and `git diff --check` passed.
+- Cartographic checks covered rate normalization, projection/extent, fixed
+  comparable anomaly endpoints, neutral no-data, 13 state identities, and
+  county GEOID integrity.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- County detail remains an aggregate polygon view and explicitly rejects
+  pixel/field precision.
+- The app-level data wiring and final mobile/browser visual smoke remain owned
+  by `TASK-022`; this task verified the shared map component directly.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- GeoAI cartography/geovisualization and web geospatial specialist guidance
+
+---
+
 ## 2026-08-19 — TASK-016 scientific evidence contracts
 
 **Work performed:**

@@ -16,6 +16,26 @@ TBD
 
 ---
 
+## Honest Shared-Domain Evidence Maps
+
+**Use when:** Two task views map normalized regional values and must remain
+comparable across events or geographic grains.
+
+**Rule:** Feed polygon fills only from typed numeric selectors, keep no-data
+outside the ramp, use an area-appropriate projection, and expose the exact
+value/denominator/source beside the map. For paired diverging maps, derive one
+domain across both panels and center it on the meaningful zero.
+
+**Example:**
+
+```text
+Task 2 maps percent regular with a sequential ramp at state or county grain;
+Task 3 maps state mean z-score for flood or drought using the same crop-specific
+[-maxAbs, +maxAbs] domain. Undefined rows render neutral gray, never the low bin.
+```
+
+---
+
 ## Aggregate At The Evidence Grain Before Rendering
 
 **Use when:** Exported chart rows contain repeated display keys because time,

@@ -1,137 +1,154 @@
 import { sourceNotesById } from "@/lib/data/source-notes";
 import type {
   ArtifactSourceId,
-  MapLayer,
+  DashboardTaskId,
   MapLayerId,
   SourceNote
 } from "@/lib/data/types";
 
-export type CornBeltMapLayerGroup = "Rotation" | "Extremes" | "Prediction";
+export type EvidenceMapLayerId =
+  | "rotation-regular-probability"
+  | "soil-moisture-anomaly";
 
-export interface CornBeltMapLayer extends MapLayer {
+export interface EvidenceMapLayer {
+  readonly id: EvidenceMapLayerId;
+  readonly taskId: Extract<DashboardTaskId, "task2" | "task3">;
+  readonly label: string;
+  readonly metricLabel: string;
   readonly description: string;
-  readonly fallbackReason: string;
-  readonly group: CornBeltMapLayerGroup;
+  readonly unit: "%" | "z-score";
+  readonly colorMode: "sequential" | "diverging";
+  readonly sourceIds: readonly ArtifactSourceId[];
   readonly sourceNotes: readonly SourceNote[];
+  readonly caveat: string;
 }
 
-const fallbackReason =
-  "No browser-ready GeoJSON/TopoJSON is available; this layer uses a code-native Corn Belt schematic backed by exported task artifacts.";
+export const NO_DATA_COLOR = "#ded8cb";
 
-export const CORN_BELT_MAP_LAYERS = [
-  defineLayer({
-    id: "rotation-class",
-    taskId: "task2",
-    label: "Rotation class",
-    group: "Rotation",
-    description:
-      "Dominant rotation class from Task 2 areal summaries, shown as a schematic fallback.",
-    sourceIds: [
-      "task2-areal-stats-by-class",
-      "task2-areal-stats-by-county",
-      "task2-areal-stats-by-region"
-    ],
-    legend: [
-      { id: "regular", label: "Regular", color: "#047857" },
-      { id: "monoculture", label: "Monoculture", color: "#d97706" },
-      { id: "irregular", label: "Irregular", color: "#be123c" }
-    ],
-    caveat:
-      "Rotation colors summarize exported class percentages; the map is not pixel-precise."
-  }),
+export const EVIDENCE_MAP_LAYERS = [
   defineLayer({
     id: "rotation-regular-probability",
     taskId: "task2",
-    label: "Regular rotation probability",
-    group: "Rotation",
+    label: "Regular rotation share",
+    metricLabel: "Regular rotation share",
     description:
-      "Regular rotation share from Task 2 geography summaries, grouped into broad bins.",
+      "Measured share of valid classified cropland pixels assigned to the regular rotation class.",
+    unit: "%",
+    colorMode: "sequential",
     sourceIds: [
-      "task2-areal-stats-by-county",
-      "task2-areal-stats-by-region"
-    ],
-    legend: [
-      { id: "high", label: "High regular share", color: "#065f46" },
-      { id: "moderate", label: "Moderate regular share", color: "#16a34a" },
-      { id: "low", label: "Low regular share", color: "#f59e0b" }
+      "task2-areal-stats-by-region",
+      "task2-areal-stats-by-county"
     ],
     caveat:
-      "Regular rotation probability is represented with broad fallback classes until map geometry is available."
+      "State and county fills are aggregate shares from dated Task 2 tables, not pixel- or field-level classifications."
   }),
   defineLayer({
     id: "soil-moisture-anomaly",
     taskId: "task3",
-    label: "Soil moisture anomaly",
-    group: "Extremes",
+    label: "Mean soil-moisture anomaly",
+    metricLabel: "Mean standardized anomaly",
     description:
-      "Task 3 flood and drought anomaly statuses summarized by state and crop.",
+      "State × crop mean z-score for the selected extreme-event window.",
+    unit: "z-score",
+    colorMode: "diverging",
     sourceIds: [
       "task3-midwest-flood-2019-anomaly-stats",
       "task3-plains-drought-2022-anomaly-stats"
     ],
-    legend: [
-      { id: "flood", label: "Flood anomaly watch", color: "#0284c7" },
-      { id: "drought", label: "Drought anomaly watch", color: "#b45309" },
-      { id: "mixed", label: "Mixed anomaly signal", color: "#7c3aed" },
-      { id: "stable", label: "Lower anomaly signal", color: "#475569" }
-    ],
     caveat:
-      "Extreme-event values are state and crop summaries, not a continuous soil-moisture raster."
-  }),
-  defineLayer({
-    id: "crop-prediction",
-    taskId: "task4",
-    label: "Crop prediction",
-    group: "Prediction",
-    description:
-      "Prediction class emphasis from Task 4 split and held-out metric summaries.",
-    sourceIds: ["task4-split-summary", "task4-test-metrics"],
-    legend: [
-      { id: "corn", label: "Corn", color: "#ca8a04" },
-      { id: "soybean", label: "Soybean", color: "#16a34a" },
-      { id: "winter-wheat", label: "Winter wheat", color: "#2563eb" },
-      { id: "other", label: "Other cropland", color: "#64748b" }
-    ],
-    caveat:
-      "Prediction labels indicate aggregate model context; this fallback is not an inference tile grid."
-  }),
-  defineLayer({
-    id: "prediction-agreement",
-    taskId: "task4",
-    label: "Prediction agreement",
-    group: "Prediction",
-    description:
-      "Agreement status from Task 4 held-out metrics and regime-stratified summaries.",
-    sourceIds: ["task4-test-metrics", "task4-regime-stratified-metrics"],
-    legend: [
-      { id: "agreement", label: "Agreement", color: "#059669" },
-      { id: "review", label: "Review", color: "#d97706" },
-      { id: "disagreement", label: "Disagreement risk", color: "#dc2626" }
-    ],
-    caveat:
-      "Agreement status is an interpretive dashboard layer derived from aggregate prediction artifacts."
+      "Task 3 is shown only at state grain; positive and negative values use one crop-specific scale centered on zero."
   })
-] as const satisfies readonly CornBeltMapLayer[];
+] as const satisfies readonly EvidenceMapLayer[];
 
 const layersById = Object.fromEntries(
-  CORN_BELT_MAP_LAYERS.map((layer) => [layer.id, layer])
-) as Readonly<Record<MapLayerId, CornBeltMapLayer>>;
+  EVIDENCE_MAP_LAYERS.map((layer) => [layer.id, layer])
+) as Readonly<Record<EvidenceMapLayerId, EvidenceMapLayer>>;
 
-export function getCornBeltMapLayer(layerId: MapLayerId): CornBeltMapLayer {
-  return layersById[layerId];
+export function normalizeEvidenceMapLayerId(layerId: MapLayerId): EvidenceMapLayerId {
+  return layerId === "soil-moisture-anomaly"
+    ? "soil-moisture-anomaly"
+    : "rotation-regular-probability";
+}
+
+export function getEvidenceMapLayer(layerId: MapLayerId): EvidenceMapLayer {
+  return layersById[normalizeEvidenceMapLayerId(layerId)];
+}
+
+export function getEvidenceFill(
+  layer: EvidenceMapLayer,
+  value: number | undefined,
+  domain: readonly [number, number]
+): string {
+  if (value === undefined) {
+    return NO_DATA_COLOR;
+  }
+
+  if (layer.colorMode === "sequential") {
+    const span = Math.max(domain[1] - domain[0], Number.EPSILON);
+    const t = clamp((value - domain[0]) / span);
+    return mixHex("#edf1e3", "#2f6f4e", t);
+  }
+
+  if (value < 0) {
+    return mixHex("#f4f0e6", "#b85f35", clamp(value / domain[0]));
+  }
+
+  return mixHex("#f4f0e6", "#24789a", clamp(value / domain[1]));
+}
+
+export function getEvidenceGradient(layer: EvidenceMapLayer): string {
+  return layer.colorMode === "sequential"
+    ? "linear-gradient(90deg, #edf1e3 0%, #8eaa78 52%, #2f6f4e 100%)"
+    : "linear-gradient(90deg, #b85f35 0%, #f4f0e6 50%, #24789a 100%)";
+}
+
+export function formatEvidenceValue(value: number, unit: EvidenceMapLayer["unit"]): string {
+  return unit === "%" ? `${value.toFixed(2)}%` : `${formatSigned(value)} z`;
+}
+
+export function formatLegendValue(value: number, unit: EvidenceMapLayer["unit"]): string {
+  if (unit === "%") {
+    return `${value.toFixed(2)}%`;
+  }
+
+  return formatSigned(value);
 }
 
 function defineLayer(
-  layer: Omit<CornBeltMapLayer, "fallbackReason" | "sourceNotes" | "status">
-): CornBeltMapLayer {
+  layer: Omit<EvidenceMapLayer, "sourceNotes">
+): EvidenceMapLayer {
   return {
     ...layer,
-    fallbackReason,
-    sourceNotes: layer.sourceIds.map(getSourceNote),
-    status: "fallback-only"
+    sourceNotes: layer.sourceIds.map((sourceId) => sourceNotesById[sourceId])
   };
 }
 
-function getSourceNote(sourceId: ArtifactSourceId): SourceNote {
-  return sourceNotesById[sourceId];
+function formatSigned(value: number): string {
+  if (value === 0) {
+    return "0";
+  }
+
+  return `${value < 0 ? "−" : "+"}${Math.abs(value).toFixed(2)}`;
+}
+
+function clamp(value: number): number {
+  return Math.max(0, Math.min(1, value));
+}
+
+function mixHex(start: string, end: string, t: number): string {
+  const startRgb = hexToRgb(start);
+  const endRgb = hexToRgb(end);
+  const mixed = startRgb.map((channel, index) =>
+    Math.round(channel + (endRgb[index] - channel) * t)
+  );
+
+  return `#${mixed.map((channel) => channel.toString(16).padStart(2, "0")).join("")}`;
+}
+
+function hexToRgb(value: string): readonly [number, number, number] {
+  return [
+    Number.parseInt(value.slice(1, 3), 16),
+    Number.parseInt(value.slice(3, 5), 16),
+    Number.parseInt(value.slice(5, 7), 16)
+  ];
 }

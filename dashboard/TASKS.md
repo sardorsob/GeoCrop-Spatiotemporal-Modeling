@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 23 | 17 | 0 | 0 | 0 | 0 | 6 |
+| 23 | 18 | 0 | 0 | 0 | 0 | 5 |
 
 `TASK-015` through `TASK-022` are the pending Narrative Atlas v2 graph. They may
 not move to `in-progress` until the user has reviewed the mockup/spec package.
@@ -1105,20 +1105,22 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - `src/features/map/map-layers.ts`
   - `src/features/map/map-selection.ts`
 - Acceptance criteria:
-  - [ ] Every mapped fill comes from a numeric Task 2 or Task 3 source field.
-  - [ ] The main frame focuses on all 13 study states.
-  - [ ] County detail exists only for Task 2 and never implies pixel/field precision.
-  - [ ] Preview, pin, keyboard, touch, Escape, and reset paths are equivalent.
-  - [ ] Evidence lens and complete legend remain source- and caveat-visible.
-  - [ ] Unsupported prediction/agreement layers are removed with a safe legacy-state fallback.
-  - [ ] Focused tests, typecheck, and lint pass.
+  - [x] Every mapped fill comes from a numeric Task 2 or Task 3 source field.
+  - [x] The main frame focuses on all 13 study states.
+  - [x] County detail exists only for Task 2 and never implies pixel/field precision.
+  - [x] Preview, pin, keyboard, touch, Escape, and reset paths are equivalent.
+  - [x] Evidence lens and complete legend remain source- and caveat-visible.
+  - [x] Unsupported prediction/agreement layers are removed with a safe legacy-state fallback.
+  - [x] Focused tests, typecheck, and lint pass.
 - QA notes:
-  - Pending implementation and independent checker pass.
-- Attempts: 0
+  - TDD red 2026-08-19: New geometry and evidence-map tests failed because the focused study geometry, numeric map contracts, evidence lens, county grain, and supported-layer registry did not exist; the v1 component still exposed nationwide hardcoded categories.
+  - Builder green 2026-08-19: Added 13-state/county Albers geometry, sequential normalized-percent and fixed zero-centered anomaly ramps, neutral no-data, exact-value alternatives, Task 2-only county grain, a bounded evidence lens, and equivalent hover/focus/click/Enter/Space/tap/Escape/reset paths. Unsupported legacy layers normalize visibly to regular rotation share.
+  - Checker pass 2026-08-19: Cartographic review verified normalized rates, a shared anomaly domain, Albers area treatment, stable color endpoints, distinct no-data, 13 canonical state features, and five-digit county joins. Ponytail review found no new dependency or removable speculative layer (`Lean already. Ship.`). Focused tests passed 2 files/8 tests, full tests passed 15 files/57 tests, and typecheck, lint, and `git diff --check` passed.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-  - No attempts yet.
-- Status: pending
+  - 2026-08-19: Started with a cartographic source/method review: normalized percent choropleth for Task 2, fixed zero-centered z-score scale for Task 3, Albers study extent, and neutral no-data treatment.
+- Status: done
 
 ---
 
