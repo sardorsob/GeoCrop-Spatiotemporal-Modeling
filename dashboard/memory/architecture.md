@@ -31,9 +31,9 @@
 - `src/components/map/__tests__/MapPanel.test.tsx` verifies the shipped map card's legend/source context, state selection callback payload, and map-layer metadata coverage.
 - `src/features/map/map-layers.ts` defines map layer metadata, legends, source labels, and caveats for rotation, extremes, prediction, and agreement views.
 - `src/features/map/map-selection.ts` defines schematic fallback geographies and selected-map context records for downstream panels.
-- `src/features/phenology/PhenologyPanel.tsx` composes the phenology tab from a `PanelHeader` Card, the metrics card, the NDVI curve, and a gradient source-notes card. The crop control is a styled native `<select>` so the existing `getByLabelText("Crop")` test keeps passing.
-- `src/features/phenology/NdviCurveChart.tsx` renders the Recharts `ComposedChart` (Area band for the credible interval, posterior `Line`, dashed empirical `Line`) with a static `LegendDot` row, a hover tooltip, and peak summary tiles. The chart container carries `role="img"` with `aria-label="${cropLabel} NDVI phenology curve"` for the test.
-- `src/features/phenology/PhenologyMetrics.tsx` renders tone-coded metric tiles (emerald RMSE/MAE, sky Coverage, violet CRPS) and an observation count.
+- `src/features/phenology/PhenologyPanel.tsx` composes Task 1 as one corn/soybean/winter-wheat comparator. Story always shows all three crops; Explore keeps all three while adding a crop emphasis and one compact shared season-window disclosure. The panel owns source/caveat and named fallback states.
+- `src/features/phenology/NdviCurveChart.tsx` renders each comparator row with a shared focused 0.50–1.00 NDVI domain, month context, posterior 5–95% and 25–75% areas, posterior mean, empirical Q25/Q75 lines, direct modeled peak, and paper-authored crop-stage chips. A safe initial Recharts dimension prevents negative-width SSR/container warnings.
+- `src/features/phenology/PhenologyMetrics.tsx` renders the three paper crops in one responsive semantic fit table, keeping RMSE and 90% coverage visible at narrow widths while progressively revealing supporting metrics.
 - `src/features/prediction/PredictionPanel.tsx` composes the prediction diagnostics tab from headline metrics, ablation, SHAP, regime metrics, and confusion matrix views.
 - `src/features/prediction/AblationChart.tsx`, `ShapFeatureChart.tsx`, `RegimeMetricsChart.tsx`, and `ConfusionMatrix.tsx` render Task 4 diagnostic evidence with visible source/caveat context.
 - `src/features/rotation/RotationPanel.tsx` composes the rotation tab from class summaries, geographic ranking, Markov/threshold caveats, selection status, and source notes.
@@ -57,7 +57,7 @@
 - TASK-004 adds URL-backed dashboard state helpers. Defaults are omitted from serialized URLs, invalid params produce warning objects, and incoming state is normalized before use.
 - TASK-005, TASK-006, and TASK-009 consume normalized source contracts through component props; they do not load filesystem artifacts directly.
 - Map selections are represented as typed context records so later integration can synchronize selected geography, map layer, and panel evidence through URL-backed state.
-- Phenology and prediction visual components keep essential values, source paths, and caveats visible without hover.
+- Phenology and prediction visual components keep essential values, source paths, and caveats visible without hover. Task 1 applies one shared season window and NDVI domain to all three crop rows so Explore never destroys comparison context.
 - Rotation and extremes visual components receive normalized Task 2/3 data via props and expose URL-state-compatible selection/filter props for TASK-010 integration.
 - Rotation consumes `selectedEntity` or `selectedGeographyId`; extremes consumes `selectedEvent`, `selectedCrop`, and `selectedState` plus matching callbacks.
 - TASK-010 wires the server/client boundary: filesystem artifact loading remains in the server page, while URL search params and map/filter interactions live in the client shell.
@@ -80,4 +80,4 @@
 - `npm audit --audit-level=high` reports no high/critical advisories, but npm install/audit reports two moderate advisories in Next/PostCSS with only breaking `npm audit fix --force` remediation suggested. `TASK-011` dependencies did not introduce new high/critical advisories.
 - The Corn Belt map is now a real U.S. Albers choropleth (`d3-geo` + `us-atlas/states-albers-10m.json`), but it uses categorical-index coloring derived from the Corn Belt fallback geography registry. States outside the fallback registry render as no-data. It is not pixel/raster geometry.
 - The integration test relies on the shell using a controlled button tablist rather than Radix `<Tabs>` (under React 19 + JSDOM, `fireEvent.click` on a Radix `TabsTrigger` did not reliably propagate the controlled-state change during the redesign).
-- In-app browser visual smoke is currently blocked in this environment by the browser runtime Windows sandbox setup error, and the Chrome MCP extension was unreachable in the last session. Use HTTP smoke plus automated tests until the runtime is available or Playwright is added.
+- Browser Use can inspect the local app when Next development runs with webpack in the isolated worktree; Turbopack rejects the worktree's external `node_modules` symlink. TASK-018 verified desktop and 320px mobile rendering through that path.

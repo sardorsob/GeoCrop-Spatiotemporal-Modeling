@@ -9,10 +9,10 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 23 | 18 | 0 | 0 | 0 | 0 | 5 |
+| 23 | 19 | 0 | 0 | 0 | 0 | 4 |
 
-`TASK-015` through `TASK-022` are the pending Narrative Atlas v2 graph. They may
-not move to `in-progress` until the user has reviewed the mockup/spec package.
+`TASK-015` through `TASK-022` are the approved Narrative Atlas v2 graph. They
+execute sequentially with one verified task commit at a time.
 
 ---
 
@@ -1133,7 +1133,7 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-018
-  - Integration status: pending
+  - Integration status: done
 - Design source:
   - `SCOPE.md` Act I and phenology evidence contract
   - `../artifacts/figures/task1/hsgp_phenology_crops.png`
@@ -1169,22 +1169,23 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - `src/features/phenology/__tests__/phenology-panel.test.tsx`
   - `src/features/phenology/__tests__/season-window.test.ts`
 - Acceptance criteria:
-  - [ ] Story displays three aligned crop plots with paper-faithful uncertainty semantics.
-  - [ ] Direct labels, seasonal context, stage windows, and peak annotations carry the main reading.
-  - [ ] A focused y-domain is explicitly labeled and includes a visible
+  - [x] Story displays three aligned crop plots with paper-faithful uncertainty semantics.
+  - [x] Direct labels, seasonal context, stage windows, and peak annotations carry the main reading.
+  - [x] A focused y-domain is explicitly labeled and includes a visible
     truncation/range note so the chart cannot be mistaken for a zero-based NDVI
     scale.
-  - [ ] The large default brush is removed and advanced controls live in Explore.
-  - [ ] Mobile stacks crops without horizontal overflow or clipped essential labels.
-  - [ ] Empty, source, and caveat states remain explicit.
-  - [ ] Focused tests, typecheck, and lint pass.
+  - [x] The large default brush is removed and advanced controls live in Explore.
+  - [x] Mobile stacks crops without horizontal overflow or clipped essential labels.
+  - [x] Empty, source, and caveat states remain explicit.
+  - [x] Focused tests, typecheck, and lint pass.
 - QA notes:
-  - Pending implementation and independent checker pass.
-- Attempts: 0
+  - Approved after a paper-semantics review, focused and full automated checks, desktop/mobile browser inspection, diff hygiene, and Ponytail simplification review (`Lean already. Ship.`).
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-  - No attempts yet.
-- Status: pending
+  - 2026-08-19: Started with the paper notebook as the figure contract: three aligned crops, nested posterior intervals, empirical spatial IQR, paper-authored growth stages, and a shared explicit focused NDVI domain.
+  - 2026-08-19: Completed the shared comparator, removed brush-specific code, added compact Explore controls, and verified 320px wrapping with no document overflow. Focused 2-file/9-test and full 15-file/57-test suites passed with typecheck and lint.
+- Status: done
 
 ---
 

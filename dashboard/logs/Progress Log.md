@@ -4,6 +4,53 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-08-19 — TASK-018 paper-faithful HSGP comparator
+
+**Work performed:**
+
+- Replaced the single selected-crop chart with vertically aligned corn,
+  soybean, and winter-wheat rows in Story.
+- Matched the paper notebook's figure semantics: posterior 5–95% and 25–75%
+  fills, posterior mean, empirical spatial Q25/Q75 boundaries, crop colors, and
+  crop-specific growth-stage windows.
+- Added direct modeled peak timing/value, month context, and an explicit note
+  that the shared 0.50–1.00 NDVI axis is focused rather than zero-based.
+- Replaced the permanent chart brush with one shared compact Explore disclosure;
+  crop focus never removes the other two comparison rows.
+- Reframed model metrics as a responsive three-crop table and retained named
+  empty, fallback-figure, source, denominator, and caveat paths.
+- Added a safe initial Recharts dimension for SSR/container startup and removed
+  obsolete brush-index code.
+
+**Verification:**
+
+- TDD red: 4 of 5 comparator tests failed against v1's single-crop chart; the
+  season helper test passed independently.
+- Focused green: 2 files and 9 tests passed.
+- Checker full suite: 15 files and 57 tests passed.
+- `npm run typecheck`, `npm run lint`, and `git diff --check` passed.
+- Browser Use confirmed nested uncertainty and stage readability at 800px and
+  320px; the 320px document width equaled the viewport with no horizontal
+  overflow.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- Final Story/Explore route wiring and whole-app mobile smoke remain owned by
+  `TASK-022`; this task verified both modes directly at component level.
+- No dependency, generated image, animation system, raw-observation layer, or
+  separate per-crop controller was added.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- Statistical uncertainty and missingness visualization guidance
+- Browser Use desktop/mobile visual inspection
+
+---
+
 ## 2026-08-19 — TASK-017 honest Task 2/3 evidence map
 
 **Work performed:**

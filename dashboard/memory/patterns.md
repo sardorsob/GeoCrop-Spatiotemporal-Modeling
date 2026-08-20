@@ -16,6 +16,28 @@ TBD
 
 ---
 
+## Aligned Uncertainty Small Multiples
+
+**Use when:** Several related model series must be compared by shape, timing,
+and uncertainty rather than inspected one at a time.
+
+**Rule:** Keep every subject visible on one shared axis grammar; render the
+widest posterior interval first, the IQR above it, and the mean above both.
+Use empirical quartile boundaries as lines so observational spread cannot be
+mistaken for posterior uncertainty. Put peak values, scale truncation, and
+domain-specific stages in the reading path, and apply one shared Explore window
+to every panel.
+
+**Example:**
+
+```text
+Task 1 stacks corn, soybean, and winter wheat on the same 0.50–1.00 NDVI range.
+Each row shows posterior 5–95%, posterior 25–75%, posterior mean, empirical
+Q25/Q75, the modeled peak, and the paper notebook's crop-stage windows.
+```
+
+---
+
 ## Honest Shared-Domain Evidence Maps
 
 **Use when:** Two task views map normalized regional values and must remain

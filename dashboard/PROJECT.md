@@ -41,7 +41,8 @@ v2 task graph is now executing sequentially with one task commit at a time.
 | HSGP season-window zoom | done | `TASK-012` adds local Full / Green-up / Peak / Senescence / custom DOY zoom controls to the Task 1 NDVI chart |
 | NAFSI paper reader | done | `TASK-013` replaces the old Prediction hero KPI with a `NAFSI 2025 winning paper` CTA, embedded PDF reader, and open/download actions |
 | Sprout favicon | done | `TASK-014` adds a public SVG favicon using the current top-bar plant mark |
-| Website redesign v2 | in progress | `TASK-015`–`TASK-017` establish the shared grammar, deterministic evidence contracts, and honest Task 2/3 evidence map; Act I HSGP work begins in `TASK-018` |
+| Website redesign v2 | in progress | `TASK-015`–`TASK-018` establish the shared grammar, deterministic evidence contracts, honest Task 2/3 map, and paper-faithful three-crop HSGP comparator; Act II begins in `TASK-019` |
+| Act I HSGP comparator | done | Story aligns corn, soybean, and winter wheat with nested posterior intervals, empirical spatial IQR, paper growth stages, direct peaks, and an explicit focused NDVI scale; Explore adds one shared compact season window |
 
 ## Decisions
 
@@ -64,12 +65,13 @@ v2 task graph is now executing sequentially with one task commit at a time.
 - 2026-08-19: Use Narrative Atlas as the v2 product structure, with a Chaptered Evidence Canvas in Story and a sibling Evidence Lab in Explore. “Atlas” describes a collection of evidence plates; maps lead only rotation and extremes.
 - 2026-08-19: Share task-specific figure components and selectors between Story and Explore. Keep the current stack and add no dependency unless an implementation task proves a concrete gap.
 - 2026-08-19: Preserve `TASK-000`–`TASK-014` as v1 history and append eight pending v2 tasks (`TASK-015`–`TASK-022`). No v2 task may start before mockup/spec review.
+- 2026-08-19: Keep the Task 1 story as one three-row comparator on a shared 0.50–1.00 NDVI scale. Encode the paper's posterior IQR, 90% interval, empirical Q25/Q75, and crop-specific stages directly; reserve shared season-window controls for Explore.
 
 ## Last Session
 
 - **Date:** 2026-08-19
-- **What was done:** Completed `TASK-017`: removed the hardcoded fallback registry and Task 4 map claims, focused the Albers frame on 13 study states, added honest Task 2 state/county and Task 3 state fills, and implemented a source-visible evidence lens with pointer, keyboard, touch, Escape, reset, legend, and exact-value paths.
-- **What's next:** Execute `TASK-018` to rebuild Act I as the paper-faithful three-crop HSGP comparator.
+- **What was done:** Completed `TASK-018`: rebuilt Task 1 as an aligned corn/soybean/winter-wheat comparator with nested paper-faithful uncertainty, empirical spatial quartiles, direct peaks, crop stages, a visibly truncated shared scale, and compact shared Explore controls. Desktop and 320px browser checks passed without horizontal overflow.
+- **What's next:** Execute `TASK-019` to build the rotation-memory explanation and measured geography chapter.
 - **Blockers:** No implementation blocker. Content inconsistencies in rotation thresholds, challenge chronology, award wording, and the paper's repository link remain final-copy gates; the scope defines safe fallback wording and behavior.
 
 ## Environment
