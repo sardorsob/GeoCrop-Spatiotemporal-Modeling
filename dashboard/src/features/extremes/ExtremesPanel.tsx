@@ -5,6 +5,7 @@ import type {
   ExtremeEventId
 } from "@/lib/data/types";
 import { CROP_OPTIONS } from "@/lib/state/dashboard-state";
+import { cn } from "@/lib/utils";
 
 import { AnomalySummaryChart } from "./AnomalySummaryChart";
 import { AnomalyTable } from "./AnomalyTable";
@@ -25,9 +26,6 @@ export interface ExtremesPanelProps {
   readonly onCropChange?: (crop: CropId | undefined) => void;
   readonly onStateChange?: (state: string | undefined) => void;
 }
-
-const inputClassName =
-  "h-10 w-full rounded-md border border-rule bg-paper px-3 text-sm font-medium text-ink shadow-sm focus:outline-none focus:ring-2 focus:ring-focus";
 
 export function ExtremesPanel({
   anomalySummaries,
@@ -61,25 +59,40 @@ export function ExtremesPanel({
           <EventSelector />
         </div>
 
-        <div className="mt-5 flex flex-col gap-2 border-t border-rule pt-4 sm:flex-row sm:items-end sm:justify-between">
-          <label className="grid max-w-xs gap-1 text-sm font-medium text-ink">
-            Compared crop
-            <select
-              aria-label="Compared crop"
-              className={inputClassName}
-              onChange={(event) => onCropChange?.(event.currentTarget.value as CropId)}
-              value={activeCrop}
-            >
-              {CROP_OPTIONS.map((option) => (
-                <option key={option.id} value={option.id}>
+        <div className="mt-5 border-t border-rule pt-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Compared crop
+            </p>
+            <p aria-live="polite" className="text-sm font-semibold text-primary">
+              Compared crop · {getCropLabel(activeCrop)}
+            </p>
+          </div>
+          <div
+            aria-label="Compared crop"
+            className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5"
+            role="group"
+          >
+            {CROP_OPTIONS.map((option) => {
+              const isActive = option.id === activeCrop;
+              return (
+                <button
+                  aria-pressed={isActive}
+                  className={cn(
+                    "min-h-11 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors last:col-span-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus lg:last:col-span-1",
+                    isActive
+                      ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                      : "border-rule bg-muted/35 text-ink hover:bg-field/60"
+                  )}
+                  key={option.id}
+                  onClick={() => onCropChange?.(option.id)}
+                  type="button"
+                >
                   {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <p className="text-sm font-semibold text-primary">
-            Compared crop · {getCropLabel(activeCrop)}
-          </p>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </header>
 

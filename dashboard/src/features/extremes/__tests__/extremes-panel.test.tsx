@@ -1,8 +1,10 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
+import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import type {
   AnomalyStateCropSummary,
+  CropId,
   DataPointSource
 } from "@/lib/data/types";
 
@@ -103,6 +105,40 @@ describe("ExtremesPanel", () => {
     expect(screen.getAllByText("Shared mean z scale · −1.0000 to +1.0000")).toHaveLength(2);
   });
 
+  it("offers all five crops as direct pressed buttons and updates the evidence", () => {
+    const onCropChange = vi.fn();
+
+    function CropHarness() {
+      const [crop, setCrop] = useState<CropId>("corn");
+      return (
+        <ExtremesPanel
+          anomalySummaries={anomalySummaries}
+          onCropChange={(nextCrop) => {
+            onCropChange(nextCrop);
+            if (nextCrop) setCrop(nextCrop);
+          }}
+          selectedCrop={crop}
+        />
+      );
+    }
+
+    render(<CropHarness />);
+
+    const cropGroup = screen.getByRole("group", { name: "Compared crop" });
+    expect(within(cropGroup).getAllByRole("button")).toHaveLength(5);
+    expect(screen.queryByRole("combobox", { name: "Compared crop" }))
+      .not.toBeInTheDocument();
+    expect(within(cropGroup).getByRole("button", { name: "Corn" }))
+      .toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.click(within(cropGroup).getByRole("button", { name: "Soybean" }));
+
+    expect(onCropChange).toHaveBeenCalledWith("soybean");
+    expect(within(cropGroup).getByRole("button", { name: "Soybean" }))
+      .toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText("Compared crop · Soybean")).toBeInTheDocument();
+  });
+
   it("pins one state into event-specific magnitude, NIG, denominator, source, and limits", () => {
     render(<ExtremesPanel anomalySummaries={anomalySummaries} selectedCrop="corn" />);
 
@@ -189,7 +225,10 @@ describe("ExtremesPanel", () => {
       />
     );
 
-    fireEvent.change(screen.getByLabelText("Compared crop"), { target: { value: "soybean" } });
+    fireEvent.click(
+      within(screen.getByRole("group", { name: "Compared crop" }))
+        .getByRole("button", { name: "Soybean" })
+    );
     expect(onCropChange).toHaveBeenCalledWith("soybean");
 
     const summary = screen.getByText("Exact state × crop values · 4 rows");

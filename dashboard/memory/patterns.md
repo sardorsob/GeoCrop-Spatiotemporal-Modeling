@@ -102,19 +102,18 @@ posterior IQR plus 90% bounds.
 
 ## Semantic Evidence Figure Primitives
 
-**Use when:** Story and analytical views need to share an evidence hierarchy
+**Use when:** Several analytical tasks need a consistent evidence hierarchy
 without sharing one monolithic page component.
 
-**Rule:** Compose small semantic primitives for act headings, navigation,
-figure naming, source/denominator/caveat captions, and mode switching. Keep the
-figure body task-owned and data-bound; keep essential destinations as native
-links so the reading path exists before hydration.
+**Rule:** Compose small semantic primitives for figure naming and
+source/denominator/caveat captions. Keep the figure body task-owned and
+data-bound; keep essential controls and destinations in the accessibility tree.
 
 **Example:**
 
 ```text
 Wrap a task-owned chart in `FigureFrame`, pass `EvidenceCaption` with its source
-and denominator, and use the same figure in a Story act or Explore panel.
+and denominator, and place the figure inside its task panel.
 ```
 
 ---
@@ -273,10 +272,10 @@ to satisfy an old assertion.
 **Example:**
 
 ```text
-`TopBar` exposes the Narrative Atlas page identity and named Story/Explore
-navigation. Story acts use labelled sections; Explore uses a named tablist and
-tabpanel. `UsChoropleth` paths remain keyboard-activatable, and the paper sheet
-has a title, description, and fallback links.
+`TopBar` exposes the GeoCrop / U.S. Corn Belt page identity and paper action.
+`DashboardShell` uses a named task tablist and tabpanel. `UsChoropleth` paths
+remain keyboard-activatable, and the paper sheet has a title, description, and
+fallback links.
 ```
 
 ---
@@ -367,6 +366,45 @@ numeric domain and units, and uses paper gray only for `undefined` no-data.
 
 ---
 
+## Evidence Field With A Stacked Summary Rail
+
+**Use when:** A visual composition field leaves unused wide-screen space while
+its exact class summaries sit in a detached row below.
+
+**Rule:** At wide widths, place the visual field and its exact summaries in one
+named group with a proportional two-column layout; stack the summary cards in a
+single rail. At narrow widths, stack field then summaries without changing DOM
+meaning, counts, or evidence values.
+
+**Example:**
+
+```text
+`RotationClassChart` keeps exactly 100 allocated cells at left and three exact
+class cards at right. The same wrapper becomes one column below the large
+breakpoint; source date, denominator, pixels, area, and definitions remain.
+```
+
+---
+
+## Direct Buttons For A Small Finite Comparison Set
+
+**Use when:** A selector has roughly five stable options and the surrounding
+card has enough space to expose them without a dropdown.
+
+**Rule:** Render one 44 px minimum button per option inside a named `role=group`,
+mark the active option with `aria-pressed`, and retain the existing controlled
+callback. Use responsive columns and let the final odd option span unused mobile
+columns rather than leaving a visible hole.
+
+**Example:**
+
+```text
+`ExtremesPanel` exposes Corn, Soybean, Winter wheat, Oats, and Other cropland as
+direct buttons; all five map to the same URL-backed crop callback used before.
+```
+
+---
+
 ## Matched Frames For Opposing Spatial Events
 
 **Use when:** Two dated events must be compared without allowing scale, crop, or
@@ -410,44 +448,42 @@ labels are `+1.74 pp vs CDL`, `+0.07 pp vs CDL`, and `−0.07 pp vs CDL + NDVI`.
 
 ---
 
-## One Task Component, Two Compositions
+## One Task Dispatcher, One Evidence Workspace
 
-**Use when:** A research website needs an authored reading path and an analytical
-workspace without duplicating charts or allowing source/copy drift.
+**Use when:** A research website has several evidence tasks that share one shell
+but require task-local controls and figures.
 
 **Rule:** Put task data, controls, figures, sources, and limitations in one
-task-specific component. Let a shell-level dispatcher render that same component
-with a small `story` or `explore` mode. Story owns chapter order, act copy, and
-handoff links; Explore owns the active tab. Do not create Story-only chart or map
-implementations.
+task-specific component. Let a shell-level dispatcher render only the active
+task from URL-backed state. Do not duplicate chart or map implementations in a
+second presentation mode unless users have approved a distinct need.
 
 **Example:**
 
 ```text
-`DashboardShell.TaskPanel` dispatches the same `PhenologyPanel`, `RotationPanel`,
-`ExtremesPanel`, and `PredictionPanel` in both views. Story maps all four acts;
-Explore renders only `state.tab`. Rotation receives the same measured `MapPanel`
-through its geography figure slot in either composition.
+`DashboardShell.TaskPanel` dispatches `PhenologyPanel`, `RotationPanel`,
+`ExtremesPanel`, or `PredictionPanel` from `state.tab`. Rotation receives the
+measured `MapPanel` through its geography figure slot.
 ```
 
 ---
 
-## Infer Legacy Analytics Without Stealing The Empty URL
+## Retire A Mode Parameter Without Breaking Shared Analytics
 
-**Use when:** A new Story/Explore mode is added to a URL-backed dashboard that
-already has shared tab and filter links.
+**Use when:** A rejected presentation mode is removed from a URL-backed
+dashboard that already has shared task and filter links.
 
-**Rule:** Reserve an empty query for Story. If `view` is absent but at least one
-valid legacy analytical parameter parses, infer Explore. Explicit `view=story`
-or `view=explore` wins. When Story carries non-default analytical state, serialize
-`view=story` explicitly so a round-trip cannot accidentally infer Explore.
-Unsupported but recognized values must normalize with a visible warning.
+**Rule:** Stop parsing and serializing the retired mode, but keep its parameter
+in the update helper's deletion list. Ignore old mode values on read, preserve
+valid task/filter and unrelated query state, and remove the retired parameter on
+the next state update. Unsupported evidence values still normalize with a
+visible warning.
 
 **Example:**
 
 ```text
-`?tab=extremes&crop=corn` opens Explore/Extremes. `/` opens Story.
-`?view=story&selectedEntity=state%3AIA` remains Story after a map pin.
+`?view=story&tab=extremes&crop=corn` opens the Extremes task with Corn selected.
+The next task/filter update removes `view=story`.
 `mapLayer=crop-prediction` becomes measured regular-rotation share and emits a
 compatibility notice.
 ```

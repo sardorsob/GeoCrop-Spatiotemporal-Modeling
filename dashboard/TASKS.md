@@ -9,11 +9,11 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 25 | 24 | 0 | 0 | 0 | 0 | 1 |
+| 25 | 25 | 0 | 0 | 0 | 0 | 0 |
 
 `TASK-015` through `TASK-022` are the completed Narrative Atlas v2 graph.
 `TASK-023` and `TASK-024` are the approved post-review simplification and
-density-polish tasks. They execute sequentially with one verified task commit
+density-polish tasks. They were executed sequentially with one verified task commit
 at a time.
 
 ---
@@ -1559,7 +1559,7 @@ at a time.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-024
-  - Integration status: pending
+  - Integration status: complete
 - Design source:
   - User review 2026-08-19: use the Rotation composition's right-side whitespace
     for stacked class summaries and replace the Extremes crop dropdown with one
@@ -1606,16 +1606,29 @@ at a time.
   - `logs/Progress Log.md`
   - `logs/Handoff Notes.md`
 - Acceptance criteria:
-  - [ ] Rotation uses a balanced field-and-summary layout without changing data.
-  - [ ] Extremes uses five direct, accessible crop buttons and no crop dropdown.
-  - [ ] Mobile has no document overflow or clipped essential labels.
-  - [ ] No unsupported year selector, auto-scroll, dependency, or data claim is added.
-  - [ ] Focused tests, full tests, typecheck, lint, build, workflow validation, audit, and browser smoke pass.
+  - [x] Rotation uses a balanced field-and-summary layout without changing data.
+  - [x] Extremes uses five direct, accessible crop buttons and no crop dropdown.
+  - [x] Mobile has no document overflow or clipped essential labels.
+  - [x] No unsupported year selector, auto-scroll, dependency, or data claim is added.
+  - [x] Focused tests, full tests, typecheck, lint, build, workflow validation, audit, and browser smoke pass.
 - QA notes:
-  - Pending implementation.
-- Attempts: 0
+  - Green 2026-08-19: Rotation retains exactly 100 largest-remainder cells and
+    exact percentage/pixel/area/source/date/denominator/definition evidence. At
+    wide widths the field sits beside three stacked summary cards; mobile stacks.
+  - Green 2026-08-19: Extremes exposes Corn, Soybean, Winter wheat, Oats, and
+    Other cropland as direct `aria-pressed` buttons. All are at least 44 px;
+    the last option spans the open mobile row, the controlled crop callback/URL
+    path is unchanged, and no crop combobox remains.
+  - Green 2026-08-19: 15 files / 67 tests, typecheck, lint, Webpack production
+    build, zero-vulnerability high audit, workflow validation, and required-
+    artifact validation passed. Browser Use confirmed 1440/320 px composition,
+    exact document containment, intact long labels, and 100 rendered cells.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
   - 2026-08-19: Approved as a bounded layout/control polish task. Ponytail scope
     keeps the withdrawn auto-scroll and unsupported year selector out.
-- Status: pending
+  - 2026-08-19: Rebalanced Rotation composition, replaced the Extremes crop
+    dropdown with direct buttons, synchronized handoff/context files, and passed
+    automated, audit, and responsive live-browser gates without new scope.
+- Status: done

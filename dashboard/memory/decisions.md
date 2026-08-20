@@ -193,3 +193,40 @@ but a forced major upgrade or unrelated dependency sweep would exceed scope.
 
 **Impact:** `package.json` is unchanged, `package-lock.json` carries the patched
 graph, and tests/typecheck/lint/build were repeated against the clean install.
+
+## 2026-08-19 — Retire Story and make GeoCrop Explore-only
+
+**Context:** During live review, the user approved the Explore workspace but
+rejected the duplicated Story surface and the `Narrative Atlas` product name.
+
+**Decision:** Make `/` open Explore directly, remove Story composition and mode
+controls, remove `view` from domain state, and identify the product as GeoCrop
+with U.S. Corn Belt context. Ignore old `view` values while preserving supported
+task/filter state, then delete the retired parameter on the next update.
+
+**Reason:** Maintaining a second rejected surface would duplicate presentation
+logic without adding user value. The approved task workspace already provides
+the desired layout, evidence, and interactivity.
+
+**Impact:** This supersedes the earlier default-Story and `view` decisions.
+Three Story-only primitives were deleted; all four evidence tasks, the paper,
+sources, caveats, and compatible analytical links remain.
+
+## 2026-08-19 — Fill evidence whitespace without inventing behavior
+
+**Context:** Live review identified unused space beside the Rotation 100-cell
+composition and an unnecessarily hidden five-option crop selector in Extremes.
+The same review withdrew map-click auto-scroll and found no need to force a year
+control.
+
+**Decision:** Pair the 100-cell field with a stacked exact-summary rail at wide
+widths and expose the five crop options as direct pressed buttons. Keep the
+mobile fallbacks stacked, preserve every scientific value, and add neither
+auto-scroll nor a year selector.
+
+**Reason:** These changes increase density and discoverability using existing
+evidence and callbacks. The Rotation artifact is a dated aggregate result and
+does not support a truthful year-by-year map control.
+
+**Impact:** The visual layout changes without changing calculations, URL crop
+state, map behavior, dependencies, or data claims.

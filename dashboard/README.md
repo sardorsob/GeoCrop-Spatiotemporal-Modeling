@@ -1,14 +1,13 @@
-# GeoCrop Narrative Atlas
+# GeoCrop
 
 Next.js evidence website for the GeoCrop Spatiotemporal Modeling project. The
-default Story reads the paper as four connected acts; Explore reuses the same
-source-backed components as a task-specific analytical workspace.
+site opens directly into one source-backed analytical workspace for four
+research tasks across the U.S. Corn Belt.
 
 ## Experience
 
-- **Story:** an authored four-act sequence—phenology, rotation, extremes, and
-  prediction—with the HSGP comparator leading before any map.
-- **Explore:** four shareable task tabs with controls beside the evidence they
+- **Explore:** four shareable task tabs—phenology, rotation, extremes, and
+  prediction—with controls beside the evidence they
   affect. There is no universal map or six-field global filter wall.
 - **Maps:** measured regular-rotation share at state/county grain and matched
   state-grain flood/drought anomaly maps. Task 1 and Task 4 remain chart-led.
@@ -16,9 +15,9 @@ source-backed components as a task-specific analytical workspace.
   method caveats, limitations, and named missing-data states.
 - **Paper:** a neutral `GeoCrop research paper` drawer with embedded reading,
   open, and download actions.
-- **Compatibility:** empty URLs open Story; valid v1 analytical URLs normalize
-  into Explore; retired map layers show a warning and use measured
-  regular-rotation share safely.
+- **Compatibility:** old `view=story` / `view=explore` parameters are ignored
+  and removed on the next state update while valid task/filter context remains;
+  retired map layers show a warning and use measured regular-rotation share.
 
 ## Local Development
 
@@ -42,9 +41,9 @@ python scripts/validate-task-statuses.py
 python scripts/check-required-artifacts.py
 ```
 
-Latest QA on 2026-08-19 after `TASK-022`:
+Latest QA on 2026-08-19 after `TASK-024`:
 
-- 15 test files and 68 tests passed.
+- 15 test files and 67 tests passed.
 - TypeScript and ESLint passed.
 - The production build passed with Next.js 16.3.1. In the managed isolated
   worktree, `npm run build -- --webpack` avoids sandbox/Turbopack process-port
@@ -52,9 +51,9 @@ Latest QA on 2026-08-19 after `TASK-022`:
 - `npm audit --audit-level=high` reported zero vulnerabilities after a
   lockfile-only update within the existing manifest ranges.
 - Workflow status and required-artifact validators passed.
-- Browser Use smoke passed at 1440, 390, and 320 px: no document-level
-  horizontal overflow, no negative-size chart warnings, no global filter wall,
-  and all visible 390 px controls met the 44 px touch minimum.
+- Browser Use smoke passed at 1440 and 320 px: the Rotation field and stacked
+  summary rail balance at wide width; all five Extremes crop buttons remain
+  intact at 320 px with 44 px minimum targets and no document overflow.
 
 ## Tech Stack
 
@@ -88,5 +87,6 @@ Latest QA on 2026-08-19 after `TASK-022`:
 ## Workflow
 
 The repository follows `PROJECT.md`, `SCOPE.md`, `TASKS.md`, `AGENTS.md`,
-`memory/`, and `logs/`. `TASK-015` through `TASK-022` were implemented and
-committed sequentially, one task per commit.
+`memory/`, and `logs/`. `TASK-015` through `TASK-024` were implemented and
+committed sequentially, one task per commit. Merge remains deferred for final
+user review.

@@ -4,6 +4,46 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-08-19 — TASK-024 evidence density polish
+
+**Work performed:**
+
+- Rebuilt the dated Rotation composition as one responsive field/summary group:
+  exactly 100 cells at left and three exact class cards stacked at right on wide
+  screens, with a natural mobile stack.
+- Kept exact percentages, pixel counts, area, source/date, class definitions,
+  and the valid-cropland denominator in the visible composition.
+- Replaced the Extremes crop dropdown with five direct `aria-pressed` buttons.
+  The controlled crop callback and URL path are unchanged; long labels remain
+  intact, and the final option fills the unused mobile row.
+- Synchronized README, handoff, architecture, patterns, decisions, overview,
+  progress, and session context to the Explore-only final state.
+
+**Verification:**
+
+- Test-first red confirmed the old composition structure and crop combobox
+  before implementation; focused Rotation/Extremes checks passed afterward.
+- Full gate passed: 15 files / 67 tests, TypeScript, ESLint, Webpack production
+  build, zero-vulnerability high audit, workflow validation, and required-
+  artifact validation.
+- Browser Use confirmed the live Rotation and Extremes tasks at 1440 and 320 px:
+  100 cells, balanced stacked summaries, five direct crop buttons, 44 px minimum
+  targets, intact long labels, and exact document-width containment.
+
+**Blockers / cuts:**
+
+- No automatic map-click scroll was added because the user withdrew it.
+- No year selector was added because the dated aggregate Rotation artifact has
+  no truthful year-by-year map result.
+- Merge remains deferred for the user's final review.
+
+**AI tools used:**
+
+- Superpowers TDD and verification-before-completion, Ponytail minimal-scope
+  review, and Browser Use responsive visual smoke.
+
+---
+
 ## 2026-08-19 — TASK-023 Explore-only GeoCrop shell
 
 **Work performed:**

@@ -2,13 +2,13 @@
 
 ## Status
 
-The Narrative Atlas v2 redesign is complete through `TASK-022`. Story is the
-default four-act reading experience, Explore is a task-scoped and shareable
-evidence workspace, and both paths use the same source-backed task components.
+The GeoCrop redesign is complete through `TASK-024` on
+`codex/narrative-atlas-v2`. Explore is the only/default task-scoped evidence
+workspace. The branch is intentionally unmerged pending the user's final check.
 
 ## Delivered
 
-- A field-notebook / satellite-atlas visual grammar with accessible act
+- A field-notebook / satellite-atlas visual grammar with accessible task
   navigation, figure framing, evidence captions, focus treatment, and reduced-
   motion fallback.
 - Deterministic Task 1–4 evidence contracts that preserve sources, dates,
@@ -16,19 +16,20 @@ evidence workspace, and both paths use the same source-backed task components.
 - A three-crop HSGP comparator with aligned corn, soybean, and winter-wheat
   seasonality, posterior intervals, empirical spatial IQR, direct peaks, paper
   stages, and a shared Explore season window.
-- Rotation sequence rules, dated 100-cell composition, measured state/county
-  regular-share map and evidence lens, within-grain ranking, exact sensitivity
-  rows, and Markov context.
-- Matched 2019 flood and 2022 drought state maps with a shared crop/domain, one
-  pin, separate mean-z and NIG posterior context, complete Explore table, and
-  honest no-data behavior.
+- Rotation sequence rules, dated 100-cell composition with a wide field-plus-
+  stacked-summary layout, measured state/county regular-share map and evidence
+  lens, within-grain ranking, exact sensitivity rows, and Markov context.
+- Matched 2019 flood and 2022 drought state maps with a shared crop/domain, five
+  direct crop buttons, one pin, separate mean-z and NIG posterior context, a
+  complete exact table, and honest no-data behavior.
 - A prediction conclusion from CDL/NDVI/SMAP input braid through branch-aware
   ablation, lossless grouped SHAP, annotated four-class confusion, regime
   comparison, and concurrent-season/spatial/sample limits.
-- Default Story composition containing all four acts, plus one Explore panel at
-  a time with relevant local controls only.
-- URL `view` state, safe v1 analytical-link normalization, visible warnings for
-  retired map layers, and preservation of unrelated URL parameters.
+- One Explore panel at a time with relevant local controls only; the rejected
+  Story composition and mode control are removed.
+- Task/filter URL state without `view`; old mode parameters are ignored and
+  removed on update. Retired map layers still warn visibly, and unrelated URL
+  parameters remain preserved.
 - A neutral `GeoCrop research paper` drawer with embedded, open, and download
   paths. Unverified award/year claims and the unrelated paper-source repository
   link are not exposed.
@@ -40,7 +41,7 @@ evidence workspace, and both paths use the same source-backed task components.
 
 Latest run on 2026-08-19:
 
-- `npm run test`: 15 files, 68 tests passed.
+- `npm run test`: 15 files, 67 tests passed.
 - `npm run typecheck`: passed.
 - `npm run lint`: passed.
 - `npm run build -- --webpack`: passed. The managed sandbox blocks a Turbopack
@@ -50,10 +51,10 @@ Latest run on 2026-08-19:
   in-range remediation and a clean install.
 - `python scripts/validate-task-statuses.py`: passed.
 - `python scripts/check-required-artifacts.py`: passed.
-- Browser Use: Story at 1440 and 320 px and Explore at 390/320 px had exact
-  document-width containment, no negative-size chart warnings, one rotation map
-  in its task context, no global controls, visible legacy warning, and 44 px
-  visible touch controls. Paper dialog keyboard activation succeeded.
+- Browser Use: Explore at 1440 and 320 px had exact document-width containment.
+  Rotation retained 100 cells in a wide field/stacked-summary composition and a
+  natural mobile stack. Extremes exposed five 44 px minimum crop buttons with
+  intact long labels and no dropdown. Paper and task navigation remained intact.
 - Automated map coverage verifies pointer preview, keyboard pin, touch/click
   pin, Escape/reset, and exact-value fallback paths.
 

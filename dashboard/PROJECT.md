@@ -12,11 +12,10 @@
 
 <!-- 0-Intake | 1-Scope | 2-Setup | 3-Development | 4-QA | 5-Delivery | 6-Maintenance -->
 
-**Current:** 3-Development — post-review Explore polish
+**Current:** 4-QA — awaiting final user check
 
-The reviewer approved the Explore workspace and requested two bounded follow-up
-tasks before final merge: remove Story/rename the shell, then tighten two sparse
-evidence-control layouts.
+The two post-review follow-up tasks are complete and separately committed. The
+branch remains intentionally unmerged while the reviewer performs the final check.
 
 ## Source Docs
 
@@ -42,10 +41,10 @@ evidence-control layouts.
 | HSGP season-window zoom | done | `TASK-012` adds local Full / Green-up / Peak / Senescence / custom DOY zoom controls to the Task 1 NDVI chart |
 | NAFSI paper reader | done | `TASK-013` replaces the old Prediction hero KPI with a `NAFSI 2025 winning paper` CTA, embedded PDF reader, and open/download actions |
 | Sprout favicon | done | `TASK-014` adds a public SVG favicon using the current top-bar plant mark |
-| Website redesign v2 | done | `TASK-015`–`TASK-022` deliver the shared grammar, evidence contracts/map, four chapters, default Story, task-scoped Explore, compatibility, and handoff |
+| Website redesign v2 | done | `TASK-015`–`TASK-022` delivered the original shared grammar/evidence build; `TASK-023` later retired the rejected Story surface |
 | Explore-only shell | done | `TASK-023` removes Story runtime/mode state, preserves legacy task/filter URLs, and changes the product identity to GeoCrop / U.S. Corn Belt |
-| Evidence density polish | pending | `TASK-024` balances Rotation composition and replaces the Extremes crop dropdown with direct buttons |
-| Act I HSGP comparator | done | Story aligns corn, soybean, and winter wheat with nested posterior intervals, empirical spatial IQR, paper growth stages, direct peaks, and an explicit focused NDVI scale; Explore adds one shared compact season window |
+| Evidence density polish | done | `TASK-024` balances Rotation composition and replaces the Extremes crop dropdown with five direct buttons |
+| Task 1 HSGP comparator | done | Explore aligns corn, soybean, and winter wheat with nested posterior intervals, empirical spatial IQR, paper growth stages, direct peaks, an explicit focused NDVI scale, and one shared compact season window |
 | Act II rotation memory | done | Schematic decade strips lead into a dated 100-cell composition, measured within-grain geography ranking/map slot, and discrete source-only threshold sensitivity |
 | Act III paired extremes | done | Matched 2019 flood and 2022 drought state maps share crop and mean-z scale; one state pin exposes event-specific NIG posterior context, denominator, source, and no-data honestly |
 | Act IV prediction conclusion | done | CDL/NDVI/SMAP feed a source-backed ablation and grouped-SHAP story, annotated corn/soy errors, and a denominator-aware regime close with forecast/spatial limits |
@@ -84,9 +83,9 @@ evidence-control layouts.
 ## Last Session
 
 - **Date:** 2026-08-19
-- **What was done:** Completed `TASK-023`: GeoCrop now opens directly into Explore, Story/runtime mode state is removed, legacy mode URLs retain supported evidence state, and the compact GeoCrop / U.S. Corn Belt header passed 320 px browser smoke.
-- **What's next:** Execute and commit `TASK-024`: balance Rotation composition and replace the Extremes dropdown with direct crop buttons. User will perform the final review before merge.
-- **Blockers:** No implementation blocker. Merge remains explicitly deferred pending user review.
+- **What was done:** Completed `TASK-024`: Rotation now pairs its 100-cell field with stacked exact summaries at wide widths, Extremes uses five direct crop buttons, full gates/audit passed, and 1440/320 px browser smoke confirmed composition and containment.
+- **What's next:** Keep the local server running and wait for the user's final review before merge.
+- **Blockers:** No implementation blocker. Merge is explicitly deferred pending user approval.
 
 ## Environment
 

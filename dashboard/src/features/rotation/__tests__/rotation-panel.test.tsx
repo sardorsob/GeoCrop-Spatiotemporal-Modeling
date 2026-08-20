@@ -191,6 +191,25 @@ describe("RotationPanel", () => {
     expect(within(composition).getByText("68.74%")).toBeInTheDocument();
     expect(within(composition).getByText("2,084,112 eligible pixels")).toBeInTheDocument();
     expect(within(composition).getByText("2026-04-12")).toBeInTheDocument();
+    expect(
+      within(composition).getByText("Denominator · Valid classified cropland pixels")
+    ).toBeInTheDocument();
+
+    const layout = within(composition).getByRole("group", {
+      name: "Rotation composition layout"
+    });
+    const field = within(layout).getByRole("img", {
+      name: "100-cell rotation composition field"
+    });
+    const summaries = within(layout).getByRole("group", {
+      name: "Rotation class summaries"
+    });
+
+    expect(layout).toHaveAttribute("data-layout", "field-summary");
+    expect(layout).toContainElement(field);
+    expect(layout).toContainElement(summaries);
+    expect(summaries).toHaveAttribute("data-layout", "stacked");
+    expect(within(summaries).getAllByRole("article")).toHaveLength(3);
   });
 
   it("marks every sequence as schematic and defines irregular neutrally", () => {

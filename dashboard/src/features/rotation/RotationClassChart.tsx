@@ -58,42 +58,65 @@ export function RotationClassChart({ classSummaries }: RotationClassChartProps) 
         ) : (
           <>
             <div
-              aria-label="100-cell rotation composition field"
-              className="mt-5 grid max-w-lg grid-cols-10 gap-1.5"
-              role="img"
+              aria-label="Rotation composition layout"
+              className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(18rem,2fr)] lg:items-stretch"
+              data-layout="field-summary"
+              role="group"
             >
-              {cells.map((rotationClass, index) => (
-                <span
-                  aria-hidden="true"
-                  className={`aspect-square rounded-[3px] ${CLASS_STYLE[rotationClass].cell}`}
-                  data-testid="rotation-composition-cell"
-                  key={`${rotationClass}-${index}`}
-                />
-              ))}
-            </div>
+              <div className="flex min-w-0 flex-col justify-center rounded-lg border border-rule/70 bg-muted/20 p-3 sm:p-4">
+                <div
+                  aria-label="100-cell rotation composition field"
+                  className="mx-auto grid w-full max-w-lg grid-cols-10 gap-1.5"
+                  role="img"
+                >
+                  {cells.map((rotationClass, index) => (
+                    <span
+                      aria-hidden="true"
+                      className={`aspect-square rounded-[3px] ${CLASS_STYLE[rotationClass].cell}`}
+                      data-testid="rotation-composition-cell"
+                      key={`${rotationClass}-${index}`}
+                    />
+                  ))}
+                </div>
 
-            <p className="mt-3 text-xs font-semibold tabular-nums text-ink">
-              {`${formatCount(totalPixels)} eligible pixels`}
-            </p>
+                <p className="mt-3 text-xs font-semibold tabular-nums text-ink">
+                  {`${formatCount(totalPixels)} eligible pixels`}
+                </p>
+                {source?.denominator ? (
+                  <p className="mt-1 text-[10px] leading-4 text-muted-foreground">
+                    {`Denominator · ${source.denominator}`}
+                  </p>
+                ) : null}
+              </div>
 
-            <div className="mt-4 grid gap-2 lg:grid-cols-3">
-              {available.map((summary) => (
-                <article className="rounded-lg border border-rule bg-muted/35 p-3" key={summary.rotationClass}>
-                  <div className="flex items-center gap-2">
-                    <span aria-hidden="true" className={`size-2.5 rounded-full ${CLASS_STYLE[summary.rotationClass].dot}`} />
-                    <h4 className="font-semibold text-ink">{rotationClassLabels[summary.rotationClass]}</h4>
-                    <span className="ml-auto font-mono text-lg font-semibold tabular-nums text-ink">
-                      {formatExactPercent(summary.percentOfValid)}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                    {rotationClassDescriptions[summary.rotationClass]}
-                  </p>
-                  <p className="mt-2 text-[10px] leading-4 text-muted-foreground">
-                    {`${formatCount(summary.pixelCount)} pixels · ${formatAreaHa(summary.areaHa)}`}
-                  </p>
-                </article>
-              ))}
+              <div
+                aria-label="Rotation class summaries"
+                className="grid gap-2"
+                data-layout="stacked"
+                role="group"
+              >
+                {available.map((summary) => (
+                  <article
+                    aria-label={`${rotationClassLabels[summary.rotationClass]} summary`}
+                    className="rounded-lg border border-rule bg-muted/35 p-3 sm:p-4"
+                    key={summary.rotationClass}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span aria-hidden="true" className={`size-2.5 rounded-full ${CLASS_STYLE[summary.rotationClass].dot}`} />
+                      <h4 className="font-semibold text-ink">{rotationClassLabels[summary.rotationClass]}</h4>
+                      <span className="ml-auto font-mono text-lg font-semibold tabular-nums text-ink">
+                        {formatExactPercent(summary.percentOfValid)}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                      {rotationClassDescriptions[summary.rotationClass]}
+                    </p>
+                    <p className="mt-2 text-[10px] leading-4 text-muted-foreground">
+                      {`${formatCount(summary.pixelCount)} pixels · ${formatAreaHa(summary.areaHa)}`}
+                    </p>
+                  </article>
+                ))}
+              </div>
             </div>
           </>
         )}
