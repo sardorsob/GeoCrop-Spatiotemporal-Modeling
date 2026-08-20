@@ -259,16 +259,24 @@ Rotation accepts `selectedEntity`; extremes accepts `selectedEvent`, `selectedCr
 
 ---
 
-## Test-Stable Accessibility Tree Under Redesign
+## Semantically Stable Accessibility Tree Under Redesign
 
-**Use when:** Replacing a previously shipped UI without rewriting the existing test suite.
+**Use when:** Replacing a shipped UI while preserving equivalent access for
+assistive technology and non-pointer users.
 
-**Rule:** Preserve the accessible-name surface (heading text, `role="region"` aria-labels, `getByLabelText` targets, exact-string assertions) even when the visual layer is fully replaced. Use `Card asChild` + `<section aria-label="...">` wrappers, hidden `<h1 className="sr-only">` elements, and styled native `<select>` / `<input>` with proper `<label>` association so existing `getByText` and `getByLabelText` matchers keep working.
+**Rule:** Preserve the semantic contract—one page identity, named navigation,
+linked tabs/panels, visible labels, titled figures/dialogs, live status, keyboard
+activation, and focus visibility—while updating stale names and tests to the
+approved design. Do not retain obsolete hidden headings or global regions only
+to satisfy an old assertion.
 
 **Example:**
 
 ```text
-`DashboardShell` keeps a hidden `<h1>GeoCrop Interactive Dashboard</h1>` for the integration test, wraps the filters card with `<section aria-label="Dashboard filters">`, wraps the map card with `<section aria-label="Corn Belt map surface">`, and exposes each state path on the choropleth with `role="button"` + `aria-label="Select ${name}"` to keep the prior tablist/region/button assertions green.
+`TopBar` exposes the Narrative Atlas page identity and named Story/Explore
+navigation. Story acts use labelled sections; Explore uses a named tablist and
+tabpanel. `UsChoropleth` paths remain keyboard-activatable, and the paper sheet
+has a title, description, and fallback links.
 ```
 
 ---
@@ -282,7 +290,9 @@ Rotation accepts `selectedEntity`; extremes accepts `selectedEvent`, `selectedCr
 **Example:**
 
 ```text
-`UsChoropleth` accepts `{ values, colorScale, selectedState, onSelect, format }`. `MapPanel` maps categorical layer values (legend index) to a discrete color from the layer's legend, with a soft slate for `undefined` (no data).
+`UsChoropleth` accepts measured evidence rows plus a numeric color scale.
+`MapPanel` selects regular-share or event-anomaly evidence, prints the complete
+numeric domain and units, and uses paper gray only for `undefined` no-data.
 ```
 
 ---
@@ -357,20 +367,6 @@ Rotation accepts `selectedEntity`; extremes accepts `selectedEvent`, `selectedCr
 
 ---
 
-## Lucide Overlay Chevron For Styled Native Selects
-
-**Use when:** A styled native `<select>` needs a custom chevron without using an inline `data:image/svg+xml` URL in Tailwind classes.
-
-**Rule:** Wrap the `<select>` in a `relative` container, add `appearance-none` + right padding, and absolutely-position a Lucide `<ChevronDown />` over the right edge with `pointer-events-none`. Avoids Lightning CSS parser warnings on data-URL backgrounds at build time.
-
-**Example:**
-
-```text
-`NativeSelect` in `CompactFilterBar` is a small helper: `<div className="relative"><select className={SELECT_CLASS} {...props} /><ChevronDown className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-slate-400" /></div>`.
-```
-
----
-
 ## Matched Frames For Opposing Spatial Events
 
 **Use when:** Two dated events must be compared without allowing scale, crop, or
@@ -410,4 +406,48 @@ alternative branches.
 `AblationChart` orders A–D by `ablationId`: B (CDL+NDVI) and C (CDL+SMAP)
 are each compared with A (CDL), while D (full) is compared with B. The visible
 labels are `+1.74 pp vs CDL`, `+0.07 pp vs CDL`, and `−0.07 pp vs CDL + NDVI`.
+```
+
+---
+
+## One Task Component, Two Compositions
+
+**Use when:** A research website needs an authored reading path and an analytical
+workspace without duplicating charts or allowing source/copy drift.
+
+**Rule:** Put task data, controls, figures, sources, and limitations in one
+task-specific component. Let a shell-level dispatcher render that same component
+with a small `story` or `explore` mode. Story owns chapter order, act copy, and
+handoff links; Explore owns the active tab. Do not create Story-only chart or map
+implementations.
+
+**Example:**
+
+```text
+`DashboardShell.TaskPanel` dispatches the same `PhenologyPanel`, `RotationPanel`,
+`ExtremesPanel`, and `PredictionPanel` in both views. Story maps all four acts;
+Explore renders only `state.tab`. Rotation receives the same measured `MapPanel`
+through its geography figure slot in either composition.
+```
+
+---
+
+## Infer Legacy Analytics Without Stealing The Empty URL
+
+**Use when:** A new Story/Explore mode is added to a URL-backed dashboard that
+already has shared tab and filter links.
+
+**Rule:** Reserve an empty query for Story. If `view` is absent but at least one
+valid legacy analytical parameter parses, infer Explore. Explicit `view=story`
+or `view=explore` wins. When Story carries non-default analytical state, serialize
+`view=story` explicitly so a round-trip cannot accidentally infer Explore.
+Unsupported but recognized values must normalize with a visible warning.
+
+**Example:**
+
+```text
+`?tab=extremes&crop=corn` opens Explore/Extremes. `/` opens Story.
+`?view=story&selectedEntity=state%3AIA` remains Story after a map pin.
+`mapLayer=crop-prediction` becomes measured regular-rotation share and emits a
+compatibility notice.
 ```

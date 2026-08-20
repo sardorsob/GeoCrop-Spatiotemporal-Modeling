@@ -1,18 +1,23 @@
+import type { DashboardView } from "@/lib/data/types";
 import { cn } from "@/lib/utils";
 
-export type StoryMode = "story" | "explore";
+export type StoryMode = DashboardView;
 
 const MODES = [
-  { id: "story", label: "Story", href: "/" },
-  { id: "explore", label: "Explore", href: "/?view=explore" }
+  { id: "story", label: "Story" },
+  { id: "explore", label: "Explore" }
 ] as const;
 
 export function StoryModeToggle({
   mode,
-  className
+  className,
+  storyHref = "/",
+  exploreHref = "/?view=explore"
 }: {
   readonly mode: StoryMode;
   readonly className?: string;
+  readonly storyHref?: string;
+  readonly exploreHref?: string;
 }) {
   return (
     <nav
@@ -24,14 +29,15 @@ export function StoryModeToggle({
     >
       {MODES.map((item) => {
         const isCurrent = item.id === mode;
+        const href = item.id === "story" ? storyHref : exploreHref;
 
         return (
           <a
             key={item.id}
-            href={item.href}
+            href={href}
             aria-current={isCurrent ? "page" : undefined}
             className={cn(
-              "flex min-h-9 min-w-16 items-center justify-center rounded-full px-3 transition-colors",
+              "flex min-h-11 min-w-16 items-center justify-center rounded-full px-3 transition-colors",
               isCurrent
                 ? "bg-paper text-ink shadow-sm"
                 : "text-muted-foreground hover:text-ink"

@@ -18,7 +18,7 @@ function DashboardFallback() {
     <main className="min-h-screen bg-slate-50 px-4 py-6 text-slate-950">
       <div className="mx-auto max-w-7xl border border-slate-200 bg-white p-4">
         <p className="text-sm font-semibold text-slate-700">
-          Loading GeoCrop dashboard
+          Loading GeoCrop Narrative Atlas
         </p>
       </div>
     </main>

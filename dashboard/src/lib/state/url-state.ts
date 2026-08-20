@@ -3,9 +3,11 @@ import {
   DEFAULT_DASHBOARD_FILTER_STATE,
   isCropId,
   isDashboardTab,
+  isDashboardView,
   isExtremeEventId,
   isMapLayerId,
   isRotationRegimeId,
+  isSupportedMapLayerId,
   normalizeDashboardFilterState
 } from "./dashboard-state";
 
@@ -26,6 +28,7 @@ type DraftDashboardFilterState = {
 };
 
 const QUERY_PARAM_ORDER = [
+  "view",
   "tab",
   "mapLayer",
   "state",
@@ -43,7 +46,9 @@ export function parseDashboardUrlState(
 ): ParsedDashboardUrlState {
   const warnings: DashboardUrlStateWarning[] = [];
   const state: DraftDashboardFilterState = {};
+  const hasExplicitView = searchParams.has("view");
 
+  parseView(searchParams, state, warnings);
   parseTab(searchParams, state, warnings);
   parseMapLayer(searchParams, state, warnings);
   parseState(searchParams, state, warnings);
@@ -52,6 +57,10 @@ export function parseDashboardUrlState(
   parseRotationRegime(searchParams, state, warnings);
   parseSelectedEntity(searchParams, state, warnings);
   parseMapView(searchParams, state, warnings);
+
+  if (!hasExplicitView && Object.keys(state).length > 0) {
+    state.view = "explore";
+  }
 
   return {
     state: normalizeDashboardFilterState(state),
@@ -64,6 +73,21 @@ export function serializeDashboardUrlState(
 ): string {
   const state = normalizeDashboardFilterState(inputState);
   const searchParams = new URLSearchParams();
+  const hasAnalyticalState =
+    state.tab !== DEFAULT_DASHBOARD_FILTER_STATE.tab ||
+    state.mapLayer !== DEFAULT_DASHBOARD_FILTER_STATE.mapLayer ||
+    Boolean(
+      state.state ||
+        state.crop ||
+        state.event ||
+        state.rotationRegime ||
+        state.selectedEntity ||
+        state.mapView
+    );
+
+  if (state.view !== DEFAULT_DASHBOARD_FILTER_STATE.view || hasAnalyticalState) {
+    searchParams.set("view", state.view);
+  }
 
   if (state.tab !== DEFAULT_DASHBOARD_FILTER_STATE.tab) {
     searchParams.set("tab", state.tab);
@@ -100,6 +124,28 @@ export function serializeDashboardUrlState(
   }
 
   return searchParams.toString();
+}
+
+function parseView(
+  searchParams: DashboardSearchParams,
+  state: DraftDashboardFilterState,
+  warnings: DashboardUrlStateWarning[]
+) {
+  const value = searchParams.get("view");
+  if (value === null) {
+    return;
+  }
+
+  if (isDashboardView(value)) {
+    state.view = value;
+    return;
+  }
+
+  warnings.push({
+    param: "view",
+    value,
+    message: `Invalid view "${value}"; using default "${DEFAULT_DASHBOARD_FILTER_STATE.view}".`
+  });
 }
 
 export function updateDashboardUrlSearchParams(
@@ -151,8 +197,18 @@ function parseMapLayer(
     return;
   }
 
-  if (isMapLayerId(value)) {
+  if (isSupportedMapLayerId(value)) {
     state.mapLayer = value;
+    return;
+  }
+
+  if (isMapLayerId(value)) {
+    state.mapLayer = DEFAULT_DASHBOARD_FILTER_STATE.mapLayer;
+    warnings.push({
+      param: "mapLayer",
+      value,
+      message: `The legacy mapLayer "${value}" is no longer supported; using measured regular rotation share.`
+    });
     return;
   }
 

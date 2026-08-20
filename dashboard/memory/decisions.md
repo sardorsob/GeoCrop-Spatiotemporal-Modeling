@@ -143,3 +143,53 @@ artifacts do not support.
 **Impact:** The close names the 95.5% / 87.4% / 70.9% regime accuracies and their
 unequal denominators, while class balance, SHAP sample, SMAP 9 km resolution,
 the common ~557 m grid, and concurrent-season timing stay adjacent.
+
+## 2026-08-19 — Normalize v1 analytics into Explore
+
+**Context:** Story needed the empty URL, but existing tab/filter links still had
+to restore a useful analytical experience. Several v1 map-layer ids no longer
+represented supported numeric evidence.
+
+**Decision:** `/` opens Story. If `view` is absent and at least one valid legacy
+analytical parameter parses, infer Explore and preserve its task/filter context.
+Recognized retired layers normalize to measured regular-rotation share with a
+visible compatibility notice. Explicit `view` always wins.
+
+**Reason:** This preserves useful shared links without allowing old placeholder
+layers to masquerade as research evidence or sacrificing the first-visit story.
+
+**Impact:** `DashboardFilterState` owns `view`; serialization writes explicit
+Story when non-default analytics are present; unrelated query parameters remain
+untouched.
+
+## 2026-08-19 — Keep maps inside the task that owns them
+
+**Context:** The v1 universal map and six-control wall made geography look like
+the organizing principle for every result and pushed the HSGP evidence down the
+page.
+
+**Decision:** Delete the global `CompactFilterBar`, remove the universal map,
+and inject the measured regular-share map only into Rotation. Extremes keeps its
+own paired maps; Phenology and Prediction have no map.
+
+**Reason:** Controls and maps should appear only where their data grain and
+research question support them.
+
+**Impact:** Story presents all four shared task components in order, with HSGP
+first. Explore renders one task component and its local controls at a time.
+
+## 2026-08-19 — Patch the audited graph without adding feature scope
+
+**Context:** The final live npm audit reported newly published high-severity
+advisories against the previously locked Next/PostCSS toolchain even though no
+dependency was added by the redesign.
+
+**Decision:** Run npm's lockfile-only remediation within existing manifest
+ranges, then clean-install and re-run the complete gates. This resolved to
+Next.js 16.3.1 and patched transitive versions with zero reported vulnerabilities.
+
+**Reason:** The required audit gate should close on the exact deliverable graph,
+but a forced major upgrade or unrelated dependency sweep would exceed scope.
+
+**Impact:** `package.json` is unchanged, `package-lock.json` carries the patched
+graph, and tests/typecheck/lint/build were repeated against the clean install.

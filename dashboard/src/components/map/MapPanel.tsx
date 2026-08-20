@@ -49,12 +49,13 @@ interface GeographyReference {
 
 export interface MapPanelProps {
   readonly activeLayerId: MapLayerId;
-  readonly onLayerChange: (layerId: MapLayerId) => void;
+  readonly onLayerChange?: (layerId: MapLayerId) => void;
   readonly data?: Pick<NormalizedDashboardData, "task2" | "task3">;
   readonly selectedCrop?: CropId;
   readonly selectedEvent?: ExtremeEventId;
   readonly selectedGeographyId?: string;
   readonly onSelectionChange?: (context: CornBeltMapSelectionContext) => void;
+  readonly showLayerControl?: boolean;
 }
 
 export function MapPanel({
@@ -64,7 +65,8 @@ export function MapPanel({
   selectedCrop = "corn",
   selectedEvent = "midwest_flood_2019",
   selectedGeographyId,
-  onSelectionChange
+  onSelectionChange,
+  showLayerControl = true
 }: MapPanelProps) {
   const normalizedLayerId = normalizeEvidenceMapLayerId(activeLayerId);
   const activeLayer = getEvidenceMapLayer(normalizedLayerId);
@@ -164,7 +166,7 @@ export function MapPanel({
                     <Button
                       aria-label={`${kind === "state" ? "State" : "County"} geography`}
                       aria-pressed={geographyKind === kind}
-                      className="min-h-9 rounded-full"
+                      className="min-h-11 rounded-full"
                       key={kind}
                       onClick={() => changeGrain(kind)}
                       size="sm"
@@ -176,25 +178,27 @@ export function MapPanel({
                 </div>
               ) : null}
 
-              <Select
-                onValueChange={(value) => {
-                  clearSelection();
-                  onLayerChange(value as MapLayerId);
-                }}
-                value={normalizedLayerId}
-              >
-                <SelectTrigger aria-label="Map evidence layer" className="min-h-11 min-w-56 border-rule bg-paper">
-                  <Layers3 className="size-4 text-primary" />
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {EVIDENCE_MAP_LAYERS.map((layer) => (
-                    <SelectItem key={layer.id} value={layer.id}>
-                      {layer.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {showLayerControl ? (
+                <Select
+                  onValueChange={(value) => {
+                    clearSelection();
+                    onLayerChange?.(value as MapLayerId);
+                  }}
+                  value={normalizedLayerId}
+                >
+                  <SelectTrigger aria-label="Map evidence layer" className="min-h-11 min-w-56 border-rule bg-paper">
+                    <Layers3 className="size-4 text-primary" />
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EVIDENCE_MAP_LAYERS.map((layer) => (
+                      <SelectItem key={layer.id} value={layer.id}>
+                        {layer.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : null}
             </div>
           </header>
 

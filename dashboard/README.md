@@ -1,79 +1,92 @@
-# GeoCrop Interactive Dashboard
+# GeoCrop Narrative Atlas
 
-Next.js dashboard workspace for the GeoCrop Spatiotemporal Modeling project.
+Next.js evidence website for the GeoCrop Spatiotemporal Modeling project. The
+default Story reads the paper as four connected acts; Explore reuses the same
+source-backed components as a task-specific analytical workspace.
 
-## What It Shows
+## Experience
 
-- Sticky top bar with brand mark, live source / task / load-issue badges.
-- Browser-tab favicon using the GeoCrop sprout mark.
-- Hero strip with project narrative, three data KPI tiles, and a `NAFSI 2025 winning paper` reference button.
-- Compact filter bar (Crop, Extreme event, Rotation regime, State, Map layer, Selected entity) with removable filter chips and an advanced sheet drawer for map view coordinates.
-- Real U.S. Albers choropleth Corn Belt map with hover tooltips, click-to-select states, in-card layer selector, and an info popover with source/caveat detail.
-- Pill-style task tabs for the four research lanes.
-- Task 1 phenology metrics (tone-coded RMSE / MAE / Coverage / CRPS tiles) and a Recharts NDVI seasonality chart with credible-interval band, posterior line, dashed empirical line, hover tooltips, brush zoom, season-window presets, custom DOY inputs, and selected-span peak summary cards.
-- Task 2 rotation class summaries and a collapsible Geographic rotation summaries table (compact 5-row view by default with a "Show N more" / "Show less" toggle).
-- Task 3 soil-moisture flood/drought anomaly summaries and a state x crop anomaly table.
-- Task 4 prediction diagnostics, ablation, SHAP, regime-stratified metrics, and confusion matrix.
-- Embedded NAFSI 2025 winning paper reader with Open PDF and Download PDF actions.
-- Visible source paths, denominators, dates, caveats, and load-error states throughout.
+- **Story:** an authored four-act sequence—phenology, rotation, extremes, and
+  prediction—with the HSGP comparator leading before any map.
+- **Explore:** four shareable task tabs with controls beside the evidence they
+  affect. There is no universal map or six-field global filter wall.
+- **Maps:** measured regular-rotation share at state/county grain and matched
+  state-grain flood/drought anomaly maps. Task 1 and Task 4 remain chart-led.
+- **Evidence:** visible source paths, artifact dates, denominators, uncertainty,
+  method caveats, limitations, and named missing-data states.
+- **Paper:** a neutral `GeoCrop research paper` drawer with embedded reading,
+  open, and download actions.
+- **Compatibility:** empty URLs open Story; valid v1 analytical URLs normalize
+  into Explore; retired map layers show a warning and use measured
+  regular-rotation share safely.
 
 ## Local Development
 
-```powershell
+```bash
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open <http://localhost:3000>. No secrets, database, backend, or remote data
+service are required.
 
 ## Verification
 
-```powershell
+```bash
 npm run test
 npm run typecheck
 npm run lint
 npm run build
-python scripts\validate-task-statuses.py
-python scripts\check-required-artifacts.py
+npm audit --audit-level=high
+python scripts/validate-task-statuses.py
+python scripts/check-required-artifacts.py
 ```
 
-Last QA run on 2026-06-03 (after `TASK-014` favicon): `npm run test` passed 44/44 in 12 files, `npm run typecheck`, `npm run lint`, and `npm run build` passed. Workflow validators passed. HTTP smoke at `http://localhost:3000` linked `/favicon.svg`, and `/favicon.svg` returned 200.
+Latest QA on 2026-08-19 after `TASK-022`:
+
+- 15 test files and 68 tests passed.
+- TypeScript and ESLint passed.
+- The production build passed with Next.js 16.3.1. In the managed isolated
+  worktree, `npm run build -- --webpack` avoids sandbox/Turbopack process-port
+  restrictions.
+- `npm audit --audit-level=high` reported zero vulnerabilities after a
+  lockfile-only update within the existing manifest ranges.
+- Workflow status and required-artifact validators passed.
+- Browser Use smoke passed at 1440, 390, and 320 px: no document-level
+  horizontal overflow, no negative-size chart warnings, no global filter wall,
+  and all visible 390 px controls met the 44 px touch minimum.
 
 ## Tech Stack
 
-- **Framework:** Next.js 16 (Turbopack), React 19, TypeScript 5.9.
-- **Styling:** Tailwind CSS v4 (`@theme` tokens in `globals.css`), `class-variance-authority` for variants, `clsx` + `tailwind-merge` for class composition.
-- **Primitives:** Local shadcn-style components under `src/components/ui/` (Card, Button, Badge, Input, Select, Popover, Sheet) backed by Radix where needed.
-- **Icons:** `lucide-react`.
-- **Charts:** `recharts` (NDVI ComposedChart; other panels stay on HTML/SVG tables and bars).
-- **Maps:** `d3-geo` + `us-atlas/states-albers-10m.json` + `topojson-client` for the U.S. Albers choropleth.
-- **State:** URL search params for shareable analytical state. No database / auth / backend for MVP.
-- **Testing:** Vitest + Testing Library.
+- Next.js 16.3.1, React 19, TypeScript 5.9, Tailwind CSS v4.
+- Recharts for the HSGP comparator and diagnostic charts.
+- D3 Geo, TopoJSON Client, and `us-atlas` for code-native Albers geography.
+- Local Radix-backed UI primitives and Lucide icons.
+- Static CSV/JSON artifact loading and URL-backed analytical state.
+- Vitest and Testing Library.
 
-## Deployment Notes
+## Data and Deployment
 
-- Target host: Vercel.
-- No runtime database, auth, or secrets are required for the MVP.
-- Parent `../artifacts/tables/` CSV/JSON files are the dashboard source of truth.
-- The paper PDF is served as a static asset from `public/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf`.
-- Large Parquet/GeoTIFF artifacts are intentionally not shipped to the browser.
+- Parent `../artifacts/tables/` CSV/JSON files are the result authority.
+- The paper PDF is served from
+  `public/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf`.
+- Large Parquet and GeoTIFF artifacts are not shipped to the browser.
+- The target host is Vercel; project settings are not configured in this repo.
 
-## Known Caveats
+## Known Boundaries
 
-- The Corn Belt map is a real U.S. Albers choropleth, but it uses categorical-index coloring derived from the Corn Belt fallback geography registry. It is not a per-pixel raster and should not be read as field-level geometry. States outside the Corn Belt fallback registry render as no-data.
-- Two moderate npm advisories remain upstream in Next/PostCSS tooling; `npm audit --audit-level=high` previously reported no high/critical advisories and no high/critical advisories were introduced by the `TASK-011` redesign dependencies.
-- Vercel project settings still need to be created by the repo owner before deployment.
-- The old schematic map/filter components were removed in the cleanup pass; the shipped `MapPanel` choropleth is covered directly by component tests.
+- Task 2 geography is aggregate state/county evidence, not field or pixel
+  precision. Task 3 is state-grain only.
+- Task 4 is a concurrent-season diagnostic conclusion, not a pre-plant forecast,
+  and has no geographic prediction layer without a supporting browser-safe
+  artifact.
+- The paper reader uses the browser-native PDF viewer; no viewer package was
+  added.
+- No Playwright suite is included; component coverage and manual Browser Use
+  smoke form the current interaction gate.
 
 ## Workflow
 
-This project follows the local agentic workflow artifacts:
-
-- `PROJECT.md`
-- `SCOPE.md`
-- `TASKS.md`
-- `AGENTS.md`
-- `memory/`
-- `logs/`
-
-Build work follows one task at a time, with Builder and QA passes kept separate.
+The repository follows `PROJECT.md`, `SCOPE.md`, `TASKS.md`, `AGENTS.md`,
+`memory/`, and `logs/`. `TASK-015` through `TASK-022` were implemented and
+committed sequentially, one task per commit.

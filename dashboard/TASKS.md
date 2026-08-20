@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 23 | 22 | 0 | 0 | 0 | 0 | 1 |
+| 23 | 23 | 0 | 0 | 0 | 0 | 0 |
 
 `TASK-015` through `TASK-022` are the approved Narrative Atlas v2 graph. They
 execute sequentially with one verified task commit at a time.
@@ -939,7 +939,7 @@ execute sequentially with one verified task commit at a time.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-015
-  - Integration status: pending
+  - Integration status: complete
 - Design source:
   - `SCOPE.md` sections 2, 3, 7, and 8
   - `docs/design/2026-08-19-narrative-atlas-mockups.md`
@@ -1438,21 +1438,24 @@ execute sequentially with one verified task commit at a time.
   - `logs/Progress Log.md`
   - `logs/Handoff Notes.md`
 - Acceptance criteria:
-  - [ ] Story is the default and communicates all four acts; Explore remains task-specific and shareable.
-  - [ ] HSGP remains a lead narrative figure rather than being subordinated to maps.
-  - [ ] Universal map and global six-control wall are removed.
-  - [ ] Paper remains a drawer/action with neutral verified copy and no unrelated
+  - [x] Story is the default and communicates all four acts; Explore remains task-specific and shareable.
+  - [x] HSGP remains a lead narrative figure rather than being subordinated to maps.
+  - [x] Universal map and global six-control wall are removed.
+  - [x] Paper remains a drawer/action with neutral verified copy and no unrelated
     repository link.
-  - [ ] Existing valid v1 URLs normalize safely and unsupported legacy layers warn.
-  - [ ] Source, denominator, uncertainty, and limitation text appears beside each qualified claim.
-  - [ ] Desktop and 320–390 px mobile have no horizontal overflow, clipped essential labels, or negative-size chart warnings.
-  - [ ] Pointer, keyboard, touch, and reduced-motion paths expose equivalent evidence.
-  - [ ] No backend, new dependency, generated image, unsupported data, or unrelated cleanup is introduced.
-  - [ ] Full test, typecheck, lint, build, workflow validation, audit, and manual browser smoke gates pass.
+  - [x] Existing valid v1 URLs normalize safely and unsupported legacy layers warn.
+  - [x] Source, denominator, uncertainty, and limitation text appears beside each qualified claim.
+  - [x] Desktop and 320–390 px mobile have no horizontal overflow, clipped essential labels, or negative-size chart warnings.
+  - [x] Pointer, keyboard, touch, and reduced-motion paths expose equivalent evidence.
+  - [x] No backend, new feature dependency, generated image, unsupported data, or unrelated cleanup is introduced.
+  - [x] Full test, typecheck, lint, build, workflow validation, audit, and manual browser smoke gates pass.
 - QA notes:
-  - Pending implementation and independent checker pass.
-- Attempts: 0
+  - Builder green 2026-08-19: Default Story renders all four shared task panels in order; HSGP precedes the Rotation-only measured map. Explore renders one shareable task panel and its local controls. The global `CompactFilterBar` and overview map are removed.
+  - Compatibility green 2026-08-19: Empty URLs open Story; valid v1 tab/filter URLs infer Explore; `view` round-trips; retired map layers normalize to measured regular share with a visible warning; unrelated URL params remain preserved.
+  - Interaction green 2026-08-19: Automated pointer/keyboard/reset map coverage and paper-dialog coverage passed. Browser Use confirmed exact document-width containment at 1440, 390, and 320 px, no negative-size chart warning, no global filter wall, and 44 px visible controls at 390 px. Reduced-motion media override resolved true.
+  - Final gates green 2026-08-19: 15 files / 68 tests, typecheck, lint, Webpack production build, zero-vulnerability high audit, workflow status validation, and required-artifact validation passed. The managed sandbox blocks Turbopack's helper process from binding a port, so the equivalent production build gate used `next build --webpack`.
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-  - No attempts yet.
-- Status: pending
+  - 2026-08-19: Integrated the four-act Story and task-scoped Explore, added URL view/legacy normalization, moved the measured map into Rotation, retired global controls, neutralized paper copy, repaired touch targets, completed desktop/mobile/accessibility smoke, and updated the lockfile within existing dependency ranges after the live audit exposed newly published advisories.
+- Status: done

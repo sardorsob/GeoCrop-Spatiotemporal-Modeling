@@ -4,6 +4,57 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-08-19 — TASK-022 Story / Explore integration and final handoff
+
+**Work performed:**
+
+- Made Story the empty-URL default and composed all four source-backed task
+  panels in authored order under a data-bearing scale introduction and act
+  navigator. The HSGP comparator appears before the only Rotation map.
+- Built the sibling Explore workspace from the same `TaskPanel` dispatcher,
+  rendering one active task, relevant local controls, and exact/source paths.
+- Removed the universal overview map and deleted the v1 global
+  `CompactFilterBar` six-control wall.
+- Added `view` URL state, v1 analytical-link inference, explicit Story
+  round-tripping for non-default state, stable unrelated-param preservation,
+  and visible safe normalization for retired map layers.
+- Kept the paper as a neutral `GeoCrop research paper` drawer with embedded,
+  open, and download paths; removed unverified award/year presentation.
+- Tightened mode, paper, and map-grain controls to the 44 px touch minimum.
+- Updated README, project/task status, handoff, architecture/pattern/decision
+  memory, overview, and session notes after the implementation checks passed.
+- Triaged newly published npm advisories and applied npm's lockfile-only update
+  within existing manifest ranges; no feature package was added.
+
+**Verification:**
+
+- Focused integration/state/map/story suite: 4 files, 21 tests passed.
+- Full suite: 15 files, 68 tests passed.
+- `npm run typecheck` and `npm run lint` passed.
+- Clean-install `npm run build -- --webpack` passed with Next.js 16.3.1.
+- `npm audit --audit-level=high` reported zero vulnerabilities.
+- Browser Use passed Story at 1440/320 px and Explore at 390/320 px: document
+  width equaled viewport, no global filter wall, no negative-size warning, one
+  task-scoped Rotation map, visible legacy warning, and no visible control below
+  44 px at 390 px. Reduced-motion override matched; paper keyboard activation
+  opened the titled dialog.
+- Automated map coverage retains pointer preview, keyboard pin, Escape/reset,
+  county exact-value, and no-data paths.
+
+**Blockers / cuts:**
+
+- Managed sandbox Turbopack cannot bind its internal CSS helper port; the
+  equivalent production build used Webpack. No source/build failure remains.
+- Deployment, Playwright E2E, backend, generated imagery, runtime raster delivery,
+  and unsupported geographic prediction remain outside scope.
+
+**AI tools used:**
+
+- Superpowers execution/TDD/verification, Ponytail scope review, web data
+  visualization/cartography guidance, Browser Use, and dependency-finding triage.
+
+---
+
 ## 2026-08-19 — TASK-021 model-evidence and rotation-regime conclusion
 
 **Work performed:**

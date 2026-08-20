@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Sprout, Database, AlertTriangle, GitBranch } from "lucide-react";
 
 import { StoryModeToggle, type StoryMode } from "@/components/story/StoryModeToggle";
@@ -8,10 +9,16 @@ import type { NormalizedDashboardData } from "@/lib/data/normalize";
 
 export function TopBar({
   data,
-  mode = "story"
+  exploreHref,
+  mode = "story",
+  paperAction,
+  storyHref
 }: {
   readonly data: NormalizedDashboardData;
+  readonly exploreHref?: string;
   readonly mode?: StoryMode;
+  readonly paperAction?: ReactNode;
+  readonly storyHref?: string;
 }) {
   const hasIssues = data.errors.length > 0;
 
@@ -33,7 +40,12 @@ export function TopBar({
         </div>
 
         <div className="flex items-center gap-2">
-          <StoryModeToggle mode={mode} />
+          <StoryModeToggle
+            exploreHref={exploreHref}
+            mode={mode}
+            storyHref={storyHref}
+          />
+          {paperAction}
           <div className="hidden items-center gap-2 lg:flex">
             <Badge variant="primary" className="gap-1.5">
               <Database className="size-3" />

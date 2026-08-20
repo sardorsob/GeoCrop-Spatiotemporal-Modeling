@@ -12,10 +12,10 @@
 
 <!-- 0-Intake | 1-Scope | 2-Setup | 3-Development | 4-QA | 5-Delivery | 6-Maintenance -->
 
-**Current:** 3-Development — Narrative Atlas v2 implementation
+**Current:** 5-Delivery — Narrative Atlas v2 complete
 
-The v1 dashboard remains the preserved baseline. The approved Narrative Atlas
-v2 task graph is now executing sequentially with one task commit at a time.
+The approved Narrative Atlas v2 graph is implemented through `TASK-022`, checked,
+and ready for product review and deployment handoff.
 
 ## Source Docs
 
@@ -41,7 +41,7 @@ v2 task graph is now executing sequentially with one task commit at a time.
 | HSGP season-window zoom | done | `TASK-012` adds local Full / Green-up / Peak / Senescence / custom DOY zoom controls to the Task 1 NDVI chart |
 | NAFSI paper reader | done | `TASK-013` replaces the old Prediction hero KPI with a `NAFSI 2025 winning paper` CTA, embedded PDF reader, and open/download actions |
 | Sprout favicon | done | `TASK-014` adds a public SVG favicon using the current top-bar plant mark |
-| Website redesign v2 | in progress | `TASK-015`–`TASK-021` complete the shared grammar, evidence contracts/map, and all four evidence chapters; final Story/Explore integration begins in `TASK-022` |
+| Website redesign v2 | done | `TASK-015`–`TASK-022` deliver the shared grammar, evidence contracts/map, four chapters, default Story, task-scoped Explore, compatibility, and handoff |
 | Act I HSGP comparator | done | Story aligns corn, soybean, and winter wheat with nested posterior intervals, empirical spatial IQR, paper growth stages, direct peaks, and an explicit focused NDVI scale; Explore adds one shared compact season window |
 | Act II rotation memory | done | Schematic decade strips lead into a dated 100-cell composition, measured within-grain geography ranking/map slot, and discrete source-only threshold sensitivity |
 | Act III paired extremes | done | Matched 2019 flood and 2022 drought state maps share crop and mean-z scale; one state pin exposes event-specific NIG posterior context, denominator, source, and no-data honestly |
@@ -72,13 +72,16 @@ v2 task graph is now executing sequentially with one task commit at a time.
 - 2026-08-19: Teach Task 2 classes with explicitly schematic decade strips before showing dated composition or geography. Keep the dated class result separate from the threshold-sensitivity experiment, and allow sensitivity changes only by selecting complete exported rows.
 - 2026-08-19: Compare the 2019 flood and 2022 drought in matched state frames with one crop-wide symmetric mean-z scale. Treat the paper's NIG quantity as a posterior-predictive percentile that contextualizes baseline uncertainty, never as the map color or a confidence interval around mean z.
 - 2026-08-19: Present Task 4 ablations as two alternative CDL-baseline branches plus the full model, not as additive steps. Preserve every SHAP source row within a named family, use only the four exported test classes, and close on descriptive regime predictability while keeping unequal denominators and concurrent-season limitations visible.
+- 2026-08-19: Make Story the empty-URL default and normalize valid v1 analytical URLs into Explore. Retire the universal map and global control wall; place the measured regular-share map only inside Rotation and warn visibly when old unsupported map layers are normalized.
+- 2026-08-19: Replace unverified award/year wording with `GeoCrop research paper`; keep the existing reader/open/download action and exclude the unrelated repository link.
+- 2026-08-19: Accept npm's lockfile-only, manifest-range-preserving security remediation so the final audit resolves to Next.js 16.3.1 and zero reported vulnerabilities without adding a feature dependency.
 
 ## Last Session
 
 - **Date:** 2026-08-19
-- **What was done:** Completed `TASK-021`: connected CDL/NDVI/SMAP sources to LightGBM, source-derived ablation increments, lossless SHAP grouping, the annotated four-class error matrix, and the rotation-regime conclusion with visible timing/sample/spatial limits.
-- **What's next:** Execute `TASK-022` to integrate the four acts into the final Story and task-scoped Explore experiences, run whole-app QA, and complete handoff.
-- **Blockers:** No implementation blocker. Content inconsistencies in rotation thresholds, challenge chronology, award wording, and the paper's repository link remain final-copy gates; the scope defines safe fallback wording and behavior.
+- **What was done:** Completed `TASK-022`: integrated the four source-backed acts into default Story and task-scoped Explore, retired the global map/filter wall, added view compatibility and visible legacy warnings, neutralized paper copy, completed responsive/accessibility/browser QA, and remediated the dependency audit within existing ranges.
+- **What's next:** User product review, then configure deployment if authorized.
+- **Blockers:** No implementation blocker. Vercel project configuration and deployment remain outside the completed redesign task graph.
 
 ## Environment
 
