@@ -12,10 +12,11 @@
 
 <!-- 0-Intake | 1-Scope | 2-Setup | 3-Development | 4-QA | 5-Delivery | 6-Maintenance -->
 
-**Current:** 5-Delivery — Narrative Atlas v2 complete
+**Current:** 3-Development — post-review Explore polish
 
-The approved Narrative Atlas v2 graph is implemented through `TASK-022`, checked,
-and ready for product review and deployment handoff.
+The reviewer approved the Explore workspace and requested two bounded follow-up
+tasks before final merge: remove Story/rename the shell, then tighten two sparse
+evidence-control layouts.
 
 ## Source Docs
 
@@ -42,6 +43,8 @@ and ready for product review and deployment handoff.
 | NAFSI paper reader | done | `TASK-013` replaces the old Prediction hero KPI with a `NAFSI 2025 winning paper` CTA, embedded PDF reader, and open/download actions |
 | Sprout favicon | done | `TASK-014` adds a public SVG favicon using the current top-bar plant mark |
 | Website redesign v2 | done | `TASK-015`–`TASK-022` deliver the shared grammar, evidence contracts/map, four chapters, default Story, task-scoped Explore, compatibility, and handoff |
+| Explore-only shell | done | `TASK-023` removes Story runtime/mode state, preserves legacy task/filter URLs, and changes the product identity to GeoCrop / U.S. Corn Belt |
+| Evidence density polish | pending | `TASK-024` balances Rotation composition and replaces the Extremes crop dropdown with direct buttons |
 | Act I HSGP comparator | done | Story aligns corn, soybean, and winter wheat with nested posterior intervals, empirical spatial IQR, paper growth stages, direct peaks, and an explicit focused NDVI scale; Explore adds one shared compact season window |
 | Act II rotation memory | done | Schematic decade strips lead into a dated 100-cell composition, measured within-grain geography ranking/map slot, and discrete source-only threshold sensitivity |
 | Act III paired extremes | done | Matched 2019 flood and 2022 drought state maps share crop and mean-z scale; one state pin exposes event-specific NIG posterior context, denominator, source, and no-data honestly |
@@ -75,13 +78,15 @@ and ready for product review and deployment handoff.
 - 2026-08-19: Make Story the empty-URL default and normalize valid v1 analytical URLs into Explore. Retire the universal map and global control wall; place the measured regular-share map only inside Rotation and warn visibly when old unsupported map layers are normalized.
 - 2026-08-19: Replace unverified award/year wording with `GeoCrop research paper`; keep the existing reader/open/download action and exclude the unrelated repository link.
 - 2026-08-19: Accept npm's lockfile-only, manifest-range-preserving security remediation so the final audit resolves to Next.js 16.3.1 and zero reported vulnerabilities without adding a feature dependency.
+- 2026-08-19: After live review, retire Story rather than maintain a rejected second surface. Explore becomes the empty-URL product, and the header identity becomes GeoCrop with Corn Belt context.
+- 2026-08-19: Use existing Rotation and Extremes data more compactly: wide Rotation composition becomes field plus stacked summaries, and Extremes uses five direct crop buttons. Do not add the withdrawn auto-scroll or an unsupported year selector.
 
 ## Last Session
 
 - **Date:** 2026-08-19
-- **What was done:** Completed `TASK-022`: integrated the four source-backed acts into default Story and task-scoped Explore, retired the global map/filter wall, added view compatibility and visible legacy warnings, neutralized paper copy, completed responsive/accessibility/browser QA, and remediated the dependency audit within existing ranges.
-- **What's next:** User product review, then configure deployment if authorized.
-- **Blockers:** No implementation blocker. Vercel project configuration and deployment remain outside the completed redesign task graph.
+- **What was done:** Completed `TASK-023`: GeoCrop now opens directly into Explore, Story/runtime mode state is removed, legacy mode URLs retain supported evidence state, and the compact GeoCrop / U.S. Corn Belt header passed 320 px browser smoke.
+- **What's next:** Execute and commit `TASK-024`: balance Rotation composition and replace the Extremes dropdown with direct crop buttons. User will perform the final review before merge.
+- **Blockers:** No implementation blocker. Merge remains explicitly deferred pending user review.
 
 ## Environment
 

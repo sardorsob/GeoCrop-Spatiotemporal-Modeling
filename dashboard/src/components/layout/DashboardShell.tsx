@@ -5,7 +5,6 @@ import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   AlertTriangle,
-  ArrowUpRight,
   BookOpen,
   CheckCircle2,
   Download,
@@ -17,9 +16,6 @@ import {
 } from "lucide-react";
 
 import { MapPanel } from "@/components/map/MapPanel";
-import { ActHeader } from "@/components/story/ActHeader";
-import { ActNavigator } from "@/components/story/ActNavigator";
-import type { StoryMode } from "@/components/story/StoryModeToggle";
 import { TopBar } from "@/components/layout/TopBar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,45 +55,6 @@ const TAB_META: Record<
   rotation: { label: "Rotation", icon: Repeat },
   extremes: { label: "Extremes", icon: ShieldAlert },
   prediction: { label: "Prediction", icon: Target }
-};
-
-const ACT_COPY: Record<
-  DashboardTab,
-  {
-    readonly act: 1 | 2 | 3 | 4;
-    readonly eyebrow: string;
-    readonly title: string;
-    readonly summary: string;
-  }
-> = {
-  phenology: {
-    act: 1,
-    eyebrow: "See the season",
-    title: "Every crop keeps time.",
-    summary:
-      "A Hilbert Space Gaussian process aligns corn, soybean, and winter wheat in one seasonal frame, keeping modeled and empirical uncertainty visible."
-  },
-  rotation: {
-    act: 2,
-    eyebrow: "Read the land’s memory",
-    title: "A decade of planting leaves a pattern.",
-    summary:
-      "Sequence rules become measured rotation classes, then move into state and county evidence without pretending that aggregate shares reveal individual fields."
-  },
-  extremes: {
-    act: 3,
-    eyebrow: "Watch the system under stress",
-    title: "Weather interrupts the pattern.",
-    summary:
-      "Matched flood and drought frames hold crop, projection, and anomaly scale constant so wet and dry departures can be compared honestly."
-  },
-  prediction: {
-    act: 4,
-    eyebrow: "Predict what comes next",
-    title: "History makes some landscapes easier to read.",
-    summary:
-      "CDL history, seasonal NDVI, and SMAP context culminate in held-out diagnostics—not a pre-plant forecast or an unsupported prediction map."
-  }
 };
 
 const PAPER_REFERENCE = {
@@ -143,116 +100,21 @@ export function DashboardShell({ data }: DashboardShellProps) {
     patchState({ selectedEntity: context.selection.id });
   }
 
-  function buildExploreHref(tab: DashboardTab) {
-    const params = updateDashboardUrlSearchParams(
-      new URLSearchParams(searchParamString),
-      { ...dashboardState, view: "explore", tab }
-    );
-    params.set("tab", tab);
-    return `${pathname}?${params.toString()}`;
-  }
-
-  function buildStoryHref() {
-    const params = updateDashboardUrlSearchParams(
-      new URLSearchParams(searchParamString),
-      normalizeDashboardFilterState({})
-    );
-    const query = params.toString();
-    return query ? `${pathname}?${query}` : pathname;
-  }
-
-  const mode = dashboardState.view satisfies StoryMode;
-
   return (
     <div className="min-h-screen min-w-0 text-ink">
       <TopBar
         data={data}
-        exploreHref={buildExploreHref(dashboardState.tab)}
-        mode={mode}
         paperAction={<PaperReferenceAction />}
-        storyHref={buildStoryHref()}
       />
 
-      {mode === "story" ? (
-        <StoryExperience
-          data={data}
-          exploreHref={buildExploreHref}
-          onMapSelection={handleMapSelection}
-          onStatePatch={patchState}
-          state={dashboardState}
-          warnings={parsedUrlState.warnings}
-        />
-      ) : (
-        <ExploreExperience
-          data={data}
-          onMapSelection={handleMapSelection}
-          onStatePatch={patchState}
-          state={dashboardState}
-          warnings={parsedUrlState.warnings}
-        />
-      )}
+      <ExploreExperience
+        data={data}
+        onMapSelection={handleMapSelection}
+        onStatePatch={patchState}
+        state={dashboardState}
+        warnings={parsedUrlState.warnings}
+      />
     </div>
-  );
-}
-
-function StoryExperience({
-  data,
-  exploreHref,
-  onMapSelection,
-  onStatePatch,
-  state,
-  warnings
-}: {
-  readonly data: NormalizedDashboardData;
-  readonly exploreHref: (tab: DashboardTab) => string;
-  readonly onMapSelection: (context: CornBeltMapSelectionContext) => void;
-  readonly onStatePatch: (patch: Partial<DashboardFilterState>) => void;
-  readonly state: DashboardFilterState;
-  readonly warnings: readonly DashboardUrlStateWarning[];
-}) {
-  return (
-    <main className="mx-auto flex max-w-[1600px] min-w-0 flex-col gap-10 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-      <StoryOpening />
-      <ActNavigator className="border-y border-rule py-2" />
-      <UrlStateWarnings warnings={warnings} />
-
-      {(Object.keys(ACT_COPY) as DashboardTab[]).map((tab) => {
-        const copy = ACT_COPY[tab];
-        return (
-          <section
-            aria-labelledby={`act-${tab}-heading`}
-            className="scroll-mt-28 space-y-7 border-b border-rule pb-12 last:border-b-0"
-            id={`act-${tab}`}
-            key={tab}
-          >
-            <ActHeader
-              act={copy.act}
-              eyebrow={copy.eyebrow}
-              id={`act-${tab}-heading`}
-              summary={copy.summary}
-              title={copy.title}
-            />
-            <TaskPanel
-              data={data}
-              mode="story"
-              onMapSelection={onMapSelection}
-              onStatePatch={onStatePatch}
-              state={state}
-              tab={tab}
-            />
-            <a
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-rule bg-paper px-4 py-2 text-sm font-semibold text-primary shadow-sm transition-colors hover:bg-field/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-              href={exploreHref(tab)}
-            >
-              Explore this evidence · {TAB_META[tab].label}
-              <ArrowUpRight className="size-4" aria-hidden="true" />
-            </a>
-          </section>
-        );
-      })}
-
-      <DataLoadStatus data={data} />
-    </main>
   );
 }
 
@@ -287,7 +149,7 @@ function ExploreExperience({
       <UrlStateWarnings warnings={warnings} />
       <TaskTabs
         activeTab={state.tab}
-        onTabChange={(tab) => onStatePatch({ tab, view: "explore" })}
+        onTabChange={(tab) => onStatePatch({ tab })}
       />
       <section
         aria-label="Active task panel"
@@ -297,7 +159,6 @@ function ExploreExperience({
       >
         <TaskPanel
           data={data}
-          mode="explore"
           onMapSelection={onMapSelection}
           onStatePatch={onStatePatch}
           state={state}
@@ -311,14 +172,12 @@ function ExploreExperience({
 
 function TaskPanel({
   data,
-  mode,
   onMapSelection,
   onStatePatch,
   state,
   tab
 }: {
   readonly data: NormalizedDashboardData;
-  readonly mode: StoryMode;
   readonly onMapSelection: (context: CornBeltMapSelectionContext) => void;
   readonly onStatePatch: (patch: Partial<DashboardFilterState>) => void;
   readonly state: DashboardFilterState;
@@ -327,7 +186,6 @@ function TaskPanel({
   if (tab === "phenology") {
     return (
       <PhenologyPanel
-        mode={mode}
         modelEvaluation={data.task1.modelEvaluation}
         onCropChange={(crop) => onStatePatch({ crop })}
         phenologySeries={data.task1.phenologySeries}
@@ -361,7 +219,6 @@ function TaskPanel({
     return (
       <ExtremesPanel
         anomalySummaries={data.task3.anomalySummaries}
-        mode={mode}
         onCropChange={(crop) => onStatePatch({ crop })}
         onStateChange={(selectedState) => onStatePatch({ state: selectedState })}
         selectedCrop={state.crop}
@@ -379,61 +236,6 @@ function TaskPanel({
       splitSummaries={data.task4.splitSummaries}
       testMetrics={data.task4.testMetrics}
     />
-  );
-}
-
-function StoryOpening() {
-  return (
-    <section
-      aria-labelledby="story-opening-heading"
-      className="grid gap-7 border-b border-rule pb-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)] lg:items-end"
-    >
-      <div className="min-w-0">
-        <p className="text-[0.68rem] font-bold uppercase tracking-[0.2em] text-primary">
-          A landscape seen at three scales
-        </p>
-        <h2
-          className="mt-3 max-w-[18ch] text-balance font-display text-4xl font-semibold leading-[1.02] tracking-[-0.03em] text-ink sm:text-6xl"
-          id="story-opening-heading"
-        >
-          The Corn Belt has a rhythm, a memory, and a breaking point.
-        </h2>
-        <p className="mt-5 max-w-[62ch] text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
-          Three satellite records reveal how crops grow, how fields repeat, how
-          weather interrupts, and why some landscapes are easier to read than others.
-        </p>
-      </div>
-
-      <ol aria-label="Native observation scales" className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1">
-        <ScaleRow label="Cropland Data Layer" scale="30 m" use="crop history" />
-        <ScaleRow label="MODIS NDVI" scale="250 m" use="seasonal greenness" />
-        <ScaleRow label="SMAP" scale="9 km" use="soil moisture" />
-      </ol>
-      <p className="text-xs leading-5 text-muted-foreground lg:col-start-2">
-        Native sensor resolutions from the paper methods. Model inputs are later
-        harmonized to a common analysis grid; these scales do not imply field-level precision.
-      </p>
-    </section>
-  );
-}
-
-function ScaleRow({
-  label,
-  scale,
-  use
-}: {
-  readonly label: string;
-  readonly scale: string;
-  readonly use: string;
-}) {
-  return (
-    <li className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 border-l-2 border-primary bg-field/35 px-4 py-3">
-      <span className="row-span-2 font-mono text-xl font-semibold tabular-nums text-ink">
-        {scale}
-      </span>
-      <span className="truncate text-sm font-semibold text-ink">{label}</span>
-      <span className="text-xs text-muted-foreground">{use}</span>
-    </li>
   );
 }
 

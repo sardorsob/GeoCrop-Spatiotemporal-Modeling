@@ -85,7 +85,7 @@ const phenologySeries: readonly PhenologySeries[] = crops.flatMap((crop) => {
 });
 
 describe("PhenologyPanel", () => {
-  it("shows the three paper crops together in Story with a shared visual grammar", () => {
+  it("shows the three paper crops with the Explore controls and shared visual grammar", () => {
     render(
       <PhenologyPanel modelEvaluation={modelEvaluation} phenologySeries={phenologySeries} />
     );
@@ -94,8 +94,8 @@ describe("PhenologyPanel", () => {
     for (const label of ["Corn", "Soybean", "Winter wheat"]) {
       expect(screen.getByRole("img", { name: `${label} NDVI phenology curve` })).toBeInTheDocument();
     }
-    expect(screen.queryByRole("region", { name: "Season window controls" })).not.toBeInTheDocument();
-    expect(screen.queryByLabelText("Focus crop")).not.toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Season window controls" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Focus crop")).toHaveValue("corn");
 
     const metrics = screen.getByRole("region", { name: "HSGP model metrics" });
     expect(within(metrics).getAllByRole("row")).toHaveLength(4);
@@ -136,7 +136,6 @@ describe("PhenologyPanel", () => {
     const onCropChange = vi.fn();
     render(
       <PhenologyPanel
-        mode="explore"
         modelEvaluation={modelEvaluation}
         onCropChange={onCropChange}
         phenologySeries={phenologySeries}

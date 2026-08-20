@@ -83,16 +83,6 @@ body {
   animation: fade-in 0.3s ease-out;
 }
 
-@media (max-width: 359px) {
-  .story-frame {
-    padding-inline: 0.75rem;
-  }
-
-  .story-mode-toggle {
-    width: 100%;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

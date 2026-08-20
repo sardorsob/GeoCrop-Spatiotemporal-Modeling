@@ -19,13 +19,12 @@ describe("dashboard URL state", () => {
   it("parses all supported query params into normalized dashboard state", () => {
     const result = parseDashboardUrlState(
       new URLSearchParams(
-        "view=explore&tab=extremes&mapLayer=soil-moisture-anomaly&state=ia&crop=corn&event=midwest_flood_2019&rotationRegime=regular&selectedEntity=county%3A19001&lng=-93.62&lat=42.03&zoom=6.5"
+        "view=story&tab=extremes&mapLayer=soil-moisture-anomaly&state=ia&crop=corn&event=midwest_flood_2019&rotationRegime=regular&selectedEntity=county%3A19001&lng=-93.62&lat=42.03&zoom=6.5"
       )
     );
 
     expect(result.warnings).toEqual([]);
     expect(result.state).toEqual({
-      view: "explore",
       tab: "extremes",
       mapLayer: "soil-moisture-anomaly",
       state: "IA",
@@ -43,7 +42,6 @@ describe("dashboard URL state", () => {
   it("serializes state in stable order and omits default values", () => {
     const query = serializeDashboardUrlState({
       ...DEFAULT_DASHBOARD_FILTER_STATE,
-      view: "explore",
       tab: "prediction",
       mapLayer: "soil-moisture-anomaly",
       state: "IA",
@@ -56,18 +54,17 @@ describe("dashboard URL state", () => {
     });
 
     expect(query).toBe(
-      "view=explore&tab=prediction&mapLayer=soil-moisture-anomaly&state=IA&crop=soybean&selectedEntity=county%3A19001&lng=-93.62&lat=42.03&zoom=6.5"
+      "tab=prediction&mapLayer=soil-moisture-anomaly&state=IA&crop=soybean&selectedEntity=county%3A19001&lng=-93.62&lat=42.03&zoom=6.5"
     );
   });
 
-  it("opens legacy analytical URLs in Explore and preserves their valid task context", () => {
+  it("preserves valid task context from legacy analytical URLs", () => {
     const result = parseDashboardUrlState(
       new URLSearchParams("tab=extremes&state=ia&crop=corn")
     );
 
     expect(result.warnings).toEqual([]);
     expect(result.state).toMatchObject({
-      view: "explore",
       tab: "extremes",
       state: "IA",
       crop: "corn"
@@ -80,7 +77,6 @@ describe("dashboard URL state", () => {
     );
 
     expect(result.state).toMatchObject({
-      view: "explore",
       tab: "prediction",
       mapLayer: "rotation-regular-probability"
     });
@@ -101,11 +97,6 @@ describe("dashboard URL state", () => {
 
     expect(result.state).toEqual(DEFAULT_DASHBOARD_FILTER_STATE);
     expect(result.warnings).toEqual([
-      {
-        param: "view",
-        value: "bad",
-        message: "Invalid view \"bad\"; using default \"story\"."
-      },
       {
         param: "tab",
         value: "bad",
@@ -157,7 +148,7 @@ describe("dashboard URL state", () => {
 
   it("preserves unrelated URL params when updating through the helper", () => {
     const updated = updateDashboardUrlSearchParams(
-      new URLSearchParams("utm=class&tab=rotation&page=2"),
+      new URLSearchParams("utm=class&view=story&tab=rotation&page=2"),
       {
         ...DEFAULT_DASHBOARD_FILTER_STATE,
         crop: "winter_wheat"
@@ -165,7 +156,7 @@ describe("dashboard URL state", () => {
     );
 
     expect(updated.toString()).toBe(
-      "utm=class&page=2&view=story&crop=winter_wheat"
+      "utm=class&page=2&crop=winter_wheat"
     );
   });
 });

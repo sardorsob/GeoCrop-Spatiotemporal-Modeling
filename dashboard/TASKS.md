@@ -9,10 +9,12 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 23 | 23 | 0 | 0 | 0 | 0 | 0 |
+| 25 | 24 | 0 | 0 | 0 | 0 | 1 |
 
-`TASK-015` through `TASK-022` are the approved Narrative Atlas v2 graph. They
-execute sequentially with one verified task commit at a time.
+`TASK-015` through `TASK-022` are the completed Narrative Atlas v2 graph.
+`TASK-023` and `TASK-024` are the approved post-review simplification and
+density-polish tasks. They execute sequentially with one verified task commit
+at a time.
 
 ---
 
@@ -1002,7 +1004,7 @@ execute sequentially with one verified task commit at a time.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-016
-  - Integration status: pending
+  - Integration status: complete
 - Design source:
   - `SCOPE.md` section 5
   - Paper-generation phenology grouping workflow
@@ -1383,7 +1385,7 @@ execute sequentially with one verified task commit at a time.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-022
-  - Integration status: pending
+  - Integration status: complete
 - Design source:
   - `SCOPE.md` delivery criteria
   - `docs/design/2026-08-19-narrative-atlas-mockups.md`
@@ -1459,3 +1461,161 @@ execute sequentially with one verified task commit at a time.
 - Attempt log:
   - 2026-08-19: Integrated the four-act Story and task-scoped Explore, added URL view/legacy normalization, moved the measured map into Rotation, retired global controls, neutralized paper copy, repaired touch targets, completed desktop/mobile/accessibility smoke, and updated the lockfile within existing dependency ranges after the live audit exposed newly published advisories.
 - Status: done
+
+---
+
+## TASK-023
+
+- Feature group: Product Shell Simplification
+- Title: Collapse the product to Explore-only GeoCrop
+- Depends on: TASK-022
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-023
+  - Integration status: complete
+- Design source:
+  - User review 2026-08-19: remove Story, keep Explore as-is, and replace the
+    Narrative Atlas name with GeoCrop / Corn Belt.
+- User value: Opens directly into the analytical experience the reviewer chose,
+  with no unused mode choice or duplicated narrative surface.
+- User flow:
+  - User opens `/` and immediately sees the four-task Explore workspace.
+  - User switches task tabs or restores an existing task/filter URL.
+  - User opens the paper from the compact GeoCrop top bar.
+- Functional notes:
+  - Remove the Story mode button, Story route composition, act opening, and
+    Story-only runtime code.
+  - Make Explore the only/default workspace; no `view` parameter is required.
+  - Normalize old `view=story` or `view=explore` links by ignoring/removing the
+    retired mode while preserving supported tab/filter state.
+  - Change the brand heading from `Narrative Atlas` to `GeoCrop`; retain a quiet
+    Corn Belt context label and the paper action.
+  - Keep task components, source contracts, local controls, and evidence
+    behavior unchanged.
+- Edge cases:
+  - Empty URL.
+  - Old Story or Explore URL carrying valid task/filter state.
+  - Unrelated query parameters.
+  - 320 px top bar with brand and paper action.
+- Test cases:
+  1. Empty route renders the Explore task tablist and Phenology panel.
+  2. No Story toggle, act navigator, or narrative opening is rendered.
+  3. Old `view` links still restore supported task/filter state and are removed
+     on the next state update.
+  4. Top bar exposes `GeoCrop`, Corn Belt context, and the paper action.
+- Files to create/modify:
+  - `src/components/layout/DashboardShell.tsx`
+  - `src/components/layout/DashboardShell.test.tsx`
+  - `src/components/layout/TopBar.tsx`
+  - `src/components/story/ActHeader.tsx` (delete if unused)
+  - `src/components/story/ActNavigator.tsx` (delete if unused)
+  - `src/components/story/StoryModeToggle.tsx` (delete)
+  - `src/components/story/__tests__/story-primitives.test.tsx`
+  - `src/features/phenology/PhenologyPanel.tsx`
+  - `src/features/extremes/ExtremesPanel.tsx`
+  - `src/lib/data/types.ts`
+  - `src/lib/state/dashboard-state.ts`
+  - `src/lib/state/url-state.ts`
+  - `src/lib/state/__tests__/url-state.test.ts`
+  - `PROJECT.md`
+  - `logs/Progress Log.md`
+- Acceptance criteria:
+  - [x] Explore is the only and default product surface.
+  - [x] Story navigation/composition and `view` state are absent from runtime.
+  - [x] Header identity is GeoCrop with Corn Belt context.
+  - [x] Existing task/filter links remain useful after mode retirement.
+  - [x] No evidence component, source, caveat, or paper action regresses.
+  - [x] Focused tests, full tests, typecheck, lint, and responsive browser smoke pass.
+- QA notes:
+  - Green 2026-08-19: Empty and legacy-mode URLs open the task-scoped Explore
+    workspace; the next state change removes retired `view` parameters while
+    preserving valid task/filter and unrelated query state.
+  - Green 2026-08-19: Story composition, act navigation, mode control, and three
+    unused Story-only primitives were deleted. Shared figure/evidence primitives,
+    all task panels, local controls, paper actions, sources, and caveats remain.
+  - Green 2026-08-19: 15 files / 66 tests, typecheck, lint, Webpack production
+    build, workflow validation, and required-artifact validation passed.
+    Browser Use confirmed GeoCrop / U.S. Corn Belt, four tabs, paper action,
+    320 px document containment, and no Story/Explore mode links.
+- Attempts: 1
+- Max attempts: 3
+- Attempt log:
+  - 2026-08-19: Approved as a bounded deletion-first follow-up after the user
+    selected Explore and rejected the Story surface during live review.
+  - 2026-08-19: Removed the rejected Story surface and mode URL state, made
+    Explore the only route composition, retained compatibility for legacy mode
+    links, renamed the shell, and passed automated and live responsive gates.
+- Status: done
+
+---
+
+## TASK-024
+
+- Feature group: Evidence Density Polish
+- Title: Tighten Rotation composition and Extremes crop controls
+- Depends on: TASK-023
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-024
+  - Integration status: pending
+- Design source:
+  - User review 2026-08-19: use the Rotation composition's right-side whitespace
+    for stacked class summaries and replace the Extremes crop dropdown with one
+    direct button per crop.
+- User value: Makes two evidence controls faster to scan and uses wide-screen
+  space intentionally without changing scientific meaning.
+- User flow:
+  - User reads the 100-cell field beside three stacked exact class summaries.
+  - User selects Corn, Soybean, Winter wheat, Oats, or Other cropland directly
+    from a visible button group and the paired event evidence updates.
+- Functional notes:
+  - On wide screens, place the 100-cell field at left and stack the three class
+    summaries at right; stack naturally on narrow screens.
+  - Preserve exactly 100 cells, exact percentages, pixels, area, source date,
+    denominator, and class definitions.
+  - Replace the native crop dropdown with five 44 px minimum buttons using
+    `aria-pressed`; retain the selected-crop URL callback.
+  - Do not add automatic map-click scrolling; the user explicitly withdrew it.
+  - Do not add a year selector. The current Rotation map is a dated aggregate
+    classification and has no truthful year-by-year map artifact.
+- Edge cases:
+  - Crop with no event rows.
+  - Long `Winter wheat` / `Other cropland` labels at 320 px.
+  - Missing rotation class row.
+  - Keyboard and touch crop selection.
+- Test cases:
+  1. Rotation still renders exactly 100 cells and three exact class summaries.
+  2. Wide-layout composition wrapper exposes the field and stacked summary rail.
+  3. Extremes renders five crop buttons, no crop combobox, and one pressed crop.
+  4. Clicking a crop button calls the existing callback and changes visible evidence.
+  5. No year selector or map auto-scroll behavior is introduced.
+- Files to create/modify:
+  - `src/features/rotation/RotationClassChart.tsx`
+  - `src/features/rotation/__tests__/rotation-panel.test.tsx`
+  - `src/features/extremes/ExtremesPanel.tsx`
+  - `src/features/extremes/__tests__/extremes-panel.test.tsx`
+  - `README.md`
+  - `HANDOVER.md`
+  - `PROJECT.md`
+  - `memory/architecture.md`
+  - `memory/patterns.md`
+  - `memory/decisions.md`
+  - `logs/Overview.md`
+  - `logs/Progress Log.md`
+  - `logs/Handoff Notes.md`
+- Acceptance criteria:
+  - [ ] Rotation uses a balanced field-and-summary layout without changing data.
+  - [ ] Extremes uses five direct, accessible crop buttons and no crop dropdown.
+  - [ ] Mobile has no document overflow or clipped essential labels.
+  - [ ] No unsupported year selector, auto-scroll, dependency, or data claim is added.
+  - [ ] Focused tests, full tests, typecheck, lint, build, workflow validation, audit, and browser smoke pass.
+- QA notes:
+  - Pending implementation.
+- Attempts: 0
+- Max attempts: 3
+- Attempt log:
+  - 2026-08-19: Approved as a bounded layout/control polish task. Ponytail scope
+    keeps the withdrawn auto-scroll and unsupported year selector out.
+- Status: pending

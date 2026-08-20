@@ -184,7 +184,6 @@ describe("ExtremesPanel", () => {
     render(
       <ExtremesPanel
         anomalySummaries={anomalySummaries}
-        mode="explore"
         onCropChange={onCropChange}
         selectedCrop="corn"
       />

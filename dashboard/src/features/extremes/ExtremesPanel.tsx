@@ -1,4 +1,3 @@
-import type { StoryMode } from "@/components/story/StoryModeToggle";
 import type {
   AnomalyStateCropSummary,
   CropId,
@@ -19,7 +18,6 @@ import {
 
 export interface ExtremesPanelProps {
   readonly anomalySummaries: readonly AnomalyStateCropSummary[];
-  readonly mode?: StoryMode;
   readonly selectedEvent?: ExtremeEventId;
   readonly selectedCrop?: CropId;
   readonly selectedState?: string;
@@ -33,7 +31,6 @@ const inputClassName =
 
 export function ExtremesPanel({
   anomalySummaries,
-  mode = "story",
   onCropChange,
   onStateChange,
   selectedCrop,
@@ -106,16 +103,14 @@ export function ExtremesPanel({
 
       <AnomalySummaryChart rows={cropRows} />
 
-      {mode === "explore" ? (
-        <details className="rounded-xl border border-rule bg-paper p-4 sm:p-5">
-          <summary className="cursor-pointer font-semibold text-ink focus-visible:ring-2 focus-visible:ring-focus">
-            Exact state × crop values · {anomalySummaries.length.toLocaleString("en-US")} rows
-          </summary>
-          <div className="mt-4 border-t border-rule pt-4">
-            <AnomalyTable rows={anomalySummaries} />
-          </div>
-        </details>
-      ) : null}
+      <details className="rounded-xl border border-rule bg-paper p-4 sm:p-5">
+        <summary className="cursor-pointer font-semibold text-ink focus-visible:ring-2 focus-visible:ring-focus">
+          Exact state × crop values · {anomalySummaries.length.toLocaleString("en-US")} rows
+        </summary>
+        <div className="mt-4 border-t border-rule pt-4">
+          <AnomalyTable rows={anomalySummaries} />
+        </div>
+      </details>
 
       {sources.length > 0 ? <SourceNotes sources={sources} /> : null}
     </section>

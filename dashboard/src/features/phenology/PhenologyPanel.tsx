@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import type { StoryMode } from "@/components/story/StoryModeToggle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type {
@@ -24,7 +23,6 @@ import {
 } from "./season-window";
 
 export interface PhenologyPanelProps {
-  readonly mode?: StoryMode;
   readonly modelEvaluation: readonly PhenologyModelEvaluation[];
   readonly phenologySeries: readonly PhenologySeries[];
   readonly selectedCrop?: CropId;
@@ -39,7 +37,6 @@ const SEASON_PRESET_IDS = [
 ] as const satisfies readonly SeasonWindowPresetId[];
 
 export function PhenologyPanel({
-  mode = "story",
   modelEvaluation,
   onCropChange,
   phenologySeries,
@@ -86,23 +83,21 @@ export function PhenologyPanel({
         summary={PHENOLOGY_COPY.summary}
         headingId="phenology-heading"
         right={
-          mode === "explore" ? (
-            <label className="grid min-w-44 gap-1.5 text-sm">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                Focus crop
-              </span>
-              <select
-                aria-label="Focus crop"
-                className="h-9 w-full rounded-md border border-rule bg-paper px-3 text-sm font-medium text-ink shadow-sm focus:outline-none focus:ring-2 focus:ring-field"
-                value={focusedCrop}
-                onChange={(event) => onCropChange?.(event.currentTarget.value as CropId)}
-              >
-                {PHENOLOGY_CROPS.map((crop) => (
-                  <option key={crop} value={crop}>{CROP_LABELS[crop]}</option>
-                ))}
-              </select>
-            </label>
-          ) : undefined
+          <label className="grid min-w-44 gap-1.5 text-sm">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Focus crop
+            </span>
+            <select
+              aria-label="Focus crop"
+              className="h-9 w-full rounded-md border border-rule bg-paper px-3 text-sm font-medium text-ink shadow-sm focus:outline-none focus:ring-2 focus:ring-field"
+              value={focusedCrop}
+              onChange={(event) => onCropChange?.(event.currentTarget.value as CropId)}
+            >
+              {PHENOLOGY_CROPS.map((crop) => (
+                <option key={crop} value={crop}>{CROP_LABELS[crop]}</option>
+              ))}
+            </select>
+          </label>
         }
       />
 
@@ -119,12 +114,12 @@ export function PhenologyPanel({
 
       {!isMissing && (
         <PhenologyMetrics
-          focusedCrop={mode === "explore" ? focusedCrop : undefined}
+          focusedCrop={focusedCrop}
           metrics={modelEvaluation}
         />
       )}
 
-      {mode === "explore" && activeWindow && sharedBounds && (
+      {activeWindow && sharedBounds && (
         <SeasonControls
           activeWindow={activeWindow}
           bounds={sharedBounds}
@@ -142,7 +137,7 @@ export function PhenologyPanel({
             <NdviCurveChart
               key={crop}
               crop={crop}
-              emphasized={mode === "explore" && crop === focusedCrop}
+              emphasized={crop === focusedCrop}
               seasonWindow={activeWindow}
               series={phenologySeries}
             />

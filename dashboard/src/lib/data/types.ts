@@ -2,8 +2,6 @@ export type DashboardTaskId = "task1" | "task2" | "task3" | "task4";
 
 export type DashboardTab = "phenology" | "rotation" | "extremes" | "prediction";
 
-export type DashboardView = "story" | "explore";
-
 export type SourceFormat = "csv" | "json";
 
 export type ArtifactSourceStatus = "available" | "scoped" | "fallback-only";
@@ -257,7 +255,6 @@ export interface GeoSummary {
 }
 
 export interface DashboardFilterState {
-  readonly view: DashboardView;
   readonly tab: DashboardTab;
   readonly mapLayer: MapLayerId;
   readonly state?: string;

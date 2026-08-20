@@ -4,6 +4,72 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-08-19 — TASK-023 Explore-only GeoCrop shell
+
+**Work performed:**
+
+- Made the existing Explore workspace the only route composition and empty-URL
+  default, while retaining all four task tabs and their local evidence controls.
+- Removed the Story opening, act composition/navigation, mode toggle, `view`
+  domain state, and retired-mode serialization. Legacy `view` parameters are
+  ignored on read and removed on the next state update without losing supported
+  task/filter or unrelated query state.
+- Changed the compact product identity to `GeoCrop` with `U.S. Corn Belt`
+  context and retained the paper action, artifact badges, sources, caveats, and
+  evidence panels.
+- Deleted three now-unused Story-only primitives and their obsolete tests;
+  retained the shared evidence figure and caption primitives.
+
+**Verification:**
+
+- Test-first red confirmed the old Story shell and `view` URL behavior before
+  implementation; focused regression coverage passed after the deletion.
+- Full gate passed: 15 files / 66 tests, TypeScript, ESLint, Webpack production
+  build, workflow status validation, and required-artifact validation.
+- Browser Use confirmed the live default route at 800 and emulated 320 px:
+  GeoCrop / U.S. Corn Belt, paper action, four task tabs, no mode links, and
+  document width equal to viewport width at 320 px.
+
+**Blockers / cuts:**
+
+- No blocker. Merge remains deferred for the user's final review.
+
+**AI tools used:**
+
+- Superpowers TDD and verification-before-completion, Ponytail deletion-first
+  scope control, and Browser Use responsive smoke.
+
+---
+
+## 2026-08-19 — Post-review follow-up planning
+
+**Work performed:**
+
+- Captured the user's live-review choice to keep Explore and remove Story as
+  `TASK-023`, including removal of mode URL state and the Narrative Atlas name.
+- Captured Rotation composition and Extremes crop-control density polish as
+  `TASK-024`.
+- Recorded two explicit cuts: no map-click auto-scroll because the user withdrew
+  it, and no year selector because the shipped Rotation map has no truthful
+  year-by-year evidence artifact.
+- Kept the branch unmerged. Work remains sequential with one verified commit per
+  task before the user's final review.
+
+**Verification:**
+
+- Planning artifacts reviewed against the live feedback and current component
+  boundaries. No production code changed in this planning step.
+
+**Blockers / cuts:**
+
+- Merge is intentionally deferred.
+
+**AI tools used:**
+
+- Superpowers bounded brainstorming and Ponytail deletion-first scope control.
+
+---
+
 ## 2026-08-19 — TASK-022 Story / Explore integration and final handoff
 
 **Work performed:**

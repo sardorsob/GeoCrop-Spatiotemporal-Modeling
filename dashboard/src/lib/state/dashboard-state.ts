@@ -2,7 +2,6 @@ import type {
   CropId,
   DashboardFilterState,
   DashboardTab,
-  DashboardView,
   ExtremeEventId,
   MapLayerId,
   RotationRegimeId
@@ -14,7 +13,6 @@ export interface DashboardOption<TId extends string = string> {
 }
 
 export type DashboardFilterKey =
-  | "view"
   | "tab"
   | "mapLayer"
   | "state"
@@ -38,8 +36,6 @@ export const MAP_LAYER_IDS = [
   "crop-prediction",
   "prediction-agreement"
 ] as const satisfies readonly MapLayerId[];
-
-export const DASHBOARD_VIEWS = ["story", "explore"] as const satisfies readonly DashboardView[];
 
 export const SUPPORTED_MAP_LAYER_IDS = [
   "rotation-regular-probability",
@@ -66,7 +62,6 @@ export const ROTATION_REGIME_IDS = [
 ] as const satisfies readonly RotationRegimeId[];
 
 export const DEFAULT_DASHBOARD_FILTER_STATE: DashboardFilterState = {
-  view: "story",
   tab: "phenology",
   mapLayer: "rotation-regular-probability"
 };
@@ -112,10 +107,6 @@ export function isDashboardTab(value: string): value is DashboardTab {
   return includesString(DASHBOARD_TABS, value);
 }
 
-export function isDashboardView(value: string): value is DashboardView {
-  return includesString(DASHBOARD_VIEWS, value);
-}
-
 export function isSupportedMapLayerId(value: string): value is MapLayerId {
   return includesString(SUPPORTED_MAP_LAYER_IDS, value);
 }
@@ -149,9 +140,6 @@ export function normalizeDashboardFilterState(
   return {
     ...DEFAULT_DASHBOARD_FILTER_STATE,
     ...state,
-    view: state.view && isDashboardView(state.view)
-      ? state.view
-      : DEFAULT_DASHBOARD_FILTER_STATE.view,
     mapLayer:
       state.mapLayer && isSupportedMapLayerId(state.mapLayer)
         ? state.mapLayer
