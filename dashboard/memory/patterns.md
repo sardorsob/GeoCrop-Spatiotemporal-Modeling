@@ -16,6 +16,25 @@ TBD
 
 ---
 
+## Semantic Evidence Figure Primitives
+
+**Use when:** Story and analytical views need to share an evidence hierarchy
+without sharing one monolithic page component.
+
+**Rule:** Compose small semantic primitives for act headings, navigation,
+figure naming, source/denominator/caveat captions, and mode switching. Keep the
+figure body task-owned and data-bound; keep essential destinations as native
+links so the reading path exists before hydration.
+
+**Example:**
+
+```text
+Wrap a task-owned chart in `FigureFrame`, pass `EvidenceCaption` with its source
+and denominator, and use the same figure in a Story act or Explore panel.
+```
+
+---
+
 ## Manual Scaffold Preservation
 
 **Use when:** Adding framework scaffold files into a folder that already contains workflow artifacts.

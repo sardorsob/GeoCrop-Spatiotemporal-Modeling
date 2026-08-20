@@ -4,6 +4,43 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-08-19 — TASK-015 Narrative Atlas visual grammar
+
+**Work performed:**
+
+- Created a reusable four-act navigator, act header, figure frame, evidence
+  caption, and server-rendered Story/Explore switch.
+- Extended the existing Tailwind v4 theme with explicit crop, anomaly, focus,
+  neutral, ink, paper, field, and rule roles.
+- Reworked the top bar around the Narrative Atlas identity while preserving
+  artifact health indicators and existing task data.
+- Added keyboard focus, 320 px continuation, and reduced-motion rules without
+  adding a package or generated asset.
+
+**Verification:**
+
+- TDD red: the focused story-primitives suite failed on missing modules.
+- Focused green: 1 file and 4 tests passed.
+- Checker full suite: 13 files and 48 tests passed.
+- `npm run typecheck`, `npm run lint`, and `git diff --check` passed.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- Task-specific charts, maps, selectors, and data were intentionally untouched;
+  their work begins in `TASK-016`–`TASK-021`.
+- No imagery, motion library, design-system package, or duplicate UI stack was
+  introduced.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- Web data-visualization composition and mobile guidance
+
+---
+
 ## 2026-08-19 — Narrative Atlas mockups, v2 scope, and task graph
 
 **Work performed:**

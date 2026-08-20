@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 23 | 15 | 0 | 0 | 0 | 0 | 8 |
+| 23 | 16 | 0 | 0 | 0 | 0 | 7 |
 
 `TASK-015` through `TASK-022` are the pending Narrative Atlas v2 graph. They may
 not move to `in-progress` until the user has reviewed the mockup/spec package.
@@ -975,15 +975,21 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - `src/components/story/StoryModeToggle.tsx`
   - `src/components/story/__tests__/story-primitives.test.tsx`
 - Acceptance criteria:
-  - [ ] Existing tokens are extended into the approved visual grammar without generated imagery or new dependencies.
-  - [ ] Reusable semantic primitives cover four acts, evidence captions, source/denominator notes, and Story/Explore switching.
-  - [ ] Crop, anomaly, focus, and neutral roles are distinct and documented in code.
-  - [ ] Focus, reduced-motion, and 320 px behavior are defined.
-  - [ ] Task data and task-specific visualizations remain unchanged.
-  - [ ] Focused tests, typecheck, and lint pass.
-- Attempts: 0
+  - [x] Existing tokens are extended into the approved visual grammar without generated imagery or new dependencies.
+  - [x] Reusable semantic primitives cover four acts, evidence captions, source/denominator notes, and Story/Explore switching.
+  - [x] Crop, anomaly, focus, and neutral roles are distinct and documented in code.
+  - [x] Focus, reduced-motion, and 320 px behavior are defined.
+  - [x] Task data and task-specific visualizations remain unchanged.
+  - [x] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - TDD red 2026-08-19: `npx vitest run src/components/story/__tests__/story-primitives.test.tsx` failed because the five requested story primitive modules did not exist.
+  - Builder green 2026-08-19: Added semantic act navigation/header, evidence caption, figure frame, Story/Explore switch, warm atlas tokens, global focus treatment, 320 px continuation, and a reduced-motion fallback; focused suite passed 1 file and 4 tests.
+  - Checker pass 2026-08-19: Ponytail review found no speculative dependency or abstraction (`Lean already. Ship.`); `git diff --check` passed, the full suite passed 13 files and 48 tests, and `npm run typecheck` plus `npm run lint` passed.
+- Attempts: 1
 - Max attempts: 3
-- Status: pending
+- Attempt log:
+  - 2026-08-19: Started in the isolated `codex/narrative-atlas-v2` worktree after the approved mockup/spec package and a green 44-test baseline.
+- Status: done
 
 ---
 
@@ -1041,8 +1047,12 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - [ ] Selectors return source-backed values, rank where meaningful, denominator, and shared domains.
   - [ ] No selector manufactures Task 4 geography.
   - [ ] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - Pending implementation and independent checker pass.
 - Attempts: 0
 - Max attempts: 3
+- Attempt log:
+  - No attempts yet.
 - Status: pending
 
 ---
@@ -1100,8 +1110,12 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - [ ] Evidence lens and complete legend remain source- and caveat-visible.
   - [ ] Unsupported prediction/agreement layers are removed with a safe legacy-state fallback.
   - [ ] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - Pending implementation and independent checker pass.
 - Attempts: 0
 - Max attempts: 3
+- Attempt log:
+  - No attempts yet.
 - Status: pending
 
 ---
@@ -1160,8 +1174,12 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - [ ] Mobile stacks crops without horizontal overflow or clipped essential labels.
   - [ ] Empty, source, and caveat states remain explicit.
   - [ ] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - Pending implementation and independent checker pass.
 - Attempts: 0
 - Max attempts: 3
+- Attempt log:
+  - No attempts yet.
 - Status: pending
 
 ---
@@ -1216,8 +1234,12 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - [ ] Sensitivity uses discrete source rows only.
   - [ ] “Irregular” is defined without judgment and source conflicts remain caveated.
   - [ ] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - Pending implementation and independent checker pass.
 - Attempts: 0
 - Max attempts: 3
+- Attempt log:
+  - No attempts yet.
 - Status: pending
 
 ---
@@ -1271,8 +1293,12 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - [ ] Pinned evidence includes values, denominator, source, and limitation.
   - [ ] Exact values remain available in a compact table.
   - [ ] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - Pending implementation and independent checker pass.
 - Attempts: 0
 - Max attempts: 3
+- Attempt log:
+  - No attempts yet.
 - Status: pending
 
 ---
@@ -1328,8 +1354,12 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - [ ] No unsupported geographic prediction layer appears.
   - [ ] Pre-plant, sample, and spatial-resolution caveats are visible.
   - [ ] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - Pending implementation and independent checker pass.
 - Attempts: 0
 - Max attempts: 3
+- Attempt log:
+  - No attempts yet.
 - Status: pending
 
 ---
@@ -1409,6 +1439,10 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - [ ] Pointer, keyboard, touch, and reduced-motion paths expose equivalent evidence.
   - [ ] No backend, new dependency, generated image, unsupported data, or unrelated cleanup is introduced.
   - [ ] Full test, typecheck, lint, build, workflow validation, audit, and manual browser smoke gates pass.
+- QA notes:
+  - Pending implementation and independent checker pass.
 - Attempts: 0
 - Max attempts: 3
+- Attempt log:
+  - No attempts yet.
 - Status: pending

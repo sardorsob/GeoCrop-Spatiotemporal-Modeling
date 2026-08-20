@@ -12,10 +12,10 @@
 
 <!-- 0-Intake | 1-Scope | 2-Setup | 3-Development | 4-QA | 5-Delivery | 6-Maintenance -->
 
-**Current:** 1-Scope — Narrative Atlas v2 mockup/spec review
+**Current:** 3-Development — Narrative Atlas v2 implementation
 
-The implemented dashboard remains the completed v1 baseline. The active work is
-an approval-gated redesign initiative; no v2 implementation has started.
+The v1 dashboard remains the preserved baseline. The approved Narrative Atlas
+v2 task graph is now executing sequentially with one task commit at a time.
 
 ## Source Docs
 
@@ -41,7 +41,7 @@ an approval-gated redesign initiative; no v2 implementation has started.
 | HSGP season-window zoom | done | `TASK-012` adds local Full / Green-up / Peak / Senescence / custom DOY zoom controls to the Task 1 NDVI chart |
 | NAFSI paper reader | done | `TASK-013` replaces the old Prediction hero KPI with a `NAFSI 2025 winning paper` CTA, embedded PDF reader, and open/download actions |
 | Sprout favicon | done | `TASK-014` adds a public SVG favicon using the current top-bar plant mark |
-| Website redesign v2 | review-ready | Narrative Atlas product frame approved; Chaptered Evidence Canvas + Evidence Lab mockups, v2 scope/spec, and `TASK-015`–`TASK-022` are ready for review; implementation has not started |
+| Website redesign v2 | in progress | `TASK-015` establishes the shared warm-atlas grammar and semantic Story/Explore primitives; evidence normalization begins in `TASK-016` |
 
 ## Decisions
 
@@ -68,9 +68,9 @@ an approval-gated redesign initiative; no v2 implementation has started.
 ## Last Session
 
 - **Date:** 2026-08-19
-- **What was done:** Converted the approved Narrative Atlas frame into three code-native layout mockups, selected the Chaptered Evidence Canvas + Evidence Lab balance, wrote the review-ready design spec, synchronized v2 scope and stack guidance, and appended eight pending implementation tasks. No application code was changed and no application tests were run.
-- **What's next:** User reviews the mockups and design spec. If the selected balance holds, begin `TASK-015` visual grammar and `TASK-016` evidence contracts in parallel, then follow the documented dependency graph.
-- **Blockers:** Detailed mockup/spec review is still required before implementation. Content inconsistencies in rotation thresholds, challenge chronology, award wording, and the paper's repository link remain copy gates; the scope defines safe fallback wording and behavior.
+- **What was done:** Completed `TASK-015` on the isolated Narrative Atlas branch: added semantic act/figure/evidence/mode primitives, extended the Tailwind theme into the approved warm field-notebook grammar, and added focus, narrow-screen, and reduced-motion behavior without changing task data or adding dependencies.
+- **What's next:** Execute `TASK-016` to repair phenology aggregation and add deterministic evidence selectors before any redesigned map or task figure consumes those values.
+- **Blockers:** No implementation blocker. Content inconsistencies in rotation thresholds, challenge chronology, award wording, and the paper's repository link remain final-copy gates; the scope defines safe fallback wording and behavior.
 
 ## Environment
 
