@@ -456,7 +456,10 @@ describe("DashboardShell", () => {
       { scroll: false }
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Select Iowa" }));
+    const overviewMap = screen.getByRole("region", {
+      name: "Corn Belt map surface"
+    });
+    fireEvent.click(within(overviewMap).getByRole("button", { name: "Select Iowa" }));
 
     expect(mockNavigation.replace).toHaveBeenLastCalledWith(
       expect.stringContaining("selectedEntity=state%3AIA"),

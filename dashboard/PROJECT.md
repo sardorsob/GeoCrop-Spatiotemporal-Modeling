@@ -41,9 +41,10 @@ v2 task graph is now executing sequentially with one task commit at a time.
 | HSGP season-window zoom | done | `TASK-012` adds local Full / Green-up / Peak / Senescence / custom DOY zoom controls to the Task 1 NDVI chart |
 | NAFSI paper reader | done | `TASK-013` replaces the old Prediction hero KPI with a `NAFSI 2025 winning paper` CTA, embedded PDF reader, and open/download actions |
 | Sprout favicon | done | `TASK-014` adds a public SVG favicon using the current top-bar plant mark |
-| Website redesign v2 | in progress | `TASK-015`–`TASK-019` establish the shared grammar, evidence contracts/map, HSGP comparator, and rotation-memory chapter; Act III begins in `TASK-020` |
+| Website redesign v2 | in progress | `TASK-015`–`TASK-020` establish the shared grammar, evidence contracts/map, HSGP comparator, rotation memory, and paired extreme-event chapter; Act IV begins in `TASK-021` |
 | Act I HSGP comparator | done | Story aligns corn, soybean, and winter wheat with nested posterior intervals, empirical spatial IQR, paper growth stages, direct peaks, and an explicit focused NDVI scale; Explore adds one shared compact season window |
 | Act II rotation memory | done | Schematic decade strips lead into a dated 100-cell composition, measured within-grain geography ranking/map slot, and discrete source-only threshold sensitivity |
+| Act III paired extremes | done | Matched 2019 flood and 2022 drought state maps share crop and mean-z scale; one state pin exposes event-specific NIG posterior context, denominator, source, and no-data honestly |
 
 ## Decisions
 
@@ -68,12 +69,13 @@ v2 task graph is now executing sequentially with one task commit at a time.
 - 2026-08-19: Preserve `TASK-000`–`TASK-014` as v1 history and append eight pending v2 tasks (`TASK-015`–`TASK-022`). No v2 task may start before mockup/spec review.
 - 2026-08-19: Keep the Task 1 story as one three-row comparator on a shared 0.50–1.00 NDVI scale. Encode the paper's posterior IQR, 90% interval, empirical Q25/Q75, and crop-specific stages directly; reserve shared season-window controls for Explore.
 - 2026-08-19: Teach Task 2 classes with explicitly schematic decade strips before showing dated composition or geography. Keep the dated class result separate from the threshold-sensitivity experiment, and allow sensitivity changes only by selecting complete exported rows.
+- 2026-08-19: Compare the 2019 flood and 2022 drought in matched state frames with one crop-wide symmetric mean-z scale. Treat the paper's NIG quantity as a posterior-predictive percentile that contextualizes baseline uncertainty, never as the map color or a confidence interval around mean z.
 
 ## Last Session
 
 - **Date:** 2026-08-19
-- **What was done:** Completed `TASK-019`: built schematic decade sequences, a dated 100-cell class composition, source-separated discrete sensitivity controls, and responsive state/county rankings with tied-rank and pinned-detail behavior. A geography-figure slot lets `TASK-022` place the shared Task 2 map in the correct narrative position.
-- **What's next:** Execute `TASK-020` to build the paired flood and drought evidence chapter.
+- **What was done:** Completed `TASK-020`: built matched flood/drought maps with one crop and fixed symmetric mean-z domain, shared state pinning, event-specific posterior context and provenance, explicit missingness, paired summaries, and a complete Explore table.
+- **What's next:** Execute `TASK-021` to build the model-evidence and rotation-regime conclusion chapter.
 - **Blockers:** No implementation blocker. Content inconsistencies in rotation thresholds, challenge chronology, award wording, and the paper's repository link remain final-copy gates; the scope defines safe fallback wording and behavior.
 
 ## Environment

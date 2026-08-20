@@ -368,3 +368,25 @@ Rotation accepts `selectedEntity`; extremes accepts `selectedEvent`, `selectedCr
 ```text
 `NativeSelect` in `CompactFilterBar` is a small helper: `<div className="relative"><select className={SELECT_CLASS} {...props} /><ChevronDown className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-slate-400" /></div>`.
 ```
+
+---
+
+## Matched Frames For Opposing Spatial Events
+
+**Use when:** Two dated events must be compared without allowing scale, crop, or
+geographic framing to manufacture a difference.
+
+**Rule:** Compute one domain from all values for the active comparison variable,
+make it symmetric around the meaningful midpoint, and pass that exact domain to
+both maps. Keep the crop, projection, extent, legend, no-data fill, and pin state
+shared. Put uncertainty or posterior context in a differently labeled detail
+channel rather than adding it to the magnitude color.
+
+**Example:**
+
+```text
+`EventMapComparison` calls `selectEventMapEvidence` once per Task 3 event. The
+selector derives the same crop-wide `[-maxAbs, +maxAbs]` mean-z domain for each;
+both maps highlight one pinned state, while their cards separately report NIG
+posterior percentile and pixel-week denominator.
+```

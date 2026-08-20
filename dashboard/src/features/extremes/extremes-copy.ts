@@ -6,16 +6,18 @@ import {
 } from "@/lib/state/dashboard-state";
 
 export const EXTREMES_COPY = {
-  eyebrow: "Extremes",
+  eyebrow: "Act III · Watch the system under stress",
   heading: "Task 3 soil moisture extremes",
   summary:
-    "State and crop summaries compare soil moisture anomaly z-scores with NIG drought posterior evidence for the Task 3 event windows.",
+    "The same crop and the same zero-centered scale hold still while the atlas moves from the 2019 flood to the 2022 drought.",
   emptyState:
-    "No Task 3 soil moisture anomalies match the selected filters. Review the event, crop, and state filters or confirm the normalized Task 3 anomaly artifacts are available.",
+    "No Task 3 soil moisture anomalies are available for this crop. The matched frames remain visible so absence is not mistaken for zero.",
   zScoreCaveat:
-    "Z-scores compare observed soil moisture anomalies against the event baseline; positive values mark wetter-than-baseline weeks and negative values mark drier-than-baseline weeks.",
+    "Mean z is anomaly magnitude and direction; it is the map color. Positive values are wetter than the multi-year baseline and negative values are drier.",
   nigCaveat:
-    "NIG P(drought) is a posterior drought probability, so it should be read alongside the z-score direction rather than as a standalone wetness score.",
+    "The NIG posterior predictive percentile accounts for baseline uncertainty: values near 0 sit in the dry tail and values near 1 in the wet tail. It is not a confidence interval around mean z.",
+  comparisonCaveat:
+    "Read horizontally. Geography, crop, and color scale are matched; event windows and available state × crop observations are not assumed to be identical.",
   denominatorFallback: "Pixel-weeks in the selected event, state, and crop window"
 } as const;
 
@@ -32,17 +34,17 @@ export const EXTREME_EVENT_DETAILS: Readonly<
 > = {
   midwest_flood_2019: {
     label: getEventLabel("midwest_flood_2019"),
-    shortLabel: "Wet anomaly window",
-    description: "2019 Midwest flood event window",
+    shortLabel: "Wet event window",
+    description: "2019 Midwest flood",
     interpretation:
-      "Wet event interpretation: high NIG P(drought) can indicate non-drought posterior context despite wet anomaly framing."
+      "Positive mean z locates wetter-than-baseline conditions; a NIG percentile nearer 1 places the observation farther into the posterior wet tail."
   },
   plains_drought_2022: {
     label: getEventLabel("plains_drought_2022"),
-    shortLabel: "Dry anomaly window",
-    description: "2022 Plains drought event window",
+    shortLabel: "Dry event window",
+    description: "2022 Plains drought",
     interpretation:
-      "Dry event interpretation: P(drought) below 0.1 marks drought evidence when the z-score context is dry."
+      "Negative mean z locates drier-than-baseline conditions; a NIG percentile nearer 0 places the observation farther into the posterior dry tail."
   }
 };
 
@@ -61,7 +63,20 @@ export function formatZScore(value: number): string {
   });
 }
 
+export function formatSignedZScore(value: number): string {
+  if (!Number.isFinite(value)) {
+    return "Not reported";
+  }
+
+  const sign = value < 0 ? "−" : "+";
+  return `${sign}${Math.abs(value).toFixed(4)}`;
+}
+
 export function formatProbability(value: number): string {
+  if (!Number.isFinite(value)) {
+    return "Not reported";
+  }
+
   return value.toLocaleString("en-US", {
     maximumFractionDigits: 4,
     minimumFractionDigits: 4

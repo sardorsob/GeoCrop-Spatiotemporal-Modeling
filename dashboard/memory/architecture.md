@@ -41,8 +41,9 @@
 - `src/features/rotation/RotationClassChart.tsx` allocates a largest-remainder 100-cell field from the dated Task 2 shares while printing exact two-decimal percentages, pixels, area, source date, and denominator.
 - `src/features/rotation/RotationGeoRanking.tsx` ranks regular share only within the selected state or county grain, assigns equal values equal competition ranks, exposes a pinned exact-share detail, and uses responsive list rows rather than a wide table.
 - `src/features/rotation/ThresholdComparison.tsx` filters to complete exported sensitivity rows and exposes them through a native discrete select; it never interpolates threshold results or treats the sensitivity grid as the dated baseline.
-- `src/features/extremes/ExtremesPanel.tsx` composes the soil moisture extremes tab from event selection, URL-state-compatible filters, anomaly summary cards, anomaly table, caveats, and source notes.
-- `src/features/extremes/EventSelector.tsx`, `AnomalySummaryChart.tsx`, and `AnomalyTable.tsx` render Task 3 event, aggregate, and state x crop evidence.
+- `src/features/extremes/ExtremesPanel.tsx` composes Act III as a matched flood/drought chapter. One crop drives both event maps; Story keeps the comparison concise while Explore reveals the complete event × state × crop table.
+- `src/features/extremes/EventMapComparison.tsx` reuses the shared Albers `UsChoropleth` twice with one crop-wide symmetric mean-z domain. Hover/focus previews and click/keyboard pins are shared across frames; the pinned region reports event-specific mean z, NIG posterior percentile, pixel-week denominator, source, limitation, and explicit no-data.
+- `src/features/extremes/EventSelector.tsx`, `AnomalySummaryChart.tsx`, and `AnomalyTable.tsx` render the fixed event pair, separate magnitude/posterior anchors, and exact Task 3 evidence.
 - `src/lib/scaffold/home-copy.ts` stores minimal scaffold copy for the landing page.
 - `src/lib/scaffold/home-copy.test.ts` verifies the scaffold title and four research lanes.
 - `next.config.ts` pins `turbopack.root` to the dashboard folder so local builds do not infer a parent lockfile as the workspace root.
@@ -63,6 +64,7 @@
 - Rotation and extremes visual components receive normalized Task 2/3 data via props and expose URL-state-compatible selection/filter props for TASK-010 integration.
 - Rotation consumes `selectedEntity` or `selectedGeographyId`; extremes consumes `selectedEvent`, `selectedCrop`, and `selectedState` plus matching callbacks.
 - Rotation strips `state:` / `county:` URL prefixes when matching a pin and switches ranking grain to the matched geography, keeping the external map lens and chapter detail synchronized.
+- Extremes selectors compute a crop-wide anomaly domain across both events, so the paired maps always share a zero-centered scale. The map encodes mean z only; NIG remains a separately labeled posterior-predictive percentile and missing combinations are never substituted from another event or crop.
 - TASK-010 wires the server/client boundary: filesystem artifact loading remains in the server page, while URL search params and map/filter interactions live in the client shell.
 - `DashboardShell` preserves unrelated URL params when writing dashboard params and keeps immediate local UI state in sync with representative share URLs.
 - TASK-011 introduces a local shadcn-style primitive layer under `src/components/ui/` and rewrites the shell, map card, NDVI chart, and rotation geographic ranking to use it. Data flow above is unchanged; only the visual layer was replaced.
@@ -83,4 +85,4 @@
 - `npm audit --audit-level=high` reports no high/critical advisories, but npm install/audit reports two moderate advisories in Next/PostCSS with only breaking `npm audit fix --force` remediation suggested. `TASK-011` dependencies did not introduce new high/critical advisories.
 - The Corn Belt map is now a real U.S. Albers choropleth (`d3-geo` + `us-atlas/states-albers-10m.json`), but it uses categorical-index coloring derived from the Corn Belt fallback geography registry. States outside the fallback registry render as no-data. It is not pixel/raster geometry.
 - The integration test relies on the shell using a controlled button tablist rather than Radix `<Tabs>` (under React 19 + JSDOM, `fireEvent.click` on a Radix `TabsTrigger` did not reliably propagate the controlled-state change during the redesign).
-- Browser Use can inspect the local app when Next development runs with webpack in the isolated worktree; Turbopack rejects the worktree's external `node_modules` symlink. TASK-018 verified desktop and 320px mobile rendering through that path.
+- Browser Use can inspect the local app when Next development runs with webpack in the isolated worktree; Turbopack rejects the worktree's external `node_modules` symlink. TASK-018 and TASK-020 verified desktop and 320px mobile rendering through that path.

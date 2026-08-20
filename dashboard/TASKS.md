@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 23 | 20 | 0 | 0 | 0 | 0 | 3 |
+| 23 | 21 | 0 | 0 | 0 | 0 | 2 |
 
 `TASK-015` through `TASK-022` are the approved Narrative Atlas v2 graph. They
 execute sequentially with one verified task commit at a time.
@@ -1259,7 +1259,7 @@ execute sequentially with one verified task commit at a time.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-020
-  - Integration status: pending
+  - Integration status: done
 - Design source:
   - `SCOPE.md` Act III and extremes evidence contract
   - Dated 2019 flood and 2022 drought state × crop artifacts
@@ -1293,19 +1293,21 @@ execute sequentially with one verified task commit at a time.
   - `src/features/extremes/extremes-copy.ts`
   - `src/features/extremes/__tests__/extremes-panel.test.tsx`
 - Acceptance criteria:
-  - [ ] Flood and drought use matched frames and one fixed scale centered on zero.
-  - [ ] The active crop is visible and applies to both events.
-  - [ ] Magnitude and confidence remain visually and verbally distinct.
-  - [ ] Pinned evidence includes values, denominator, source, and limitation.
-  - [ ] Exact values remain available in a compact table.
-  - [ ] Focused tests, typecheck, and lint pass.
+  - [x] Flood and drought use matched frames and one fixed scale centered on zero.
+  - [x] The active crop is visible and applies to both events.
+  - [x] Magnitude and confidence remain visually and verbally distinct.
+  - [x] Pinned evidence includes values, denominator, source, and limitation.
+  - [x] Exact values remain available in a compact table.
+  - [x] Focused tests, typecheck, and lint pass.
 - QA notes:
-  - Pending implementation and independent checker pass.
-- Attempts: 0
+  - Builder handoff 2026-08-19: Replaced the single-event Task 3 card/table view with paired 2019 flood and 2022 drought choropleths that share crop, projection, extent, and one crop-wide symmetric mean-z domain. Pinning in either frame highlights the same state in both and reports exact mean z, separately labeled NIG posterior-predictive percentile, pixel-week denominator, source, and limitation; absent combinations and absent NIG remain explicit no-data. Explore retains the complete event × state × crop table behind a keyboard-focusable disclosure.
+  - Checker pass 2026-08-19: TDD red confirmed all five initial comparison behaviors failed against v1; focused green passed 7 tests including missing NIG and external-state synchronization. Full suite passed 15 files / 64 tests, with typecheck, lint, and diff checks clean. Browser Use verified identical real-data domains at 1280px and a stacked 320px layout with no horizontal overflow. Ponytail review: `Lean already. Ship.`
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-  - No attempts yet.
-- Status: pending
+  - 2026-08-19: Started from the paper's z-score and NIG posterior-predictive definitions, using one crop-specific diverging domain across both events and keeping the NIG percentile distinct from confidence in the mean z estimate.
+  - 2026-08-19: Completed paired event maps, shared pin/detail, posterior-context explanation, Explore table, regression coverage, desktop/mobile visual QA, and checker verification without adding a dependency or inventing geographic detail.
+- Status: done
 
 ---
 

@@ -4,6 +4,55 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-08-19 — TASK-020 paired flood and drought evidence chapter
+
+**Work performed:**
+
+- Replaced single-event switching with matched 2019 flood and 2022 drought
+  state frames driven by the same crop, projection, extent, legend, and one
+  crop-wide symmetric mean-z domain.
+- Added one shared hover/focus preview and click/keyboard pin; pinned evidence
+  reports exact event, state, crop, signed mean z, NIG posterior-predictive
+  percentile, pixel-week denominator, source, and limitation for both events.
+- Made missing state × crop combinations and missing NIG values explicit rather
+  than substituting another event/crop or treating missingness as zero.
+- Reframed the paper semantics so mean z owns map magnitude/direction and NIG is
+  a distinct posterior context, explicitly not a confidence interval around z.
+- Added paired weighted comparison anchors and moved the complete exact table,
+  now including Event, behind a keyboard-focusable Explore disclosure.
+- Scoped the shell integration test to the overview-map region now that the
+  chapter contains two additional legitimate “Select Iowa” controls.
+
+**Verification:**
+
+- TDD red: all 5 initial TASK-020 comparison tests failed against the v1
+  single-event layout.
+- Focused green: 1 file and 7 tests passed, including absent NIG with present z
+  and external state selection replacing a local map pin.
+- Checker full suite: 15 files and 64 tests passed.
+- `npm run typecheck`, `npm run lint -- --quiet`, and `git diff --check` passed.
+- Browser Use confirmed identical `−1.3373` to `+1.3373` domains with real data
+  at 1280px; at 320px both 288px map frames stacked and document overflow was
+  false.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- Final Story/Explore route wiring and removal/recomposition of the v1 universal
+  map/filter shell remain owned by `TASK-022`.
+- No new dependency, generated image, interpolated event value, invented
+  geographic grain, or decorative animation was added.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- Cartographic/geovisualization and statistical uncertainty guidance
+- Browser Use desktop/mobile visual inspection
+
+---
+
 ## 2026-08-19 — TASK-019 rotation memory chapter
 
 **Work performed:**

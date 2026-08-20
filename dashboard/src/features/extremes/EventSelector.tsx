@@ -1,48 +1,35 @@
-import type { ExtremeEventId } from "@/lib/data/types";
 import { EXTREME_EVENT_OPTIONS } from "@/lib/state/dashboard-state";
 
 import { EXTREME_EVENT_DETAILS } from "./extremes-copy";
 
-export interface EventSelectorProps {
-  readonly selectedEvent: ExtremeEventId;
-  readonly onEventChange?: (eventId: ExtremeEventId) => void;
-}
-
-export function EventSelector({
-  onEventChange,
-  selectedEvent
-}: EventSelectorProps) {
+export function EventSelector() {
   return (
-    <fieldset className="grid gap-2">
-      <legend className="text-sm font-semibold text-slate-700">Event</legend>
-      <div className="grid gap-1.5 sm:grid-cols-2" role="group">
-        {EXTREME_EVENT_OPTIONS.map((option) => {
-          const isSelected = option.id === selectedEvent;
+    <aside aria-label="Compared extreme events" className="grid gap-2">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        Matched event frames
+      </p>
+      <div className="grid grid-cols-2 gap-2">
+        {EXTREME_EVENT_OPTIONS.map((option, index) => {
           const details = EXTREME_EVENT_DETAILS[option.id];
 
           return (
-            <button
-              aria-current={isSelected ? "true" : undefined}
-              aria-label={option.label}
-              aria-pressed={isSelected}
-              className={[
-                "rounded-lg px-3 py-3 text-left text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2",
-                isSelected
-                  ? "border-l-4 border-emerald-500 bg-emerald-50 text-slate-950"
-                  : "border-l-4 border-transparent bg-slate-50 text-slate-700 hover:bg-slate-100"
-              ].join(" ")}
+            <div
+              className="rounded-lg border border-rule bg-muted/40 px-3 py-3"
               key={option.id}
-              onClick={() => onEventChange?.(option.id)}
-              type="button"
             >
-              <span className="block font-semibold">{option.label}</span>
-              <span className="mt-1 block text-xs font-medium uppercase tracking-wide text-slate-500">
+              <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">
+                {index === 0 ? "Frame A" : "Frame B"}
+              </span>
+              <span className="mt-1 block text-sm font-semibold text-ink">
+                {option.label}
+              </span>
+              <span className="mt-0.5 block text-xs text-muted-foreground">
                 {details.shortLabel}
               </span>
-            </button>
+            </div>
           );
         })}
       </div>
-    </fieldset>
+    </aside>
   );
 }

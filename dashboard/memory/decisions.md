@@ -102,3 +102,22 @@ missing framework or service.
 **Impact:** Implementation can start with visual grammar and evidence contracts
 in parallel after mockup/spec review. Backend, database, auth, and new map/chart
 libraries remain outside scope.
+
+## 2026-08-19 — Separate Task 3 anomaly magnitude from NIG posterior context
+
+**Context:** Task 3 exports both state × crop mean standardized anomalies and an
+NIG posterior-predictive percentile. Presenting the latter as generic confidence
+or using it in the same color encoding would misstate the paper's model.
+
+**Decision:** Hold crop, projection, extent, and a symmetric mean-z color domain
+constant across the 2019 flood and 2022 drought frames. Show NIG only in pinned
+details and summaries, labeled as a posterior-predictive percentile: near zero
+is the dry tail and near one is the wet tail. It is not a confidence interval
+around mean z.
+
+**Reason:** A stable visual frame makes wet/dry magnitude comparable while the
+separate label preserves what the NIG quantity actually measures under a short
+baseline.
+
+**Impact:** One pin drives both maps. Missing event/state/crop or NIG values stay
+no-data, and the complete event × state × crop table is an Explore disclosure.
