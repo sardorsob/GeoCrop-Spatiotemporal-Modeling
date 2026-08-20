@@ -36,9 +36,11 @@
 - `src/features/phenology/PhenologyMetrics.tsx` renders the three paper crops in one responsive semantic fit table, keeping RMSE and 90% coverage visible at narrow widths while progressively revealing supporting metrics.
 - `src/features/prediction/PredictionPanel.tsx` composes the prediction diagnostics tab from headline metrics, ablation, SHAP, regime metrics, and confusion matrix views.
 - `src/features/prediction/AblationChart.tsx`, `ShapFeatureChart.tsx`, `RegimeMetricsChart.tsx`, and `ConfusionMatrix.tsx` render Task 4 diagnostic evidence with visible source/caveat context.
-- `src/features/rotation/RotationPanel.tsx` composes the rotation tab from class summaries, geographic ranking, Markov/threshold caveats, selection status, and source notes.
-- `src/features/rotation/RotationClassChart.tsx` renders Task 2 class evidence with code-native cards.
-- `src/features/rotation/RotationGeoRanking.tsx` renders the Task 2 geographic ranking table with a compact 5-row view and a "Show N more" / "Show less" disclosure when there are more than 5 rows; default state is collapsed.
+- `src/features/rotation/RotationPanel.tsx` composes Task 2 in explanatory order: schematic rule strips, dated composition, an optional shared-map figure slot, measured ranking/detail, discrete sensitivity, Markov context, and source limits. `TASK-022` supplies the already-built map through the figure slot without duplicating map logic.
+- `src/features/rotation/RotationSequenceStrip.tsx` renders three explicitly schematic ten-year crop-code strips; the irregular definition is neutral and rejects management/condition judgment.
+- `src/features/rotation/RotationClassChart.tsx` allocates a largest-remainder 100-cell field from the dated Task 2 shares while printing exact two-decimal percentages, pixels, area, source date, and denominator.
+- `src/features/rotation/RotationGeoRanking.tsx` ranks regular share only within the selected state or county grain, assigns equal values equal competition ranks, exposes a pinned exact-share detail, and uses responsive list rows rather than a wide table.
+- `src/features/rotation/ThresholdComparison.tsx` filters to complete exported sensitivity rows and exposes them through a native discrete select; it never interpolates threshold results or treats the sensitivity grid as the dated baseline.
 - `src/features/extremes/ExtremesPanel.tsx` composes the soil moisture extremes tab from event selection, URL-state-compatible filters, anomaly summary cards, anomaly table, caveats, and source notes.
 - `src/features/extremes/EventSelector.tsx`, `AnomalySummaryChart.tsx`, and `AnomalyTable.tsx` render Task 3 event, aggregate, and state x crop evidence.
 - `src/lib/scaffold/home-copy.ts` stores minimal scaffold copy for the landing page.
@@ -60,6 +62,7 @@
 - Phenology and prediction visual components keep essential values, source paths, and caveats visible without hover. Task 1 applies one shared season window and NDVI domain to all three crop rows so Explore never destroys comparison context.
 - Rotation and extremes visual components receive normalized Task 2/3 data via props and expose URL-state-compatible selection/filter props for TASK-010 integration.
 - Rotation consumes `selectedEntity` or `selectedGeographyId`; extremes consumes `selectedEvent`, `selectedCrop`, and `selectedState` plus matching callbacks.
+- Rotation strips `state:` / `county:` URL prefixes when matching a pin and switches ranking grain to the matched geography, keeping the external map lens and chapter detail synchronized.
 - TASK-010 wires the server/client boundary: filesystem artifact loading remains in the server page, while URL search params and map/filter interactions live in the client shell.
 - `DashboardShell` preserves unrelated URL params when writing dashboard params and keeps immediate local UI state in sync with representative share URLs.
 - TASK-011 introduces a local shadcn-style primitive layer under `src/components/ui/` and rewrites the shell, map card, NDVI chart, and rotation geographic ranking to use it. Data flow above is unchanged; only the visual layer was replaced.

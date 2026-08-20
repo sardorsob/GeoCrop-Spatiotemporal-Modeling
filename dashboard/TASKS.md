@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 23 | 19 | 0 | 0 | 0 | 0 | 4 |
+| 23 | 20 | 0 | 0 | 0 | 0 | 3 |
 
 `TASK-015` through `TASK-022` are the approved Narrative Atlas v2 graph. They
 execute sequentially with one verified task commit at a time.
@@ -1198,7 +1198,7 @@ execute sequentially with one verified task commit at a time.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-019
-  - Integration status: pending
+  - Integration status: done
 - Design source:
   - `SCOPE.md` Act II and rotation evidence contract
   - Dated Task 2 class, state, county, transition, and sensitivity artifacts
@@ -1233,19 +1233,20 @@ execute sequentially with one verified task commit at a time.
   - `src/features/rotation/rotation-copy.ts`
   - `src/features/rotation/__tests__/rotation-panel.test.tsx`
 - Acceptance criteria:
-  - [ ] Story explains the rule, composition, and geography in that order.
-  - [ ] Overall and geographic values come from dated Task 2 artifacts.
-  - [ ] State/county selection, ranking, and evidence lens agree.
-  - [ ] Sensitivity uses discrete source rows only.
-  - [ ] “Irregular” is defined without judgment and source conflicts remain caveated.
-  - [ ] Focused tests, typecheck, and lint pass.
+  - [x] Story explains the rule, composition, and geography in that order.
+  - [x] Overall and geographic values come from dated Task 2 artifacts.
+  - [x] State/county selection, ranking, and evidence lens agree.
+  - [x] Sensitivity uses discrete source rows only.
+  - [x] “Irregular” is defined without judgment and source conflicts remain caveated.
+  - [x] Focused tests, typecheck, and lint pass.
 - QA notes:
-  - Pending implementation and independent checker pass.
-- Attempts: 0
+  - Approved after dated-artifact reconciliation, focused/full automated checks, desktop/320px browser inspection, diff hygiene, and Ponytail simplification review (`Lean already. Ship.`).
+- Attempts: 1
 - Max attempts: 3
 - Attempt log:
-  - No attempts yet.
-- Status: pending
+  - 2026-08-19: Started from the dated Task 2 class and sensitivity tables, preserving their distinct denominators/threshold semantics and treating schematic crop sequences as explanation rather than observed field evidence.
+  - 2026-08-19: Completed the schematic-to-measured chapter, 100-cell dated composition, within-grain tied ranking, shared-map composition slot, and discrete-only threshold selector. Focused 1-file/5-test and full 15-file/60-test suites passed with typecheck, lint, and 320px no-overflow browser inspection.
+- Status: done
 
 ---
 

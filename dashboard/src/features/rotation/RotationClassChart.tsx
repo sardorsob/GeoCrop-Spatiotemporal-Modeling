@@ -1,13 +1,10 @@
-import type {
-  DataPointSource,
-  RotationClassId,
-  RotationClassSummary
-} from "@/lib/data/types";
+import { Card } from "@/components/ui/card";
+import type { RotationClassId, RotationClassSummary } from "@/lib/data/types";
 
 import {
   formatAreaHa,
-  formatPercent,
-  formatPixels,
+  formatCount,
+  formatExactPercent,
   rotationClassDescriptions,
   rotationClassLabels,
   ROTATION_COPY,
@@ -18,166 +15,129 @@ interface RotationClassChartProps {
   readonly classSummaries: readonly RotationClassSummary[];
 }
 
-const classOrder: readonly RotationClassId[] = [
-  "regular",
-  "monoculture",
-  "irregular"
-];
+const CLASS_ORDER = ["regular", "monoculture", "irregular"] as const satisfies readonly RotationClassId[];
 
-const classStyles = {
-  regular: {
-    accent: "bg-emerald-600",
-    border: "border-emerald-600",
-    tint: "bg-emerald-50",
-    text: "text-emerald-800"
-  },
-  monoculture: {
-    accent: "bg-amber-500",
-    border: "border-amber-500",
-    tint: "bg-amber-50",
-    text: "text-amber-800"
-  },
-  irregular: {
-    accent: "bg-rose-600",
-    border: "border-rose-600",
-    tint: "bg-rose-50",
-    text: "text-rose-800"
-  }
-} as const satisfies Readonly<
-  Record<
-    RotationClassId,
-    {
-      readonly accent: string;
-      readonly border: string;
-      readonly tint: string;
-      readonly text: string;
-    }
-  >
->;
+const CLASS_STYLE = {
+  regular: { cell: "bg-primary", dot: "bg-primary" },
+  monoculture: { cell: "bg-corn", dot: "bg-corn" },
+  irregular: { cell: "bg-neutral", dot: "bg-neutral" }
+} as const satisfies Readonly<Record<RotationClassId, { readonly cell: string; readonly dot: string }>>;
 
-export function RotationClassChart({
-  classSummaries
-}: RotationClassChartProps) {
-  const sortedSummaries = sortClassSummaries(classSummaries);
-  const source = sortedSummaries[0]?.source;
+export function RotationClassChart({ classSummaries }: RotationClassChartProps) {
+  const summaries = CLASS_ORDER.map((rotationClass) =>
+    classSummaries.find((summary) => summary.rotationClass === rotationClass)
+  );
+  const available = summaries.filter((summary): summary is RotationClassSummary => Boolean(summary));
+  const totalPixels = available.reduce((total, summary) => total + summary.pixelCount, 0);
+  const cells = allocateCompositionCells(available);
+  const source = available[0]?.source;
 
   return (
-    <section
-      aria-label={ROTATION_COPY.classRegionLabel}
-      className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm"
-    >
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h3 className="text-base font-semibold text-slate-950">
-            Rotation class summaries
-          </h3>
-          <p className="mt-1 text-sm leading-6 text-slate-600">
-            Valid cropland split across regular, monoculture, and irregular
-            Task 2 classes.
-          </p>
+    <Card asChild>
+      <section aria-label={ROTATION_COPY.classRegionLabel} className="px-4 py-5 sm:px-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">02 · The composition</p>
+            <h3 className="mt-1 font-serif text-xl font-semibold text-ink">One hundred cells, one dated result</h3>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              Each cell represents approximately one percentage point; exact artifact values remain printed below.
+            </p>
+          </div>
+          {source ? (
+            <p className="shrink-0 text-xs leading-5 text-muted-foreground">
+              <span className="block font-semibold text-ink">{source.label ?? source.sourceId}</span>
+              {source.dateStamp ? <span>{source.dateStamp}</span> : null}
+            </p>
+          ) : null}
         </div>
-        <SourcePill source={source} />
-      </div>
 
-      {sortedSummaries.length === 0 ? (
-        <div className="mt-4 rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-5">
-          <p className="text-sm font-medium text-slate-800">
+        {available.length === 0 ? (
+          <p className="mt-4 rounded-lg border border-dashed border-rule bg-muted/45 px-4 py-5 text-sm text-ink">
             {ROTATION_COPY.classEmptyState}
           </p>
-        </div>
-      ) : (
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
-          {sortedSummaries.map((summary) => (
-            <ClassSummaryCard key={summary.rotationClass} summary={summary} />
-          ))}
-        </div>
-      )}
-    </section>
+        ) : (
+          <>
+            <div
+              aria-label="100-cell rotation composition field"
+              className="mt-5 grid max-w-lg grid-cols-10 gap-1.5"
+              role="img"
+            >
+              {cells.map((rotationClass, index) => (
+                <span
+                  aria-hidden="true"
+                  className={`aspect-square rounded-[3px] ${CLASS_STYLE[rotationClass].cell}`}
+                  data-testid="rotation-composition-cell"
+                  key={`${rotationClass}-${index}`}
+                />
+              ))}
+            </div>
+
+            <p className="mt-3 text-xs font-semibold tabular-nums text-ink">
+              {`${formatCount(totalPixels)} eligible pixels`}
+            </p>
+
+            <div className="mt-4 grid gap-2 lg:grid-cols-3">
+              {available.map((summary) => (
+                <article className="rounded-lg border border-rule bg-muted/35 p-3" key={summary.rotationClass}>
+                  <div className="flex items-center gap-2">
+                    <span aria-hidden="true" className={`size-2.5 rounded-full ${CLASS_STYLE[summary.rotationClass].dot}`} />
+                    <h4 className="font-semibold text-ink">{rotationClassLabels[summary.rotationClass]}</h4>
+                    <span className="ml-auto font-mono text-lg font-semibold tabular-nums text-ink">
+                      {formatExactPercent(summary.percentOfValid)}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                    {rotationClassDescriptions[summary.rotationClass]}
+                  </p>
+                  <p className="mt-2 text-[10px] leading-4 text-muted-foreground">
+                    {`${formatCount(summary.pixelCount)} pixels · ${formatAreaHa(summary.areaHa)}`}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </>
+        )}
+      </section>
+    </Card>
   );
 }
 
-function ClassSummaryCard({
-  summary
-}: {
-  readonly summary: RotationClassSummary;
-}) {
-  const styles = classStyles[summary.rotationClass];
-  const width = Math.max(0, Math.min(100, toPercentValue(summary.percentOfValid)));
+function allocateCompositionCells(
+  summaries: readonly RotationClassSummary[]
+): readonly RotationClassId[] {
+  const shares = CLASS_ORDER.map((rotationClass) => ({
+    rotationClass,
+    share: Math.max(
+      0,
+      toPercentValue(
+        summaries.find((summary) => summary.rotationClass === rotationClass)?.percentOfValid ?? 0
+      )
+    )
+  }));
+  const total = shares.reduce((sum, item) => sum + item.share, 0);
+  if (total <= 0) return [];
 
-  return (
-    <article
-      className={[
-        "min-h-56 rounded-xl border p-4",
-        styles.border,
-        styles.tint
-      ].join(" ")}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h4 className="text-base font-semibold text-slate-950">
-            {rotationClassLabels[summary.rotationClass]}
-          </h4>
-          <p className="mt-1 text-sm leading-6 text-slate-600">
-            {rotationClassDescriptions[summary.rotationClass]}
-          </p>
-        </div>
-        <span
-          aria-hidden="true"
-          className={["mt-1 h-3 w-3 shrink-0 rounded-full", styles.accent].join(" ")}
-        />
-      </div>
-
-      <p className="mt-4 text-3xl font-bold text-slate-950">
-        {formatPercent(summary.percentOfValid)}
-      </p>
-      <div
-        aria-hidden="true"
-        className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/80"
-      >
-        <span
-          className={["block h-full rounded-full", styles.accent].join(" ")}
-          style={{ width: `${width}%` }}
-        />
-      </div>
-
-      <dl className="mt-4 grid gap-2 text-sm text-slate-700">
-        <div className="flex items-center justify-between gap-3 border-t border-white/70 pt-2">
-          <dt className="font-medium">Pixels</dt>
-          <dd className="font-semibold text-slate-950">
-            {formatPixels(summary.pixelCount)}
-          </dd>
-        </div>
-        <div className="flex items-center justify-between gap-3 border-t border-white/70 pt-2">
-          <dt className="font-medium">Area</dt>
-          <dd className="font-semibold text-slate-950">
-            {formatAreaHa(summary.areaHa)}
-          </dd>
-        </div>
-      </dl>
-    </article>
+  const quotas = shares.map((item) => ({
+    ...item,
+    quota: (item.share / total) * 100
+  }));
+  const counts = new Map(
+    quotas.map((item) => [item.rotationClass, Math.floor(item.quota)] as const)
   );
-}
+  let remaining = 100 - [...counts.values()].reduce((sum, count) => sum + count, 0);
+  const remainderOrder = [...quotas].sort(
+    (left, right) =>
+      right.quota - Math.floor(right.quota) - (left.quota - Math.floor(left.quota)) ||
+      CLASS_ORDER.indexOf(left.rotationClass) - CLASS_ORDER.indexOf(right.rotationClass)
+  );
 
-function SourcePill({ source }: { readonly source?: DataPointSource }) {
-  if (!source) {
-    return null;
+  for (const item of remainderOrder) {
+    if (remaining <= 0) break;
+    counts.set(item.rotationClass, (counts.get(item.rotationClass) ?? 0) + 1);
+    remaining -= 1;
   }
 
-  return (
-    <p
-      aria-label={source.label ?? source.sourceId}
-      className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800"
-    >
-      Class artifact source
-    </p>
-  );
-}
-
-function sortClassSummaries(
-  classSummaries: readonly RotationClassSummary[]
-): readonly RotationClassSummary[] {
-  return [...classSummaries].sort(
-    (left, right) =>
-      classOrder.indexOf(left.rotationClass) - classOrder.indexOf(right.rotationClass)
+  return CLASS_ORDER.flatMap((rotationClass) =>
+    Array.from({ length: counts.get(rotationClass) ?? 0 }, () => rotationClass)
   );
 }

@@ -1,14 +1,15 @@
-import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen, within } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 
-import { RotationPanel } from "../RotationPanel";
 import type {
   DataPointSource,
+  MarkovTransition,
   RotationClassSummary,
   RotationGeoSummary,
-  RotationThresholdSensitivity,
-  MarkovTransition
+  RotationThresholdSensitivity
 } from "@/lib/data/types";
+
+import { RotationPanel } from "../RotationPanel";
 
 const classSource: DataPointSource = {
   sourceId: "task2-areal-stats-by-class",
@@ -17,19 +18,17 @@ const classSource: DataPointSource = {
   label: "Task 2 areal statistics by class",
   dateStamp: "2026-04-12",
   denominator: "Valid classified cropland pixels",
-  caveat:
-    "Areal percentages use the valid classified cropland denominator from the exported artifact."
+  caveat: "Areal percentages use the valid classified cropland denominator."
 };
 
 const geoSource: DataPointSource = {
   sourceId: "task2-areal-stats-by-region",
-  rowCount: 2,
+  rowCount: 4,
   path: "../artifacts/tables/task4/task2__areal_stats_by_region__20260412.csv",
   label: "Task 2 areal statistics by region",
   dateStamp: "2026-04-12",
-  denominator: "Valid classified cropland pixels within region",
-  caveat:
-    "Regional summaries are derived from the exported rotation classification artifact."
+  denominator: "Valid classified cropland pixels within geography",
+  caveat: "Geographic shares are aggregate state or county evidence."
 };
 
 const markovSource: DataPointSource = {
@@ -37,39 +36,37 @@ const markovSource: DataPointSource = {
   rowCount: 25,
   path: "../artifacts/tables/task2/task2__markov_transition_probs.csv",
   label: "Task 2 Markov transition probabilities",
-  caveat:
-    "Transition probabilities summarize observed crop-to-crop transitions in the scoped Task 2 artifact."
+  caveat: "Transitions summarize observed crop-to-crop changes."
 };
 
 const thresholdSource: DataPointSource = {
   sourceId: "task2-threshold-sensitivity-grid",
-  rowCount: 9,
+  rowCount: 3,
   path: "../artifacts/tables/task2/task2__threshold_sensitivity_grid.csv",
   label: "Task 2 threshold sensitivity grid",
-  denominator: "Valid classified cropland pixels",
-  caveat:
-    "Sensitivity rows show how class percentages vary under alternate rotation thresholds."
+  denominator: "2,084,112 eligible pixels",
+  caveat: "Sensitivity rows are a separate threshold experiment."
 };
 
 const classSummaries: readonly RotationClassSummary[] = [
   {
     rotationClass: "regular",
-    pixelCount: 570202,
-    areaHa: 17669192.4,
+    pixelCount: 570_202,
+    areaHa: 17_669_192.4,
     percentOfValid: 27.36,
     source: classSource
   },
   {
     rotationClass: "monoculture",
-    pixelCount: 81248,
-    areaHa: 2517174.5,
+    pixelCount: 81_308,
+    areaHa: 2_519_539.9,
     percentOfValid: 3.9,
     source: classSource
   },
   {
     rotationClass: "irregular",
-    pixelCount: 1432205,
-    areaHa: 44378741.1,
+    pixelCount: 1_432_602,
+    areaHa: 44_392_900.1,
     percentOfValid: 68.74,
     source: classSource
   }
@@ -77,23 +74,53 @@ const classSummaries: readonly RotationClassSummary[] = [
 
 const geographySummaries: readonly RotationGeoSummary[] = [
   {
-    geographyId: "state:IL",
+    geographyId: "17",
     geographyName: "Illinois",
-    geographyKind: "region",
-    nPixels: 250000,
+    geographyKind: "state",
+    stateCode: "IL",
+    stateFips: "17",
+    nPixels: 293_524,
     pctRegular: 40.35,
     pctMonoculture: 5.07,
     pctIrregular: 54.58,
     source: geoSource
   },
   {
-    geographyId: "state:IA",
+    geographyId: "19",
     geographyName: "Iowa",
-    geographyKind: "region",
-    nPixels: 310000,
+    geographyKind: "state",
+    stateCode: "IA",
+    stateFips: "19",
+    nPixels: 321_601,
     pctRegular: 39.87,
-    pctMonoculture: 4.91,
-    pctIrregular: 55.22,
+    pctMonoculture: 6.93,
+    pctIrregular: 53.2,
+    source: geoSource
+  },
+  {
+    geographyId: "17197",
+    geographyName: "Will County, Illinois",
+    geographyKind: "county",
+    stateCode: "IL",
+    stateFips: "17",
+    countyFips: "17197",
+    nPixels: 18_000,
+    pctRegular: 44.2,
+    pctMonoculture: 4.5,
+    pctIrregular: 51.3,
+    source: geoSource
+  },
+  {
+    geographyId: "17019",
+    geographyName: "Champaign County, Illinois",
+    geographyKind: "county",
+    stateCode: "IL",
+    stateFips: "17",
+    countyFips: "17019",
+    nPixels: 16_000,
+    pctRegular: 44.2,
+    pctMonoculture: 5.1,
+    pctIrregular: 50.7,
     source: geoSource
   }
 ];
@@ -109,86 +136,149 @@ const markovTransitions: readonly MarkovTransition[] = [
 
 const thresholdSensitivity: readonly RotationThresholdSensitivity[] = [
   {
+    alternationMin: 0.5,
+    patternDistanceMax: 3,
+    pctRegular: 34.79,
+    pctMonoculture: 6.04,
+    pctIrregular: 59.17,
+    nPixels: 2_084_112,
+    source: thresholdSource
+  },
+  {
     alternationMin: 0.55,
-    patternDistanceMax: 0.2,
-    pctRegular: 27.36,
-    pctMonoculture: 3.9,
-    pctIrregular: 68.74,
-    nPixels: 2087655,
+    patternDistanceMax: 3,
+    pctRegular: 34.48,
+    pctMonoculture: 6.04,
+    pctIrregular: 59.48,
+    nPixels: 2_084_112,
+    source: thresholdSource
+  },
+  {
+    alternationMin: 0.7,
+    patternDistanceMax: 5,
+    pctRegular: 37.55,
+    pctMonoculture: 6.04,
+    pctIrregular: 56.4,
+    nPixels: 2_084_112,
     source: thresholdSource
   }
 ];
 
 describe("RotationPanel", () => {
-  it("renders class summaries, geographic summaries, selection context, and visible caveats", () => {
+  it("orders rule, source-backed composition, and measured geography", () => {
     render(
       <RotationPanel
         classSummaries={classSummaries}
+        geographyFigure={<section aria-label="Measured rotation map">Map evidence</section>}
         geographySummaries={geographySummaries}
         markovTransitions={markovTransitions}
-        selectedEntity="Illinois"
         thresholdSensitivity={thresholdSensitivity}
       />
     );
 
-    expect(screen.getByRole("heading", { name: "Task 2 rotation" }))
-      .toBeInTheDocument();
+    const sequences = screen.getByRole("region", { name: "Schematic rotation rules" });
+    const composition = screen.getByRole("region", { name: "Rotation class composition" });
+    const map = screen.getByRole("region", { name: "Measured rotation map" });
+    const ranking = screen.getByRole("region", { name: "Geographic rotation ranking" });
 
-    const classChart = screen.getByRole("region", {
-      name: "Rotation class summaries"
-    });
-    expect(within(classChart).getByText("Regular rotation")).toBeInTheDocument();
-    expect(within(classChart).getByText("27.4%")).toBeInTheDocument();
-    expect(within(classChart).getByText("570,202 pixels")).toBeInTheDocument();
-    expect(within(classChart).getByText("17,669,192.4 ha")).toBeInTheDocument();
-    expect(within(classChart).getByText("Monoculture")).toBeInTheDocument();
-    expect(within(classChart).getByText("3.9%")).toBeInTheDocument();
-    expect(within(classChart).getByText("Irregular")).toBeInTheDocument();
-    expect(within(classChart).getByText("68.7%")).toBeInTheDocument();
+    expect(sequences.compareDocumentPosition(composition) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(composition.compareDocumentPosition(map) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(map.compareDocumentPosition(ranking) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
-    const ranking = screen.getByRole("table", {
-      name: "Geographic rotation summaries"
-    });
-    const illinoisRow = within(ranking).getByRole("row", {
-      name: /Illinois/i
-    });
-    expect(within(illinoisRow).getByText("Selected")).toBeInTheDocument();
-    expect(within(illinoisRow).getByText("40.4%")).toBeInTheDocument();
-    expect(within(illinoisRow).getByText("5.1%")).toBeInTheDocument();
-    expect(within(illinoisRow).getByText("54.6%")).toBeInTheDocument();
-    expect(
-      screen.getByText("Selected geography: Illinois")
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText(/Bayesian thresholding, Markov transition probabilities, and threshold sensitivity/i)
-    ).toBeInTheDocument();
-    expect(screen.getByText("Task 2 areal statistics by class")).toBeInTheDocument();
-    expect(
-      screen.getByText("../artifacts/tables/task4/task2__areal_stats_by_class__20260412.csv")
-    ).toBeInTheDocument();
-    expect(screen.getByText("3 rows")).toBeInTheDocument();
-    expect(screen.getByText("2026-04-12")).toBeInTheDocument();
-    expect(screen.getByText("Denominator: Valid classified cropland pixels"))
-      .toBeInTheDocument();
+    expect(within(composition).getAllByTestId("rotation-composition-cell")).toHaveLength(100);
+    expect(within(composition).getByText("27.36%")).toBeInTheDocument();
+    expect(within(composition).getByText("3.90%")).toBeInTheDocument();
+    expect(within(composition).getByText("68.74%")).toBeInTheDocument();
+    expect(within(composition).getByText("2,084,112 eligible pixels")).toBeInTheDocument();
+    expect(within(composition).getByText("2026-04-12")).toBeInTheDocument();
   });
 
-  it("shows an explicit geography empty state when no geographic rows exist", () => {
+  it("marks every sequence as schematic and defines irregular neutrally", () => {
     render(
       <RotationPanel
         classSummaries={classSummaries}
-        geographySummaries={[]}
-        markovTransitions={[]}
-        selectedGeographyId="state:IL"
-        thresholdSensitivity={[]}
+        geographySummaries={geographySummaries}
+        thresholdSensitivity={thresholdSensitivity}
+      />
+    );
+
+    expect(screen.getAllByText("Schematic example · not an observed field")).toHaveLength(3);
+    expect(screen.getByRole("list", { name: "Regular rotation decade sequence" })).toBeInTheDocument();
+    expect(screen.getByRole("list", { name: "Monoculture decade sequence" })).toBeInTheDocument();
+    expect(screen.getByRole("list", { name: "Irregular decade sequence" })).toBeInTheDocument();
+    expect(
+      screen.getAllByText("Outside the strict alternation and monoculture templates; this label does not imply poor management or field condition.")
+    ).toHaveLength(2);
+  });
+
+  it("keeps a pinned map geography, its detail, and its within-grain rank consistent", () => {
+    const { rerender } = render(
+      <RotationPanel
+        classSummaries={classSummaries}
+        geographySummaries={geographySummaries}
+        selectedEntity="17"
+        thresholdSensitivity={thresholdSensitivity}
+      />
+    );
+
+    expect(screen.getByText("Pinned geography · Illinois")).toBeInTheDocument();
+    expect(screen.getByText("Rank 1 of 2 states")).toBeInTheDocument();
+
+    rerender(
+      <RotationPanel
+        classSummaries={classSummaries}
+        geographySummaries={geographySummaries}
+        selectedEntity="17197"
+        thresholdSensitivity={thresholdSensitivity}
+      />
+    );
+
+    const selectedRow = screen.getByRole("listitem", { name: /Will County, Illinois/ });
+    expect(selectedRow).toHaveAttribute("aria-current", "true");
+    expect(within(selectedRow).getByText("Rank 1")).toBeInTheDocument();
+    expect(screen.getByText("Pinned geography · Will County, Illinois")).toBeInTheDocument();
+    expect(screen.getByText("Rank 1 of 2 counties")).toBeInTheDocument();
+
+    const equalRow = screen.getByRole("listitem", { name: /Champaign County, Illinois/ });
+    expect(within(equalRow).getByText("Rank 1")).toBeInTheDocument();
+  });
+
+  it("emits only complete source-supported threshold rows", () => {
+    const onThresholdChange = vi.fn();
+    render(
+      <RotationPanel
+        classSummaries={classSummaries}
+        geographySummaries={geographySummaries}
+        onThresholdChange={onThresholdChange}
+        thresholdSensitivity={thresholdSensitivity}
+      />
+    );
+
+    const comparison = screen.getByRole("region", { name: "Discrete threshold sensitivity" });
+    const select = within(comparison).getByLabelText("Sensitivity threshold row");
+    expect(within(select).getAllByRole("option")).toHaveLength(3);
+    expect(within(comparison).getByText("34.79% regular")).toBeInTheDocument();
+
+    fireEvent.change(select, { target: { value: "a0.70-d5.00" } });
+
+    expect(onThresholdChange).toHaveBeenCalledWith(thresholdSensitivity[2]);
+    expect(within(comparison).getByText("37.55% regular")).toBeInTheDocument();
+    expect(within(comparison).getByText("56.40% irregular")).toBeInTheDocument();
+  });
+
+  it("keeps the dated class result separate from the sensitivity experiment", () => {
+    render(
+      <RotationPanel
+        classSummaries={classSummaries}
+        geographySummaries={geographySummaries}
+        thresholdSensitivity={thresholdSensitivity}
       />
     );
 
     expect(
-      screen.getByText(/No geographic rotation summaries are available/i)
+      screen.getByText(/The dated class summary and the threshold-sensitivity grid are separate exports/i)
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Selected geography: state:IL is not present in the loaded geographic summaries/i)
-    ).toBeInTheDocument();
+    expect(screen.getAllByText("Task 2 areal statistics by class").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Task 2 threshold sensitivity grid").length).toBeGreaterThan(0);
   });
 });

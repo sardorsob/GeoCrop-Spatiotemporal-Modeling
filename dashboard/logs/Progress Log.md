@@ -4,6 +4,52 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-08-19 — TASK-019 rotation memory chapter
+
+**Work performed:**
+
+- Reordered Task 2 around rule → composition → measured geography rather than
+  leading with methodology and KPI cards.
+- Added three ten-year crop-code strips with a visible “schematic, not observed”
+  label on every example and neutral irregular-class language.
+- Replaced separate class cards with a largest-remainder 100-cell field tied to
+  the dated 27.36% / 3.90% / 68.74% artifact and 2,084,112-pixel denominator.
+- Rebuilt geographic evidence as responsive state-or-county ranking rows with
+  within-grain competition ranks, equal-rank handling, prefix-safe map pin
+  matching, and a pinned exact-share/denominator detail.
+- Added a composition slot for the shared Task 2 map so final integration can
+  place it after the class result without cloning cartographic logic.
+- Added a discrete sensitivity selector containing complete exported rows only
+  and visibly separated the sensitivity experiment from the dated class result.
+
+**Verification:**
+
+- TDD red: all 5 story/composition/geography/sensitivity tests failed against
+  the v1 card/table/caveat layout.
+- Focused green: 1 file and 5 tests passed.
+- Checker full suite: 15 files and 60 tests passed.
+- `npm run typecheck`, `npm run lint`, and `git diff --check` passed.
+- Browser Use confirmed readable sequence strips and composition at desktop and
+  320px; the mobile document width equaled its viewport with no overflow.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- The shared map remains one component from `TASK-017`; final Story/Explore
+  insertion and URL state wiring are owned by `TASK-022`.
+- No continuous threshold slider, invented sequence sample, mixed-grain rank,
+  new dependency, or generated image was added.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- Cartographic/geovisualization and statistical uncertainty guidance
+- Browser Use desktop/mobile visual inspection
+
+---
+
 ## 2026-08-19 — TASK-018 paper-faithful HSGP comparator
 
 **Work performed:**

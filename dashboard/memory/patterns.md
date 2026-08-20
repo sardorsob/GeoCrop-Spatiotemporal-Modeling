@@ -16,6 +16,27 @@ TBD
 
 ---
 
+## Schematic Before Measured Evidence
+
+**Use when:** A scientific classification needs a visual teaching example, but
+the example is not itself an observed or reconstructed sample.
+
+**Rule:** Label every teaching strip as schematic at the point of use, then move
+from rule to source-backed composition to measured geography. Keep descriptive
+class language neutral. If a sensitivity export uses different thresholds than
+the reported result, present only its complete discrete rows and explicitly
+separate the two sources.
+
+**Example:**
+
+```text
+Task 2 uses ten-year C/S/W/O strips to teach regular, monoculture, and irregular;
+a dated 100-cell field reports 27.36/3.90/68.74%; state/county ranks use measured
+regular share; the sensitivity select contains only exported threshold pairs.
+```
+
+---
+
 ## Aligned Uncertainty Small Multiples
 
 **Use when:** Several related model series must be compared by shape, timing,

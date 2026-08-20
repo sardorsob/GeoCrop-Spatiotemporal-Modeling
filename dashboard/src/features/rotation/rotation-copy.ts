@@ -5,21 +5,23 @@ import type {
 } from "@/lib/data/types";
 
 export const ROTATION_COPY = {
-  eyebrow: "Rotation evidence",
+  eyebrow: "Act II · Read the land's memory",
   heading: "Task 2 rotation",
   summary:
-    "Review valid-cropland rotation classes, geographic class shares, and Task 2 transition/sensitivity context.",
-  classRegionLabel: "Rotation class summaries",
-  geographyRegionLabel: "Geographic rotation summaries",
+    "A decade of crop choices leaves a sequence. First read the classification rule, then its overall composition, and only then the measured geography.",
+  sequenceRegionLabel: "Schematic rotation rules",
+  classRegionLabel: "Rotation class composition",
+  geographyRegionLabel: "Geographic rotation ranking",
+  thresholdRegionLabel: "Discrete threshold sensitivity",
   sourceRegionLabel: "Task 2 rotation source notes",
   classEmptyState:
-    "No rotation class summaries are available in the normalized Task 2 data.",
+    "No dated rotation class summary is available in the normalized Task 2 data.",
   geographyEmptyState:
-    "No geographic rotation summaries are available. Confirm county or region Task 2 artifacts loaded before using map-linked comparisons.",
+    "No measured state or county rotation summaries are available.",
   noSelection:
-    "No map geography is selected. Select a map region to compare it against the loaded geographic summaries.",
+    "No map geography is pinned. The state ranking is shown as an exact-value path.",
   methodCaveat:
-    "Bayesian thresholding, Markov transition probabilities, and threshold sensitivity rows provide directional Task 2 evidence; class percentages depend on valid classified cropland pixels and the selected rotation thresholds."
+    "The dated class summary and the threshold-sensitivity grid are separate exports. Their percentages need not match: use the class artifact for the reported composition and the grid only to compare its discrete source rows."
 } as const;
 
 export const rotationClassLabels = {
@@ -29,9 +31,10 @@ export const rotationClassLabels = {
 } as const satisfies Readonly<Record<RotationClassId, string>>;
 
 export const rotationClassDescriptions = {
-  regular: "Alternating crop patterns that meet the Task 2 regular-rotation threshold.",
-  monoculture: "Repeated crop histories that remain in the same dominant crop class.",
-  irregular: "Crop histories outside the regular and monoculture threshold definitions."
+  regular: "Meets the strict repeating alternation template used by Task 2.",
+  monoculture: "Remains in the same dominant crop class across the sequence.",
+  irregular:
+    "Outside the strict alternation and monoculture templates; this label does not imply poor management or field condition."
 } as const satisfies Readonly<Record<RotationClassId, string>>;
 
 export const cropLabels = {
@@ -56,10 +59,15 @@ export function formatPercent(value: number): string {
   })}%`;
 }
 
+export function formatExactPercent(value: number): string {
+  return `${toPercentValue(value).toLocaleString("en-US", {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2
+  })}%`;
+}
+
 export function formatCount(value: number): string {
-  return value.toLocaleString("en-US", {
-    maximumFractionDigits: 0
-  });
+  return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
 }
 
 export function formatPixels(value: number): string {
