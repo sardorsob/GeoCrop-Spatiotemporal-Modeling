@@ -9,10 +9,12 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 23 | 15 | 0 | 0 | 0 | 0 | 8 |
+| 25 | 25 | 0 | 0 | 0 | 0 | 0 |
 
-`TASK-015` through `TASK-022` are the pending Narrative Atlas v2 graph. They may
-not move to `in-progress` until the user has reviewed the mockup/spec package.
+`TASK-015` through `TASK-022` are the completed Narrative Atlas v2 graph.
+`TASK-023` and `TASK-024` are the approved post-review simplification and
+density-polish tasks. They were executed sequentially with one verified task commit
+at a time.
 
 ---
 
@@ -939,7 +941,7 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-015
-  - Integration status: pending
+  - Integration status: complete
 - Design source:
   - `SCOPE.md` sections 2, 3, 7, and 8
   - `docs/design/2026-08-19-narrative-atlas-mockups.md`
@@ -975,15 +977,21 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - `src/components/story/StoryModeToggle.tsx`
   - `src/components/story/__tests__/story-primitives.test.tsx`
 - Acceptance criteria:
-  - [ ] Existing tokens are extended into the approved visual grammar without generated imagery or new dependencies.
-  - [ ] Reusable semantic primitives cover four acts, evidence captions, source/denominator notes, and Story/Explore switching.
-  - [ ] Crop, anomaly, focus, and neutral roles are distinct and documented in code.
-  - [ ] Focus, reduced-motion, and 320 px behavior are defined.
-  - [ ] Task data and task-specific visualizations remain unchanged.
-  - [ ] Focused tests, typecheck, and lint pass.
-- Attempts: 0
+  - [x] Existing tokens are extended into the approved visual grammar without generated imagery or new dependencies.
+  - [x] Reusable semantic primitives cover four acts, evidence captions, source/denominator notes, and Story/Explore switching.
+  - [x] Crop, anomaly, focus, and neutral roles are distinct and documented in code.
+  - [x] Focus, reduced-motion, and 320 px behavior are defined.
+  - [x] Task data and task-specific visualizations remain unchanged.
+  - [x] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - TDD red 2026-08-19: `npx vitest run src/components/story/__tests__/story-primitives.test.tsx` failed because the five requested story primitive modules did not exist.
+  - Builder green 2026-08-19: Added semantic act navigation/header, evidence caption, figure frame, Story/Explore switch, warm atlas tokens, global focus treatment, 320 px continuation, and a reduced-motion fallback; focused suite passed 1 file and 4 tests.
+  - Checker pass 2026-08-19: Ponytail review found no speculative dependency or abstraction (`Lean already. Ship.`); `git diff --check` passed, the full suite passed 13 files and 48 tests, and `npm run typecheck` plus `npm run lint` passed.
+- Attempts: 1
 - Max attempts: 3
-- Status: pending
+- Attempt log:
+  - 2026-08-19: Started in the isolated `codex/narrative-atlas-v2` worktree after the approved mockup/spec package and a green 44-test baseline.
+- Status: done
 
 ---
 
@@ -996,7 +1004,7 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-016
-  - Integration status: pending
+  - Integration status: complete
 - Design source:
   - `SCOPE.md` section 5
   - Paper-generation phenology grouping workflow
@@ -1035,15 +1043,21 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - `src/lib/data/__tests__/normalize.test.ts`
   - `src/lib/data/__tests__/selectors.test.ts`
 - Acceptance criteria:
-  - [ ] Phenology normalization has no last-write-wins path for repeated integer DOYs.
-  - [ ] Empirical and posterior outputs match the paper's aggregation semantics and retain required intervals.
-  - [ ] Task 2 state/county and Task 3 state identities are canonical and joinable.
-  - [ ] Selectors return source-backed values, rank where meaningful, denominator, and shared domains.
-  - [ ] No selector manufactures Task 4 geography.
-  - [ ] Focused tests, typecheck, and lint pass.
-- Attempts: 0
+  - [x] Phenology normalization has no last-write-wins path for repeated integer DOYs.
+  - [x] Empirical and posterior outputs match the paper's aggregation semantics and retain required intervals.
+  - [x] Task 2 state/county and Task 3 state identities are canonical and joinable.
+  - [x] Selectors return source-backed values, rank where meaningful, denominator, and shared domains.
+  - [x] No selector manufactures Task 4 geography.
+  - [x] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - TDD red 2026-08-19: Focused normalization tests exposed duplicate DOY rows, missing canonical state codes, and missing selectors; the selector suite failed module resolution because `selectors.ts` did not exist.
+  - Builder green 2026-08-19: Aggregated empirical/posterior rows by crop + DOY with missing-value-safe means and summed empirical pixel denominators; canonicalized 13 study states, five-digit county GEOIDs, and Task 3 state codes; added typed rotation/event map evidence selectors with ranks, denominators, sources, and zero-centered event domains.
+  - Checker pass 2026-08-19: Data-quality review reconciled the paper notebook's crop/DOY mean workflow and verified outside-study rows are not selectable; Ponytail review found no removable dependency or speculative layer (`Lean already. Ship.`). Focused tests passed 2 files/11 tests, full tests passed 14 files/52 tests, and typecheck, lint, and `git diff --check` passed.
+- Attempts: 1
 - Max attempts: 3
-- Status: pending
+- Attempt log:
+  - 2026-08-19: Started evidence-contract repair with source-grain profiling and paper/notebook aggregation reconciliation.
+- Status: done
 
 ---
 
@@ -1093,16 +1107,22 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - `src/features/map/map-layers.ts`
   - `src/features/map/map-selection.ts`
 - Acceptance criteria:
-  - [ ] Every mapped fill comes from a numeric Task 2 or Task 3 source field.
-  - [ ] The main frame focuses on all 13 study states.
-  - [ ] County detail exists only for Task 2 and never implies pixel/field precision.
-  - [ ] Preview, pin, keyboard, touch, Escape, and reset paths are equivalent.
-  - [ ] Evidence lens and complete legend remain source- and caveat-visible.
-  - [ ] Unsupported prediction/agreement layers are removed with a safe legacy-state fallback.
-  - [ ] Focused tests, typecheck, and lint pass.
-- Attempts: 0
+  - [x] Every mapped fill comes from a numeric Task 2 or Task 3 source field.
+  - [x] The main frame focuses on all 13 study states.
+  - [x] County detail exists only for Task 2 and never implies pixel/field precision.
+  - [x] Preview, pin, keyboard, touch, Escape, and reset paths are equivalent.
+  - [x] Evidence lens and complete legend remain source- and caveat-visible.
+  - [x] Unsupported prediction/agreement layers are removed with a safe legacy-state fallback.
+  - [x] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - TDD red 2026-08-19: New geometry and evidence-map tests failed because the focused study geometry, numeric map contracts, evidence lens, county grain, and supported-layer registry did not exist; the v1 component still exposed nationwide hardcoded categories.
+  - Builder green 2026-08-19: Added 13-state/county Albers geometry, sequential normalized-percent and fixed zero-centered anomaly ramps, neutral no-data, exact-value alternatives, Task 2-only county grain, a bounded evidence lens, and equivalent hover/focus/click/Enter/Space/tap/Escape/reset paths. Unsupported legacy layers normalize visibly to regular rotation share.
+  - Checker pass 2026-08-19: Cartographic review verified normalized rates, a shared anomaly domain, Albers area treatment, stable color endpoints, distinct no-data, 13 canonical state features, and five-digit county joins. Ponytail review found no new dependency or removable speculative layer (`Lean already. Ship.`). Focused tests passed 2 files/8 tests, full tests passed 15 files/57 tests, and typecheck, lint, and `git diff --check` passed.
+- Attempts: 1
 - Max attempts: 3
-- Status: pending
+- Attempt log:
+  - 2026-08-19: Started with a cartographic source/method review: normalized percent choropleth for Task 2, fixed zero-centered z-score scale for Task 3, Albers study extent, and neutral no-data treatment.
+- Status: done
 
 ---
 
@@ -1115,7 +1135,7 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-018
-  - Integration status: pending
+  - Integration status: done
 - Design source:
   - `SCOPE.md` Act I and phenology evidence contract
   - `../artifacts/figures/task1/hsgp_phenology_crops.png`
@@ -1151,18 +1171,23 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - `src/features/phenology/__tests__/phenology-panel.test.tsx`
   - `src/features/phenology/__tests__/season-window.test.ts`
 - Acceptance criteria:
-  - [ ] Story displays three aligned crop plots with paper-faithful uncertainty semantics.
-  - [ ] Direct labels, seasonal context, stage windows, and peak annotations carry the main reading.
-  - [ ] A focused y-domain is explicitly labeled and includes a visible
+  - [x] Story displays three aligned crop plots with paper-faithful uncertainty semantics.
+  - [x] Direct labels, seasonal context, stage windows, and peak annotations carry the main reading.
+  - [x] A focused y-domain is explicitly labeled and includes a visible
     truncation/range note so the chart cannot be mistaken for a zero-based NDVI
     scale.
-  - [ ] The large default brush is removed and advanced controls live in Explore.
-  - [ ] Mobile stacks crops without horizontal overflow or clipped essential labels.
-  - [ ] Empty, source, and caveat states remain explicit.
-  - [ ] Focused tests, typecheck, and lint pass.
-- Attempts: 0
+  - [x] The large default brush is removed and advanced controls live in Explore.
+  - [x] Mobile stacks crops without horizontal overflow or clipped essential labels.
+  - [x] Empty, source, and caveat states remain explicit.
+  - [x] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - Approved after a paper-semantics review, focused and full automated checks, desktop/mobile browser inspection, diff hygiene, and Ponytail simplification review (`Lean already. Ship.`).
+- Attempts: 1
 - Max attempts: 3
-- Status: pending
+- Attempt log:
+  - 2026-08-19: Started with the paper notebook as the figure contract: three aligned crops, nested posterior intervals, empirical spatial IQR, paper-authored growth stages, and a shared explicit focused NDVI domain.
+  - 2026-08-19: Completed the shared comparator, removed brush-specific code, added compact Explore controls, and verified 320px wrapping with no document overflow. Focused 2-file/9-test and full 15-file/57-test suites passed with typecheck and lint.
+- Status: done
 
 ---
 
@@ -1175,7 +1200,7 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-019
-  - Integration status: pending
+  - Integration status: done
 - Design source:
   - `SCOPE.md` Act II and rotation evidence contract
   - Dated Task 2 class, state, county, transition, and sensitivity artifacts
@@ -1210,15 +1235,20 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - `src/features/rotation/rotation-copy.ts`
   - `src/features/rotation/__tests__/rotation-panel.test.tsx`
 - Acceptance criteria:
-  - [ ] Story explains the rule, composition, and geography in that order.
-  - [ ] Overall and geographic values come from dated Task 2 artifacts.
-  - [ ] State/county selection, ranking, and evidence lens agree.
-  - [ ] Sensitivity uses discrete source rows only.
-  - [ ] “Irregular” is defined without judgment and source conflicts remain caveated.
-  - [ ] Focused tests, typecheck, and lint pass.
-- Attempts: 0
+  - [x] Story explains the rule, composition, and geography in that order.
+  - [x] Overall and geographic values come from dated Task 2 artifacts.
+  - [x] State/county selection, ranking, and evidence lens agree.
+  - [x] Sensitivity uses discrete source rows only.
+  - [x] “Irregular” is defined without judgment and source conflicts remain caveated.
+  - [x] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - Approved after dated-artifact reconciliation, focused/full automated checks, desktop/320px browser inspection, diff hygiene, and Ponytail simplification review (`Lean already. Ship.`).
+- Attempts: 1
 - Max attempts: 3
-- Status: pending
+- Attempt log:
+  - 2026-08-19: Started from the dated Task 2 class and sensitivity tables, preserving their distinct denominators/threshold semantics and treating schematic crop sequences as explanation rather than observed field evidence.
+  - 2026-08-19: Completed the schematic-to-measured chapter, 100-cell dated composition, within-grain tied ranking, shared-map composition slot, and discrete-only threshold selector. Focused 1-file/5-test and full 15-file/60-test suites passed with typecheck, lint, and 320px no-overflow browser inspection.
+- Status: done
 
 ---
 
@@ -1231,7 +1261,7 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-020
-  - Integration status: pending
+  - Integration status: done
 - Design source:
   - `SCOPE.md` Act III and extremes evidence contract
   - Dated 2019 flood and 2022 drought state × crop artifacts
@@ -1265,15 +1295,21 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - `src/features/extremes/extremes-copy.ts`
   - `src/features/extremes/__tests__/extremes-panel.test.tsx`
 - Acceptance criteria:
-  - [ ] Flood and drought use matched frames and one fixed scale centered on zero.
-  - [ ] The active crop is visible and applies to both events.
-  - [ ] Magnitude and confidence remain visually and verbally distinct.
-  - [ ] Pinned evidence includes values, denominator, source, and limitation.
-  - [ ] Exact values remain available in a compact table.
-  - [ ] Focused tests, typecheck, and lint pass.
-- Attempts: 0
+  - [x] Flood and drought use matched frames and one fixed scale centered on zero.
+  - [x] The active crop is visible and applies to both events.
+  - [x] Magnitude and confidence remain visually and verbally distinct.
+  - [x] Pinned evidence includes values, denominator, source, and limitation.
+  - [x] Exact values remain available in a compact table.
+  - [x] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - Builder handoff 2026-08-19: Replaced the single-event Task 3 card/table view with paired 2019 flood and 2022 drought choropleths that share crop, projection, extent, and one crop-wide symmetric mean-z domain. Pinning in either frame highlights the same state in both and reports exact mean z, separately labeled NIG posterior-predictive percentile, pixel-week denominator, source, and limitation; absent combinations and absent NIG remain explicit no-data. Explore retains the complete event × state × crop table behind a keyboard-focusable disclosure.
+  - Checker pass 2026-08-19: TDD red confirmed all five initial comparison behaviors failed against v1; focused green passed 7 tests including missing NIG and external-state synchronization. Full suite passed 15 files / 64 tests, with typecheck, lint, and diff checks clean. Browser Use verified identical real-data domains at 1280px and a stacked 320px layout with no horizontal overflow. Ponytail review: `Lean already. Ship.`
+- Attempts: 1
 - Max attempts: 3
-- Status: pending
+- Attempt log:
+  - 2026-08-19: Started from the paper's z-score and NIG posterior-predictive definitions, using one crop-specific diverging domain across both events and keeping the NIG percentile distinct from confidence in the mean z estimate.
+  - 2026-08-19: Completed paired event maps, shared pin/detail, posterior-context explanation, Explore table, regression coverage, desktop/mobile visual QA, and checker verification without adding a dependency or inventing geographic detail.
+- Status: done
 
 ---
 
@@ -1286,7 +1322,7 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-021
-  - Integration status: pending
+  - Integration status: done
 - Design source:
   - `SCOPE.md` Act IV and prediction evidence contract
   - Task 4 ablation, SHAP, confusion, regime, split, and test artifacts
@@ -1322,15 +1358,21 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - `src/features/prediction/prediction-copy.ts`
   - `src/features/prediction/__tests__/prediction-panel.test.tsx`
 - Acceptance criteria:
-  - [ ] Story connects source families to model behavior and the closing regime result.
-  - [ ] Ablation, SHAP, confusion, and regime values trace to Task 4 artifacts.
-  - [ ] Major corn/soy error and rotation-regime differences are directly annotated.
-  - [ ] No unsupported geographic prediction layer appears.
-  - [ ] Pre-plant, sample, and spatial-resolution caveats are visible.
-  - [ ] Focused tests, typecheck, and lint pass.
-- Attempts: 0
+  - [x] Story connects source families to model behavior and the closing regime result.
+  - [x] Ablation, SHAP, confusion, and regime values trace to Task 4 artifacts.
+  - [x] Major corn/soy error and rotation-regime differences are directly annotated.
+  - [x] No unsupported geographic prediction layer appears.
+  - [x] Pre-plant, sample, and spatial-resolution caveats are visible.
+  - [x] Focused tests, typecheck, and lint pass.
+- QA notes:
+  - Builder handoff 2026-08-19: Rebuilt Act IV as a source-to-conclusion evidence stack: a data-bearing CDL/NDVI/SMAP braid into LightGBM; configuration-stable ablation cards with source-derived percentage-point references; all SHAP source rows grouped without hiding unknown features; a four-class count-plus-row-share matrix with direct corn/soy cross-confusion annotations; and a denominator-aware 95.5% / 87.4% / 70.9% rotation-regime close. Concurrent-season, class-balanced test, 1,000-pixel SHAP, native-resolution/common-grid, and no-geographic-layer limitations remain visible.
+  - Checker pass 2026-08-19: TDD red failed 6 of 7 tests against v1; focused green passed 7 tests. Full suite passed 15 files / 65 tests, with typecheck, lint, workflow validation, and diff checks clean. Browser Use verified all four real ablations, 38 SHAP rows, a four-class matrix, and no desktop overflow; the 320px document width equals the viewport while the matrix alone owns an intentional internal scroller. Ponytail review: `Lean already. Ship.`
+- Attempts: 1
 - Max attempts: 3
-- Status: pending
+- Attempt log:
+  - 2026-08-19: Started from the dated Task 4 ablation, SHAP, test, split, and regime artifacts plus the paper's concurrent-season and resolution limitations. The conclusion will distinguish the alternative B/C ablations from the full model rather than treating their lifts as additive.
+  - 2026-08-19: Completed the source braid, incremental ablation, lossless SHAP family grouping, annotated confusion, regime conclusion, limitation ledger, mobile containment repair, and full checker pass without a new dependency or unsupported map.
+- Status: done
 
 ---
 
@@ -1343,7 +1385,7 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
 - Contract refs:
   - Backend owner: none
   - Frontend owner: TASK-022
-  - Integration status: pending
+  - Integration status: complete
 - Design source:
   - `SCOPE.md` delivery criteria
   - `docs/design/2026-08-19-narrative-atlas-mockups.md`
@@ -1398,17 +1440,195 @@ not move to `in-progress` until the user has reviewed the mockup/spec package.
   - `logs/Progress Log.md`
   - `logs/Handoff Notes.md`
 - Acceptance criteria:
-  - [ ] Story is the default and communicates all four acts; Explore remains task-specific and shareable.
-  - [ ] HSGP remains a lead narrative figure rather than being subordinated to maps.
-  - [ ] Universal map and global six-control wall are removed.
-  - [ ] Paper remains a drawer/action with neutral verified copy and no unrelated
+  - [x] Story is the default and communicates all four acts; Explore remains task-specific and shareable.
+  - [x] HSGP remains a lead narrative figure rather than being subordinated to maps.
+  - [x] Universal map and global six-control wall are removed.
+  - [x] Paper remains a drawer/action with neutral verified copy and no unrelated
     repository link.
-  - [ ] Existing valid v1 URLs normalize safely and unsupported legacy layers warn.
-  - [ ] Source, denominator, uncertainty, and limitation text appears beside each qualified claim.
-  - [ ] Desktop and 320–390 px mobile have no horizontal overflow, clipped essential labels, or negative-size chart warnings.
-  - [ ] Pointer, keyboard, touch, and reduced-motion paths expose equivalent evidence.
-  - [ ] No backend, new dependency, generated image, unsupported data, or unrelated cleanup is introduced.
-  - [ ] Full test, typecheck, lint, build, workflow validation, audit, and manual browser smoke gates pass.
-- Attempts: 0
+  - [x] Existing valid v1 URLs normalize safely and unsupported legacy layers warn.
+  - [x] Source, denominator, uncertainty, and limitation text appears beside each qualified claim.
+  - [x] Desktop and 320–390 px mobile have no horizontal overflow, clipped essential labels, or negative-size chart warnings.
+  - [x] Pointer, keyboard, touch, and reduced-motion paths expose equivalent evidence.
+  - [x] No backend, new feature dependency, generated image, unsupported data, or unrelated cleanup is introduced.
+  - [x] Full test, typecheck, lint, build, workflow validation, audit, and manual browser smoke gates pass.
+- QA notes:
+  - Builder green 2026-08-19: Default Story renders all four shared task panels in order; HSGP precedes the Rotation-only measured map. Explore renders one shareable task panel and its local controls. The global `CompactFilterBar` and overview map are removed.
+  - Compatibility green 2026-08-19: Empty URLs open Story; valid v1 tab/filter URLs infer Explore; `view` round-trips; retired map layers normalize to measured regular share with a visible warning; unrelated URL params remain preserved.
+  - Interaction green 2026-08-19: Automated pointer/keyboard/reset map coverage and paper-dialog coverage passed. Browser Use confirmed exact document-width containment at 1440, 390, and 320 px, no negative-size chart warning, no global filter wall, and 44 px visible controls at 390 px. Reduced-motion media override resolved true.
+  - Final gates green 2026-08-19: 15 files / 68 tests, typecheck, lint, Webpack production build, zero-vulnerability high audit, workflow status validation, and required-artifact validation passed. The managed sandbox blocks Turbopack's helper process from binding a port, so the equivalent production build gate used `next build --webpack`.
+- Attempts: 1
 - Max attempts: 3
-- Status: pending
+- Attempt log:
+  - 2026-08-19: Integrated the four-act Story and task-scoped Explore, added URL view/legacy normalization, moved the measured map into Rotation, retired global controls, neutralized paper copy, repaired touch targets, completed desktop/mobile/accessibility smoke, and updated the lockfile within existing dependency ranges after the live audit exposed newly published advisories.
+- Status: done
+
+---
+
+## TASK-023
+
+- Feature group: Product Shell Simplification
+- Title: Collapse the product to Explore-only GeoCrop
+- Depends on: TASK-022
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-023
+  - Integration status: complete
+- Design source:
+  - User review 2026-08-19: remove Story, keep Explore as-is, and replace the
+    Narrative Atlas name with GeoCrop / Corn Belt.
+- User value: Opens directly into the analytical experience the reviewer chose,
+  with no unused mode choice or duplicated narrative surface.
+- User flow:
+  - User opens `/` and immediately sees the four-task Explore workspace.
+  - User switches task tabs or restores an existing task/filter URL.
+  - User opens the paper from the compact GeoCrop top bar.
+- Functional notes:
+  - Remove the Story mode button, Story route composition, act opening, and
+    Story-only runtime code.
+  - Make Explore the only/default workspace; no `view` parameter is required.
+  - Normalize old `view=story` or `view=explore` links by ignoring/removing the
+    retired mode while preserving supported tab/filter state.
+  - Change the brand heading from `Narrative Atlas` to `GeoCrop`; retain a quiet
+    Corn Belt context label and the paper action.
+  - Keep task components, source contracts, local controls, and evidence
+    behavior unchanged.
+- Edge cases:
+  - Empty URL.
+  - Old Story or Explore URL carrying valid task/filter state.
+  - Unrelated query parameters.
+  - 320 px top bar with brand and paper action.
+- Test cases:
+  1. Empty route renders the Explore task tablist and Phenology panel.
+  2. No Story toggle, act navigator, or narrative opening is rendered.
+  3. Old `view` links still restore supported task/filter state and are removed
+     on the next state update.
+  4. Top bar exposes `GeoCrop`, Corn Belt context, and the paper action.
+- Files to create/modify:
+  - `src/components/layout/DashboardShell.tsx`
+  - `src/components/layout/DashboardShell.test.tsx`
+  - `src/components/layout/TopBar.tsx`
+  - `src/components/story/ActHeader.tsx` (delete if unused)
+  - `src/components/story/ActNavigator.tsx` (delete if unused)
+  - `src/components/story/StoryModeToggle.tsx` (delete)
+  - `src/components/story/__tests__/story-primitives.test.tsx`
+  - `src/features/phenology/PhenologyPanel.tsx`
+  - `src/features/extremes/ExtremesPanel.tsx`
+  - `src/lib/data/types.ts`
+  - `src/lib/state/dashboard-state.ts`
+  - `src/lib/state/url-state.ts`
+  - `src/lib/state/__tests__/url-state.test.ts`
+  - `PROJECT.md`
+  - `logs/Progress Log.md`
+- Acceptance criteria:
+  - [x] Explore is the only and default product surface.
+  - [x] Story navigation/composition and `view` state are absent from runtime.
+  - [x] Header identity is GeoCrop with Corn Belt context.
+  - [x] Existing task/filter links remain useful after mode retirement.
+  - [x] No evidence component, source, caveat, or paper action regresses.
+  - [x] Focused tests, full tests, typecheck, lint, and responsive browser smoke pass.
+- QA notes:
+  - Green 2026-08-19: Empty and legacy-mode URLs open the task-scoped Explore
+    workspace; the next state change removes retired `view` parameters while
+    preserving valid task/filter and unrelated query state.
+  - Green 2026-08-19: Story composition, act navigation, mode control, and three
+    unused Story-only primitives were deleted. Shared figure/evidence primitives,
+    all task panels, local controls, paper actions, sources, and caveats remain.
+  - Green 2026-08-19: 15 files / 66 tests, typecheck, lint, Webpack production
+    build, workflow validation, and required-artifact validation passed.
+    Browser Use confirmed GeoCrop / U.S. Corn Belt, four tabs, paper action,
+    320 px document containment, and no Story/Explore mode links.
+- Attempts: 1
+- Max attempts: 3
+- Attempt log:
+  - 2026-08-19: Approved as a bounded deletion-first follow-up after the user
+    selected Explore and rejected the Story surface during live review.
+  - 2026-08-19: Removed the rejected Story surface and mode URL state, made
+    Explore the only route composition, retained compatibility for legacy mode
+    links, renamed the shell, and passed automated and live responsive gates.
+- Status: done
+
+---
+
+## TASK-024
+
+- Feature group: Evidence Density Polish
+- Title: Tighten Rotation composition and Extremes crop controls
+- Depends on: TASK-023
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-024
+  - Integration status: complete
+- Design source:
+  - User review 2026-08-19: use the Rotation composition's right-side whitespace
+    for stacked class summaries and replace the Extremes crop dropdown with one
+    direct button per crop.
+- User value: Makes two evidence controls faster to scan and uses wide-screen
+  space intentionally without changing scientific meaning.
+- User flow:
+  - User reads the 100-cell field beside three stacked exact class summaries.
+  - User selects Corn, Soybean, Winter wheat, Oats, or Other cropland directly
+    from a visible button group and the paired event evidence updates.
+- Functional notes:
+  - On wide screens, place the 100-cell field at left and stack the three class
+    summaries at right; stack naturally on narrow screens.
+  - Preserve exactly 100 cells, exact percentages, pixels, area, source date,
+    denominator, and class definitions.
+  - Replace the native crop dropdown with five 44 px minimum buttons using
+    `aria-pressed`; retain the selected-crop URL callback.
+  - Do not add automatic map-click scrolling; the user explicitly withdrew it.
+  - Do not add a year selector. The current Rotation map is a dated aggregate
+    classification and has no truthful year-by-year map artifact.
+- Edge cases:
+  - Crop with no event rows.
+  - Long `Winter wheat` / `Other cropland` labels at 320 px.
+  - Missing rotation class row.
+  - Keyboard and touch crop selection.
+- Test cases:
+  1. Rotation still renders exactly 100 cells and three exact class summaries.
+  2. Wide-layout composition wrapper exposes the field and stacked summary rail.
+  3. Extremes renders five crop buttons, no crop combobox, and one pressed crop.
+  4. Clicking a crop button calls the existing callback and changes visible evidence.
+  5. No year selector or map auto-scroll behavior is introduced.
+- Files to create/modify:
+  - `src/features/rotation/RotationClassChart.tsx`
+  - `src/features/rotation/__tests__/rotation-panel.test.tsx`
+  - `src/features/extremes/ExtremesPanel.tsx`
+  - `src/features/extremes/__tests__/extremes-panel.test.tsx`
+  - `README.md`
+  - `HANDOVER.md`
+  - `PROJECT.md`
+  - `memory/architecture.md`
+  - `memory/patterns.md`
+  - `memory/decisions.md`
+  - `logs/Overview.md`
+  - `logs/Progress Log.md`
+  - `logs/Handoff Notes.md`
+- Acceptance criteria:
+  - [x] Rotation uses a balanced field-and-summary layout without changing data.
+  - [x] Extremes uses five direct, accessible crop buttons and no crop dropdown.
+  - [x] Mobile has no document overflow or clipped essential labels.
+  - [x] No unsupported year selector, auto-scroll, dependency, or data claim is added.
+  - [x] Focused tests, full tests, typecheck, lint, build, workflow validation, audit, and browser smoke pass.
+- QA notes:
+  - Green 2026-08-19: Rotation retains exactly 100 largest-remainder cells and
+    exact percentage/pixel/area/source/date/denominator/definition evidence. At
+    wide widths the field sits beside three stacked summary cards; mobile stacks.
+  - Green 2026-08-19: Extremes exposes Corn, Soybean, Winter wheat, Oats, and
+    Other cropland as direct `aria-pressed` buttons. All are at least 44 px;
+    the last option spans the open mobile row, the controlled crop callback/URL
+    path is unchanged, and no crop combobox remains.
+  - Green 2026-08-19: 15 files / 67 tests, typecheck, lint, Webpack production
+    build, zero-vulnerability high audit, workflow validation, and required-
+    artifact validation passed. Browser Use confirmed 1440/320 px composition,
+    exact document containment, intact long labels, and 100 rendered cells.
+- Attempts: 1
+- Max attempts: 3
+- Attempt log:
+  - 2026-08-19: Approved as a bounded layout/control polish task. Ponytail scope
+    keeps the withdrawn auto-scroll and unsupported year selector out.
+  - 2026-08-19: Rebalanced Rotation composition, replaced the Extremes crop
+    dropdown with direct buttons, synchronized handoff/context files, and passed
+    automated, audit, and responsive live-browser gates without new scope.
+- Status: done

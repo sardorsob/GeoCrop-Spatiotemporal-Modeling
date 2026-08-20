@@ -1,125 +1,124 @@
 import type { AnomalyStateCropSummary, ExtremeEventId } from "@/lib/data/types";
+import { EXTREME_EVENT_OPTIONS } from "@/lib/state/dashboard-state";
 
 import {
   EXTREME_EVENT_DETAILS,
   formatCount,
-  formatPercent,
   formatProbability,
-  formatZScore
+  formatSignedZScore
 } from "./extremes-copy";
 
 export interface AnomalySummaryChartProps {
-  readonly eventId: ExtremeEventId;
   readonly rows: readonly AnomalyStateCropSummary[];
 }
 
-export function AnomalySummaryChart({
+export function AnomalySummaryChart({ rows }: AnomalySummaryChartProps) {
+  return (
+    <section
+      aria-label="Event comparison summary"
+      className="rounded-xl border border-rule bg-paper p-4 sm:p-5"
+    >
+      <div className="max-w-2xl">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+          Comparison anchors
+        </p>
+        <h3 className="mt-1 font-display text-xl font-semibold text-ink">
+          Direction first, posterior context second
+        </h3>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          Weighted summaries orient the eye; pin a state to inspect the exact evidence behind either map.
+        </p>
+      </div>
+
+      <div className="mt-4 grid gap-3 lg:grid-cols-2">
+        {EXTREME_EVENT_OPTIONS.map((event) => (
+          <EventSummary
+            eventId={event.id}
+            key={event.id}
+            rows={rows.filter((row) => row.eventId === event.id)}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function EventSummary({
   eventId,
   rows
-}: AnomalySummaryChartProps) {
+}: {
+  readonly eventId: ExtremeEventId;
+  readonly rows: readonly AnomalyStateCropSummary[];
+}) {
+  const details = EXTREME_EVENT_DETAILS[eventId];
+
   if (rows.length === 0) {
     return (
-      <section className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
-        <h3 className="text-base font-semibold text-slate-950">
-          Anomaly summary
-        </h3>
-        <p className="mt-2 text-sm text-slate-600">
-          No anomaly rows are available for the selected filters.
+      <article className="rounded-lg border border-dashed border-rule bg-muted/30 p-4">
+        <p className="font-semibold text-ink">{details.label}</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          No state values are available for this crop and event.
         </p>
-      </section>
+      </article>
     );
   }
 
   const aggregate = summarizeRows(rows);
 
   return (
-    <section
-      aria-label="Anomaly z-score summary"
-      className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm"
-    >
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+    <article className="rounded-lg border border-rule bg-muted/30 p-4">
+      <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h3 className="text-base font-semibold text-slate-950">
-            Anomaly summary
-          </h3>
-          <p className="mt-1 text-sm text-slate-600">
-            {EXTREME_EVENT_DETAILS[eventId].description}
+          <p className="font-semibold text-ink">{details.label}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {rows.length} state{rows.length === 1 ? "" : "s"}
           </p>
         </div>
-        <p className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
+        <span className="rounded-full border border-rule bg-paper px-2 py-1 text-xs tabular-nums text-muted-foreground">
           {formatCount(aggregate.totalPixelWeeks)} pixel-weeks
-        </p>
+        </span>
       </div>
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard
-          label="Weighted mean z-score"
-          tone={aggregate.weightedMeanZ >= 0 ? "wet" : "dry"}
-          value={formatZScore(aggregate.weightedMeanZ)}
-        />
-        <MetricCard
-          label="Max z-score"
-          tone="wet"
-          value={formatZScore(aggregate.maxZ)}
-        />
-        <MetricCard
-          label="Observed z > 1"
-          tone="wet"
-          value={formatPercent(aggregate.fractionObservedZGreaterThan1)}
-        />
-        <MetricCard
-          label="Mean NIG P(drought)"
-          tone="dry"
-          value={formatProbability(aggregate.meanNigPDrought)}
-        />
-      </div>
-    </section>
-  );
-}
-
-function MetricCard({
-  label,
-  tone,
-  value
-}: {
-  readonly label: string;
-  readonly tone: "dry" | "wet";
-  readonly value: string;
-}) {
-  const toneClassName =
-    tone === "wet"
-      ? "border-sky-400 bg-sky-50 text-sky-950"
-      : "border-amber-400 bg-amber-50 text-amber-950";
-
-  return (
-    <div className={`rounded-xl border-l-4 px-4 py-4 shadow-sm ${toneClassName}`}>
-      <p className="text-xs font-semibold uppercase tracking-widest">{label}</p>
-      <p className="mt-2 text-2xl font-bold text-slate-950">{value}</p>
-    </div>
+      <dl className="mt-4 grid grid-cols-2 gap-3">
+        <div className="border-l-2 border-sky-700 pl-3">
+          <dt className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            Mean z magnitude
+          </dt>
+          <dd className="mt-1 font-mono text-xl font-semibold tabular-nums text-ink">
+            {formatSignedZScore(aggregate.weightedMeanZ)}
+          </dd>
+        </div>
+        <div className="border-l-2 border-amber-700 pl-3">
+          <dt className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            NIG percentile context
+          </dt>
+          <dd className="mt-1 font-mono text-xl font-semibold tabular-nums text-ink">
+            {formatProbability(aggregate.weightedNigPercentile)}
+          </dd>
+        </div>
+      </dl>
+    </article>
   );
 }
 
 function summarizeRows(rows: readonly AnomalyStateCropSummary[]) {
   const totalPixelWeeks = rows.reduce((sum, row) => sum + row.nPixelWeeks, 0);
+  const denominator = totalPixelWeeks > 0 ? totalPixelWeeks : rows.length;
   const weight = (row: AnomalyStateCropSummary) =>
     totalPixelWeeks > 0 ? row.nPixelWeeks : 1;
-  const denominator = totalPixelWeeks > 0 ? totalPixelWeeks : rows.length;
+  const nigRows = rows.filter((row) => Number.isFinite(row.meanNigPDrought));
+  const nigPixelWeeks = nigRows.reduce((sum, row) => sum + row.nPixelWeeks, 0);
+  const nigDenominator = nigPixelWeeks > 0 ? nigPixelWeeks : nigRows.length;
+  const nigWeight = (row: AnomalyStateCropSummary) =>
+    nigPixelWeeks > 0 ? row.nPixelWeeks : 1;
 
   return {
     totalPixelWeeks,
     weightedMeanZ: weightedAverage(rows, (row) => row.meanZ, weight, denominator),
-    maxZ: Math.max(...rows.map((row) => row.maxZ)),
-    fractionObservedZGreaterThan1: weightedAverage(
-      rows,
-      (row) => row.fractionObservedZGreaterThan1,
-      weight,
-      denominator
-    ),
-    meanNigPDrought: weightedAverage(
-      rows,
+    weightedNigPercentile: weightedAverage(
+      nigRows,
       (row) => row.meanNigPDrought,
-      weight,
-      denominator
+      nigWeight,
+      nigDenominator
     )
   };
 }
@@ -130,8 +129,8 @@ function weightedAverage(
   getWeight: (row: AnomalyStateCropSummary) => number,
   denominator: number
 ): number {
-  if (denominator === 0) {
-    return 0;
+  if (rows.length === 0 || denominator === 0) {
+    return Number.NaN;
   }
 
   return rows.reduce((sum, row) => sum + getValue(row) * getWeight(row), 0) / denominator;

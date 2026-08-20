@@ -12,10 +12,10 @@
 
 <!-- 0-Intake | 1-Scope | 2-Setup | 3-Development | 4-QA | 5-Delivery | 6-Maintenance -->
 
-**Current:** 1-Scope — Narrative Atlas v2 mockup/spec review
+**Current:** 4-QA — awaiting final user check
 
-The implemented dashboard remains the completed v1 baseline. The active work is
-an approval-gated redesign initiative; no v2 implementation has started.
+The two post-review follow-up tasks are complete and separately committed. The
+branch remains intentionally unmerged while the reviewer performs the final check.
 
 ## Source Docs
 
@@ -41,7 +41,13 @@ an approval-gated redesign initiative; no v2 implementation has started.
 | HSGP season-window zoom | done | `TASK-012` adds local Full / Green-up / Peak / Senescence / custom DOY zoom controls to the Task 1 NDVI chart |
 | NAFSI paper reader | done | `TASK-013` replaces the old Prediction hero KPI with a `NAFSI 2025 winning paper` CTA, embedded PDF reader, and open/download actions |
 | Sprout favicon | done | `TASK-014` adds a public SVG favicon using the current top-bar plant mark |
-| Website redesign v2 | review-ready | Narrative Atlas product frame approved; Chaptered Evidence Canvas + Evidence Lab mockups, v2 scope/spec, and `TASK-015`–`TASK-022` are ready for review; implementation has not started |
+| Website redesign v2 | done | `TASK-015`–`TASK-022` delivered the original shared grammar/evidence build; `TASK-023` later retired the rejected Story surface |
+| Explore-only shell | done | `TASK-023` removes Story runtime/mode state, preserves legacy task/filter URLs, and changes the product identity to GeoCrop / U.S. Corn Belt |
+| Evidence density polish | done | `TASK-024` balances Rotation composition and replaces the Extremes crop dropdown with five direct buttons |
+| Task 1 HSGP comparator | done | Explore aligns corn, soybean, and winter wheat with nested posterior intervals, empirical spatial IQR, paper growth stages, direct peaks, an explicit focused NDVI scale, and one shared compact season window |
+| Act II rotation memory | done | Schematic decade strips lead into a dated 100-cell composition, measured within-grain geography ranking/map slot, and discrete source-only threshold sensitivity |
+| Act III paired extremes | done | Matched 2019 flood and 2022 drought state maps share crop and mean-z scale; one state pin exposes event-specific NIG posterior context, denominator, source, and no-data honestly |
+| Act IV prediction conclusion | done | CDL/NDVI/SMAP feed a source-backed ablation and grouped-SHAP story, annotated corn/soy errors, and a denominator-aware regime close with forecast/spatial limits |
 
 ## Decisions
 
@@ -64,13 +70,22 @@ an approval-gated redesign initiative; no v2 implementation has started.
 - 2026-08-19: Use Narrative Atlas as the v2 product structure, with a Chaptered Evidence Canvas in Story and a sibling Evidence Lab in Explore. “Atlas” describes a collection of evidence plates; maps lead only rotation and extremes.
 - 2026-08-19: Share task-specific figure components and selectors between Story and Explore. Keep the current stack and add no dependency unless an implementation task proves a concrete gap.
 - 2026-08-19: Preserve `TASK-000`–`TASK-014` as v1 history and append eight pending v2 tasks (`TASK-015`–`TASK-022`). No v2 task may start before mockup/spec review.
+- 2026-08-19: Keep the Task 1 story as one three-row comparator on a shared 0.50–1.00 NDVI scale. Encode the paper's posterior IQR, 90% interval, empirical Q25/Q75, and crop-specific stages directly; reserve shared season-window controls for Explore.
+- 2026-08-19: Teach Task 2 classes with explicitly schematic decade strips before showing dated composition or geography. Keep the dated class result separate from the threshold-sensitivity experiment, and allow sensitivity changes only by selecting complete exported rows.
+- 2026-08-19: Compare the 2019 flood and 2022 drought in matched state frames with one crop-wide symmetric mean-z scale. Treat the paper's NIG quantity as a posterior-predictive percentile that contextualizes baseline uncertainty, never as the map color or a confidence interval around mean z.
+- 2026-08-19: Present Task 4 ablations as two alternative CDL-baseline branches plus the full model, not as additive steps. Preserve every SHAP source row within a named family, use only the four exported test classes, and close on descriptive regime predictability while keeping unequal denominators and concurrent-season limitations visible.
+- 2026-08-19: Make Story the empty-URL default and normalize valid v1 analytical URLs into Explore. Retire the universal map and global control wall; place the measured regular-share map only inside Rotation and warn visibly when old unsupported map layers are normalized.
+- 2026-08-19: Replace unverified award/year wording with `GeoCrop research paper`; keep the existing reader/open/download action and exclude the unrelated repository link.
+- 2026-08-19: Accept npm's lockfile-only, manifest-range-preserving security remediation so the final audit resolves to Next.js 16.3.1 and zero reported vulnerabilities without adding a feature dependency.
+- 2026-08-19: After live review, retire Story rather than maintain a rejected second surface. Explore becomes the empty-URL product, and the header identity becomes GeoCrop with Corn Belt context.
+- 2026-08-19: Use existing Rotation and Extremes data more compactly: wide Rotation composition becomes field plus stacked summaries, and Extremes uses five direct crop buttons. Do not add the withdrawn auto-scroll or an unsupported year selector.
 
 ## Last Session
 
 - **Date:** 2026-08-19
-- **What was done:** Converted the approved Narrative Atlas frame into three code-native layout mockups, selected the Chaptered Evidence Canvas + Evidence Lab balance, wrote the review-ready design spec, synchronized v2 scope and stack guidance, and appended eight pending implementation tasks. No application code was changed and no application tests were run.
-- **What's next:** User reviews the mockups and design spec. If the selected balance holds, begin `TASK-015` visual grammar and `TASK-016` evidence contracts in parallel, then follow the documented dependency graph.
-- **Blockers:** Detailed mockup/spec review is still required before implementation. Content inconsistencies in rotation thresholds, challenge chronology, award wording, and the paper's repository link remain copy gates; the scope defines safe fallback wording and behavior.
+- **What was done:** Completed `TASK-024`: Rotation now pairs its 100-cell field with stacked exact summaries at wide widths, Extremes uses five direct crop buttons, full gates/audit passed, and 1440/320 px browser smoke confirmed composition and containment.
+- **What's next:** Keep the local server running and wait for the user's final review before merge.
+- **Blockers:** No implementation blocker. Merge is explicitly deferred pending user approval.
 
 ## Environment
 

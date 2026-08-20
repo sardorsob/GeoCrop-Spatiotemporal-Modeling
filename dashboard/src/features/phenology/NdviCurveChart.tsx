@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import {
   Area,
-  Brush,
   CartesianGrid,
   ComposedChart,
   Line,
@@ -13,285 +11,292 @@ import {
   YAxis
 } from "recharts";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import type { CropId, PhenologySeries } from "@/lib/data/types";
+import type { PhenologySeries } from "@/lib/data/types";
+import { cn } from "@/lib/utils";
 
-import { CROP_LABELS, PHENOLOGY_COPY, STATIC_FALLBACK_FIGURES } from "./phenology-copy";
 import {
-  clampSeasonWindow,
-  filterRowsByWindow,
-  findBrushIndexes,
-  getSeasonBounds,
-  getSeasonWindowPreset,
-  type SeasonWindow,
-  type SeasonWindowPresetId
-} from "./season-window";
+  CROP_CHART_COLORS,
+  CROP_LABELS,
+  CROP_STAGES,
+  PHENOLOGY_COPY,
+  PHENOLOGY_CROPS,
+  STATIC_FALLBACK_FIGURES
+} from "./phenology-copy";
+import { filterRowsByWindow, getSeasonBounds, type SeasonWindow } from "./season-window";
+
+type ComparatorCrop = (typeof PHENOLOGY_CROPS)[number];
 
 export interface NdviCurveChartProps {
-  readonly crop: CropId;
+  readonly crop: ComparatorCrop;
+  readonly emphasized?: boolean;
+  readonly seasonWindow?: SeasonWindow;
   readonly series: readonly PhenologySeries[];
 }
 
 interface ChartRow {
   dayOfYear: number;
   posteriorMean?: number;
-  band?: [number, number];
-  empirical?: number;
+  posteriorIqr?: [number, number];
+  posterior90?: [number, number];
+  empiricalQ25?: number;
+  empiricalQ75?: number;
 }
 
-type SeasonWindowMode = SeasonWindowPresetId | "custom";
+const MONTH_TICKS = [91, 121, 152, 182, 213, 244, 274] as const;
+const MONTH_LABELS = new Map([
+  [91, "Apr"],
+  [121, "May"],
+  [152, "Jun"],
+  [182, "Jul"],
+  [213, "Aug"],
+  [244, "Sep"],
+  [274, "Oct"]
+]);
 
-const SEASON_PRESET_IDS: readonly SeasonWindowPresetId[] = [
-  "full",
-  "green_up",
-  "peak",
-  "senescence"
-];
-
-export function NdviCurveChart({ crop, series }: NdviCurveChartProps) {
+export function NdviCurveChart({
+  crop,
+  emphasized = false,
+  seasonWindow,
+  series
+}: NdviCurveChartProps) {
   const cropLabel = CROP_LABELS[crop];
-  const cropSeries = series.filter((s) => s.crop === crop);
+  const rows = buildRows(series.filter((item) => item.crop === crop));
+  const ownBounds = getSeasonBounds(rows);
 
-  const rows = buildRows(cropSeries);
-  const seasonBounds = getSeasonBounds(rows);
-  const [seasonWindow, setSeasonWindow] = useState<SeasonWindow | undefined>(seasonBounds);
-  const [seasonWindowMode, setSeasonWindowMode] = useState<SeasonWindowMode>("full");
-  const activeSeasonWindow = seasonBounds
-    ? clampSeasonWindow(seasonWindow ?? seasonBounds, seasonBounds)
-    : undefined;
-  const visibleRows = activeSeasonWindow ? filterRowsByWindow(rows, activeSeasonWindow) : rows;
-  const brushIndexes = activeSeasonWindow ? findBrushIndexes(rows, activeSeasonWindow) : undefined;
-  const posteriorPeak = peak(visibleRows, (r) => r.posteriorMean);
-  const empiricalPeak = peak(visibleRows, (r) => r.empirical);
+  if (!ownBounds) return <StaticFallback cropLabel={cropLabel} />;
 
-  const setPresetWindow = (id: SeasonWindowPresetId) => {
-    if (!seasonBounds) return;
-    const preset = getSeasonWindowPreset(id, seasonBounds);
-    setSeasonWindow(preset.window);
-    setSeasonWindowMode(id);
-  };
-
-  const setCustomWindow = (nextWindow: SeasonWindow) => {
-    if (!seasonBounds) return;
-    setSeasonWindow(clampSeasonWindow(nextWindow, seasonBounds));
-    setSeasonWindowMode("custom");
-  };
-
-  const handleBrushChange = (range: { startIndex?: number; endIndex?: number }) => {
-    if (!seasonBounds) return;
-    const startRow = rows[range.startIndex ?? 0];
-    const endRow = rows[range.endIndex ?? rows.length - 1];
-    if (!startRow || !endRow) return;
-
-    setCustomWindow({
-      startDay: startRow.dayOfYear,
-      endDay: endRow.dayOfYear
-    });
-  };
-
-  if (rows.length === 0) {
-    return <StaticFallback cropLabel={cropLabel} />;
-  }
+  const activeWindow = seasonWindow ?? ownBounds;
+  const visibleRows = filterRowsByWindow(rows, activeWindow);
+  const posteriorPeak = peak(visibleRows, (row) => row.posteriorMean);
+  const color = CROP_CHART_COLORS[crop];
+  const iqrFillId = `phenology-iqr-${crop}`;
+  const intervalFillId = `phenology-90-${crop}`;
 
   return (
-    <Card>
-      <section aria-label={PHENOLOGY_COPY.chartRegionLabel}>
-        <div className="flex flex-wrap items-end justify-between gap-3 border-b border-slate-100 px-5 py-4">
-          <div>
-            <h3 className="text-base font-semibold text-slate-900">NDVI seasonality</h3>
-            <p className="text-sm text-slate-500">{cropLabel}</p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs">
-            <LegendDot color="#0d9488" label="HSGP posterior" />
-            <LegendDot color="#a7f3d0" filled label="90% credible interval" />
-            <LegendDot color="#d97706" dashed label="Empirical NDVI" />
-          </div>
-        </div>
-
-        <p className="px-5 pt-3 text-xs font-medium text-slate-500">
-          {PHENOLOGY_COPY.uncertaintyLabel}
-        </p>
-
-        <CardContent className="px-2 py-3 sm:px-5">
-          {activeSeasonWindow && seasonBounds && (
-            <section
-              aria-label="Season window controls"
-              className="mb-4 rounded-xl border border-slate-100 bg-slate-50/70 px-3 py-3"
-            >
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Season window
-                  </p>
-                  <p className="mt-1 text-sm font-medium text-slate-800">
-                    {`Visible span: DOY ${activeSeasonWindow.startDay}-${activeSeasonWindow.endDay}`}
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  {SEASON_PRESET_IDS.map((presetId) => {
-                    const preset = getSeasonWindowPreset(presetId, seasonBounds);
-
-                    return (
-                      <Button
-                        key={preset.id}
-                        type="button"
-                        variant={seasonWindowMode === preset.id ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setPresetWindow(preset.id)}
-                      >
-                        {preset.label}
-                      </Button>
-                    );
-                  })}
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <label className="grid gap-1">
-                    <span className="text-xs font-medium text-slate-500">Start DOY</span>
-                    <input
-                      aria-label="Start day of year"
-                      className="h-8 w-24 rounded-md border border-slate-200 bg-white px-2 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      max={seasonBounds.endDay}
-                      min={seasonBounds.startDay}
-                      type="number"
-                      value={activeSeasonWindow.startDay}
-                      onChange={(event) => {
-                        setCustomWindow({
-                          startDay: Number(event.currentTarget.value),
-                          endDay: activeSeasonWindow.endDay
-                        });
-                      }}
-                    />
-                  </label>
-                  <label className="grid gap-1">
-                    <span className="text-xs font-medium text-slate-500">End DOY</span>
-                    <input
-                      aria-label="End day of year"
-                      className="h-8 w-24 rounded-md border border-slate-200 bg-white px-2 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      max={seasonBounds.endDay}
-                      min={seasonBounds.startDay}
-                      type="number"
-                      value={activeSeasonWindow.endDay}
-                      onChange={(event) => {
-                        setCustomWindow({
-                          startDay: activeSeasonWindow.startDay,
-                          endDay: Number(event.currentTarget.value)
-                        });
-                      }}
-                    />
-                  </label>
-                </div>
+    <Card className={cn("min-w-0 overflow-hidden", emphasized && "ring-2 ring-field/45")}>
+      <article aria-labelledby={`phenology-${crop}-heading`}>
+        <header className="border-b border-rule px-4 py-4 sm:px-5">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span
+                  aria-hidden="true"
+                  className="h-3 w-3 rounded-full"
+                  style={{ backgroundColor: color }}
+                />
+                <h3 className="font-serif text-xl font-semibold text-ink" id={`phenology-${crop}-heading`}>
+                  {cropLabel}
+                </h3>
               </div>
-            </section>
-          )}
+              {posteriorPeak && (
+                <p className="mt-1 text-sm font-semibold tabular-nums text-ink-soft">
+                  {`${cropLabel} peak · DOY ${posteriorPeak.dayOfYear} · NDVI ${fmt(posteriorPeak.value)}`}
+                </p>
+              )}
+            </div>
+            <ChartLegend color={color} />
+          </div>
+        </header>
+
+        <CardContent className="min-w-0 px-2 py-4 sm:px-5">
+          <p className="px-2 text-xs leading-5 text-muted-foreground">
+            {PHENOLOGY_COPY.uncertaintyLabel}
+          </p>
+          <p className="px-2 text-xs font-semibold leading-5 text-ink-soft">
+            {PHENOLOGY_COPY.focusedScaleNote}
+          </p>
+
           <div
             role="img"
             aria-label={`${cropLabel} NDVI phenology curve`}
-            className="h-72 w-full"
+            className="mt-2 h-64 min-h-64 min-w-0 w-full sm:h-72 sm:min-h-72"
           >
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={rows} margin={{ top: 8, right: 16, bottom: 8, left: 0 }}>
+            <ResponsiveContainer
+              height="100%"
+              initialDimension={{ height: 256, width: 320 }}
+              minHeight={0}
+              minWidth={0}
+              width="100%"
+            >
+              <ComposedChart
+                data={visibleRows}
+                margin={{ top: 10, right: 12, bottom: 16, left: -8 }}
+              >
                 <defs>
-                  <linearGradient id="bandFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#5eead4" stopOpacity={0.55} />
-                    <stop offset="100%" stopColor="#5eead4" stopOpacity={0.2} />
+                  <linearGradient id={intervalFillId} x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stopColor={color} stopOpacity={0.13} />
+                    <stop offset="100%" stopColor={color} stopOpacity={0.04} />
+                  </linearGradient>
+                  <linearGradient id={iqrFillId} x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stopColor={color} stopOpacity={0.3} />
+                    <stop offset="100%" stopColor={color} stopOpacity={0.14} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                <CartesianGrid stroke="#d9d3c7" strokeDasharray="2 5" vertical={false} />
                 <XAxis
+                  allowDataOverflow
+                  axisLine={{ stroke: "#b9b0a2" }}
                   dataKey="dayOfYear"
-                  tickFormatter={(v) => `DOY ${v}`}
-                  stroke="#94a3b8"
+                  domain={[activeWindow.startDay, activeWindow.endDay]}
                   fontSize={11}
+                  tickFormatter={(value) => MONTH_LABELS.get(Number(value)) ?? `${value}`}
                   tickLine={false}
-                  axisLine={{ stroke: "#cbd5e1" }}
+                  ticks={MONTH_TICKS.filter(
+                    (day) => day >= activeWindow.startDay && day <= activeWindow.endDay
+                  )}
+                  type="number"
                 />
                 <YAxis
-                  domain={[0, 1]}
-                  ticks={[0, 0.25, 0.5, 0.75, 1]}
-                  stroke="#94a3b8"
-                  fontSize={11}
-                  tickLine={false}
+                  allowDataOverflow
                   axisLine={false}
+                  domain={[0.5, 1]}
+                  fontSize={11}
+                  tickFormatter={(value) => Number(value).toFixed(1)}
+                  tickLine={false}
+                  ticks={[0.5, 0.6, 0.7, 0.8, 0.9, 1]}
+                  width={42}
                 />
                 <Tooltip
                   contentStyle={{
-                    borderRadius: 12,
-                    border: "1px solid #e2e8f0",
-                    boxShadow: "0 10px 30px -10px rgba(0,0,0,0.15)",
-                    padding: "8px 12px",
+                    background: "#fffdf8",
+                    border: "1px solid #d9d3c7",
+                    borderRadius: 10,
+                    boxShadow: "0 12px 30px -18px rgba(43, 38, 31, 0.45)",
                     fontSize: 12
                   }}
-                  labelFormatter={(v) => `Day of year ${v}`}
                   formatter={(value, name) => {
-                    if (Array.isArray(value)) return [`${fmt(value[0])} – ${fmt(value[1])}`, "CI 5–95"];
-                    return [fmt(value as number), labelFor(name as string)];
+                    if (Array.isArray(value)) {
+                      return [`${fmt(Number(value[0]))}–${fmt(Number(value[1]))}`, labelFor(String(name))];
+                    }
+                    return [fmt(Number(value)), labelFor(String(name))];
                   }}
+                  labelFormatter={(value) => `Day of year ${value}`}
                 />
                 <Area
-                  type="monotone"
-                  dataKey="band"
+                  dataKey="posterior90"
+                  fill={`url(#${intervalFillId})`}
+                  isAnimationActive={false}
                   stroke="none"
-                  fill="url(#bandFill)"
+                  type="monotone"
+                />
+                <Area
+                  dataKey="posteriorIqr"
+                  fill={`url(#${iqrFillId})`}
                   isAnimationActive={false}
+                  stroke="none"
+                  type="monotone"
                 />
                 <Line
-                  type="monotone"
                   dataKey="posteriorMean"
-                  stroke="#0d9488"
-                  strokeWidth={2.5}
                   dot={false}
                   isAnimationActive={false}
+                  stroke={color}
+                  strokeWidth={2.7}
+                  type="monotone"
                 />
                 <Line
-                  type="monotone"
-                  dataKey="empirical"
-                  stroke="#d97706"
-                  strokeWidth={2}
-                  strokeDasharray="4 4"
+                  dataKey="empiricalQ25"
                   dot={false}
                   isAnimationActive={false}
+                  stroke={color}
+                  strokeDasharray="4 4"
+                  strokeOpacity={0.7}
+                  strokeWidth={1.4}
+                  type="monotone"
                 />
-                {brushIndexes && (
-                  <Brush
-                    dataKey="dayOfYear"
-                    endIndex={brushIndexes.endIndex}
-                    height={24}
-                    onChange={handleBrushChange}
-                    startIndex={brushIndexes.startIndex}
-                    stroke="#0d9488"
-                    travellerWidth={8}
-                  />
-                )}
+                <Line
+                  dataKey="empiricalQ75"
+                  dot={false}
+                  isAnimationActive={false}
+                  stroke={color}
+                  strokeDasharray="4 4"
+                  strokeOpacity={0.7}
+                  strokeWidth={1.4}
+                  type="monotone"
+                />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="mt-4 grid gap-2 px-3 text-sm sm:grid-cols-2">
-            {posteriorPeak && (
-              <p className="rounded-xl border border-teal-200 bg-gradient-to-br from-teal-50 to-white px-4 py-3 font-medium text-teal-900">
-                {`Peak posterior: ${fmt(posteriorPeak.value)} at DOY ${posteriorPeak.dayOfYear}`}
-              </p>
-            )}
-            {empiricalPeak && (
-              <p className="rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white px-4 py-3 font-medium text-amber-900">
-                {`Peak empirical: ${fmt(empiricalPeak.value)} at DOY ${empiricalPeak.dayOfYear}`}
-              </p>
-            )}
-          </div>
+          <StageList crop={crop} />
         </CardContent>
-      </section>
+      </article>
     </Card>
+  );
+}
+
+function ChartLegend({ color }: { readonly color: string }) {
+  return (
+    <div className="flex max-w-2xl flex-wrap gap-x-4 gap-y-2 text-[11px] leading-4 text-muted-foreground">
+      <LegendSwatch color={color} label="Posterior mean" />
+      <LegendSwatch color={color} fillOpacity={0.3} label="Posterior IQR (25–75%)" />
+      <LegendSwatch color={color} fillOpacity={0.11} label="Posterior 90% interval" />
+      <LegendSwatch color={color} dashed label="Empirical spatial IQR (Q25–Q75)" />
+    </div>
+  );
+}
+
+function LegendSwatch({
+  color,
+  dashed = false,
+  fillOpacity,
+  label
+}: {
+  readonly color: string;
+  readonly dashed?: boolean;
+  readonly fillOpacity?: number;
+  readonly label: string;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span
+        aria-hidden="true"
+        className="h-2.5 w-5 rounded-sm border"
+        style={{
+          background: dashed
+            ? `repeating-linear-gradient(90deg, ${color} 0 4px, transparent 4px 7px)`
+            : fillOpacity === undefined
+              ? color
+              : `color-mix(in srgb, ${color} ${fillOpacity * 100}%, transparent)`,
+          borderColor: fillOpacity === undefined || dashed ? "transparent" : color
+        }}
+      />
+      {label}
+    </span>
+  );
+}
+
+function StageList({ crop }: { readonly crop: ComparatorCrop }) {
+  return (
+    <ul
+      aria-label={`${CROP_LABELS[crop]} growth stages`}
+      className="mt-3 flex list-none flex-wrap gap-1.5 border-t border-rule px-2 pt-3 text-[10px] leading-4 text-ink-soft sm:text-xs"
+    >
+      {CROP_STAGES[crop].map((stage) => (
+        <li
+          key={`${stage.startDay}-${stage.label}`}
+          aria-label={`${stage.label}, day ${stage.startDay} to ${stage.endDay}`}
+          className="rounded-full border border-rule bg-muted/55 px-2 py-1"
+          title={`${stage.label} · DOY ${stage.startDay}–${stage.endDay}`}
+        >
+          <span>{stage.shortLabel}</span>
+          <span aria-hidden="true" className="ml-1 tabular-nums text-muted-foreground">
+            {stage.startDay}–{stage.endDay}
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
 function StaticFallback({ cropLabel }: { readonly cropLabel: string }) {
   return (
-    <Card>
+    <Card className="min-w-0">
       <section aria-label={PHENOLOGY_COPY.chartRegionLabel} className="p-5">
-        <h3 className="text-base font-semibold text-slate-900">NDVI curve fallback</h3>
-        <p className="mt-1 text-sm text-slate-500">
-          No NDVI series available for {cropLabel}. Static figure fallbacks are referenced below.
+        <h3 className="font-semibold text-ink">NDVI evidence unavailable for {cropLabel}</h3>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          The normalized series is missing. These versioned paper figures are the documented fallback sources.
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           {STATIC_FALLBACK_FIGURES.map((figure) => (
@@ -299,12 +304,12 @@ function StaticFallback({ cropLabel }: { readonly cropLabel: string }) {
               key={figure.src}
               aria-label={figure.alt}
               role="img"
-              className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-3 text-xs"
+              className="min-w-0 rounded-lg border border-dashed border-rule bg-muted/45 p-3 text-xs"
             >
-              <div className="flex h-20 items-center justify-center rounded-lg border border-slate-100 bg-white text-sm font-semibold text-slate-700">
+              <div className="flex min-h-16 items-center justify-center rounded-md bg-paper px-2 text-center font-semibold text-ink">
                 {figure.label}
               </div>
-              <figcaption className="mt-2 break-words leading-5 text-slate-500">
+              <figcaption className="mt-2 break-words font-mono text-[10px] leading-4 text-muted-foreground">
                 {figure.src}
               </figcaption>
             </figure>
@@ -315,58 +320,56 @@ function StaticFallback({ cropLabel }: { readonly cropLabel: string }) {
   );
 }
 
-function LegendDot({ color, label, filled, dashed }: { color: string; label: string; filled?: boolean; dashed?: boolean }) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-slate-600">
-      {filled ? (
-        <span className="h-2 w-4 rounded-sm" style={{ backgroundColor: color }} />
-      ) : (
-        <span
-          className="h-0.5 w-4 rounded-full"
-          style={{
-            background: dashed
-              ? `repeating-linear-gradient(90deg, ${color} 0 4px, transparent 4px 7px)`
-              : color
-          }}
-        />
-      )}
-      {label}
-    </span>
-  );
-}
-
 function buildRows(series: readonly PhenologySeries[]): ChartRow[] {
   const byDoy = new Map<number, ChartRow>();
-  for (const s of series) {
-    for (const p of s.points) {
-      const existing = byDoy.get(p.dayOfYear) ?? { dayOfYear: p.dayOfYear };
-      if (p.posteriorMean !== undefined) existing.posteriorMean = p.posteriorMean;
-      if (p.credibleInterval05 !== undefined && p.credibleInterval95 !== undefined) {
-        existing.band = [p.credibleInterval05, p.credibleInterval95];
+
+  for (const item of series) {
+    for (const point of item.points) {
+      const row = byDoy.get(point.dayOfYear) ?? { dayOfYear: point.dayOfYear };
+      if (point.posteriorMean !== undefined) row.posteriorMean = point.posteriorMean;
+      if (point.posteriorIqr25 !== undefined && point.posteriorIqr75 !== undefined) {
+        row.posteriorIqr = [point.posteriorIqr25, point.posteriorIqr75];
       }
-      if (p.empiricalMeanNdvi !== undefined) existing.empirical = p.empiricalMeanNdvi;
-      byDoy.set(p.dayOfYear, existing);
+      if (point.credibleInterval05 !== undefined && point.credibleInterval95 !== undefined) {
+        row.posterior90 = [point.credibleInterval05, point.credibleInterval95];
+      }
+      if (point.empiricalQ25Ndvi !== undefined) row.empiricalQ25 = point.empiricalQ25Ndvi;
+      if (point.empiricalQ75Ndvi !== undefined) row.empiricalQ75 = point.empiricalQ75Ndvi;
+      byDoy.set(point.dayOfYear, row);
     }
   }
+
   return [...byDoy.values()].sort((a, b) => a.dayOfYear - b.dayOfYear);
 }
 
-function peak(rows: readonly ChartRow[], pick: (r: ChartRow) => number | undefined): { dayOfYear: number; value: number } | undefined {
+function peak(
+  rows: readonly ChartRow[],
+  pick: (row: ChartRow) => number | undefined
+): { dayOfYear: number; value: number } | undefined {
   let best: { dayOfYear: number; value: number } | undefined;
-  for (const r of rows) {
-    const v = pick(r);
-    if (v === undefined) continue;
-    if (!best || v > best.value) best = { dayOfYear: r.dayOfYear, value: v };
+  for (const row of rows) {
+    const value = pick(row);
+    if (value !== undefined && (!best || value > best.value)) {
+      best = { dayOfYear: row.dayOfYear, value };
+    }
   }
   return best;
 }
 
-function fmt(v: number): string {
-  return v.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+function fmt(value: number): string {
+  return value.toLocaleString("en-US", {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2
+  });
 }
 
 function labelFor(key: string): string {
-  if (key === "posteriorMean") return "HSGP posterior";
-  if (key === "empirical") return "Empirical NDVI";
-  return key;
+  const labels: Readonly<Record<string, string>> = {
+    posteriorMean: "Posterior mean",
+    posteriorIqr: "Posterior IQR",
+    posterior90: "Posterior 90% interval",
+    empiricalQ25: "Empirical Q25",
+    empiricalQ75: "Empirical Q75"
+  };
+  return labels[key] ?? key;
 }

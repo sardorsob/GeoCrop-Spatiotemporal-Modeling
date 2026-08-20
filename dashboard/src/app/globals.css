@@ -1,21 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #f8fafc;
-  --color-foreground: #020617;
-  --color-card: #ffffff;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #64748b;
-  --color-border: #e2e8f0;
-  --color-ring: #10b981;
-  --color-primary: #059669;
-  --color-primary-foreground: #ffffff;
+  --color-background: #f4f0e6;
+  --color-foreground: #17221c;
+  --color-card: #fffdf7;
+  --color-muted: #e9e4d8;
+  --color-muted-foreground: #657068;
+  --color-border: #d7d0bf;
+  --color-ring: #286b4d;
+  --color-primary: #286b4d;
+  --color-primary-foreground: #fffdf7;
 
-  --color-corn: #f59e0b;
-  --color-soybean: #16a34a;
-  --color-wheat: #8b5cf6;
-  --color-wet: #0284c7;
-  --color-dry: #b45309;
+  /* Color-role ledger: crops identify series; anomalies encode direction;
+     focus is interaction-only; neutrals carry context and structure. */
+  --color-corn: #c98717;
+  --color-soybean: #3e7d50;
+  --color-wheat: #8664a6;
+  --color-wet: #24789a;
+  --color-dry: #b85f35;
+  --color-focus: #d97722;
+  --color-neutral: #78847b;
+  --color-ink: #17221c;
+  --color-paper: #fffdf7;
+  --color-field: #dde4cf;
+  --color-rule: #c9c1ae;
+
+  --font-display: Georgia, Cambria, "Times New Roman", serif;
 
   --radius: 0.75rem;
 }
@@ -36,9 +46,14 @@ html {
 
 body {
   margin: 0;
-  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-  background-attachment: fixed;
+  background: #f4f0e6;
+  color: #17221c;
   min-height: 100vh;
+}
+
+*:focus-visible {
+  outline: 3px solid #d97722;
+  outline-offset: 3px;
 }
 
 ::-webkit-scrollbar {
@@ -66,4 +81,19 @@ body {
 
 .animate-fade-in {
   animation: fade-in 0.3s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

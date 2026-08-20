@@ -5,14 +5,16 @@ import type {
   ExtremeEventId
 } from "@/lib/data/types";
 import { CROP_OPTIONS } from "@/lib/state/dashboard-state";
+import { cn } from "@/lib/utils";
 
 import { AnomalySummaryChart } from "./AnomalySummaryChart";
 import { AnomalyTable } from "./AnomalyTable";
+import { EventMapComparison } from "./EventMapComparison";
 import { EventSelector } from "./EventSelector";
 import {
-  EXTREME_EVENT_DETAILS,
   EXTREMES_COPY,
-  formatCount
+  formatCount,
+  getCropLabel
 } from "./extremes-copy";
 
 export interface ExtremesPanelProps {
@@ -25,142 +27,132 @@ export interface ExtremesPanelProps {
   readonly onStateChange?: (state: string | undefined) => void;
 }
 
-const defaultEventId: ExtremeEventId = "midwest_flood_2019";
-const inputClassName =
-  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600";
-
 export function ExtremesPanel({
   anomalySummaries,
   onCropChange,
-  onEventChange,
   onStateChange,
   selectedCrop,
-  selectedEvent,
   selectedState
 }: ExtremesPanelProps) {
-  const activeEvent = selectedEvent ?? anomalySummaries[0]?.eventId ?? defaultEventId;
-  const eventRows = anomalySummaries.filter((row) => row.eventId === activeEvent);
-  const stateOptions = getStateOptions(eventRows, selectedState);
-  const filteredRows = eventRows.filter(
-    (row) =>
-      (!selectedCrop || row.crop === selectedCrop) &&
-      (!selectedState || row.state.toLowerCase() === selectedState.toLowerCase())
-  );
-  const sources = collectSources(eventRows.length > 0 ? eventRows : filteredRows);
+  const activeCrop = selectedCrop ?? "corn";
+  const cropRows = anomalySummaries.filter((row) => row.crop === activeCrop);
+  const sources = collectSources(anomalySummaries);
 
   return (
-    <section aria-labelledby="extremes-heading" className="space-y-4 text-slate-950">
-      <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)]">
+    <section aria-labelledby="extremes-heading" className="space-y-4 text-ink">
+      <header className="rounded-xl border border-rule bg-paper p-4 sm:p-5">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)]">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
               {EXTREMES_COPY.eyebrow}
             </p>
             <h2
-              className="mt-1 text-xl font-semibold leading-tight text-slate-950"
+              className="mt-1 font-display text-2xl font-semibold leading-tight text-ink"
               id="extremes-heading"
             >
               {EXTREMES_COPY.heading}
             </h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
               {EXTREMES_COPY.summary}
             </p>
           </div>
-          <EventSelector
-            onEventChange={onEventChange}
-            selectedEvent={activeEvent}
-          />
+          <EventSelector />
         </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:max-w-3xl">
-          <label className="grid gap-1 text-sm font-medium text-slate-700">
-            Crop
-            <select
-              className={inputClassName}
-              onChange={(event) =>
-                onCropChange?.(optionalCrop(event.currentTarget.value))
-              }
-              value={selectedCrop ?? ""}
-            >
-              <option value="">All crops</option>
-              {CROP_OPTIONS.map((option) => (
-                <option key={option.id} value={option.id}>
+        <div className="mt-5 border-t border-rule pt-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Compared crop
+            </p>
+            <p aria-live="polite" className="text-sm font-semibold text-primary">
+              Compared crop · {getCropLabel(activeCrop)}
+            </p>
+          </div>
+          <div
+            aria-label="Compared crop"
+            className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5"
+            role="group"
+          >
+            {CROP_OPTIONS.map((option) => {
+              const isActive = option.id === activeCrop;
+              return (
+                <button
+                  aria-pressed={isActive}
+                  className={cn(
+                    "min-h-11 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors last:col-span-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus lg:last:col-span-1",
+                    isActive
+                      ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                      : "border-rule bg-muted/35 text-ink hover:bg-field/60"
+                  )}
+                  key={option.id}
+                  onClick={() => onCropChange?.(option.id)}
+                  type="button"
+                >
                   {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="grid gap-1 text-sm font-medium text-slate-700">
-            State
-            <select
-              className={inputClassName}
-              onChange={(event) =>
-                onStateChange?.(optionalText(event.currentTarget.value))
-              }
-              value={selectedState ?? ""}
-            >
-              <option value="">All states</option>
-              {stateOptions.map((state) => (
-                <option key={state} value={state}>
-                  {state}
-                </option>
-              ))}
-            </select>
-          </label>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </header>
 
-      <CaveatCards eventId={activeEvent} />
+      <ComparisonGuide />
 
-      {filteredRows.length === 0 ? (
-        <div
-          className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-900"
+      {cropRows.length === 0 ? (
+        <p
+          className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950"
           role="status"
         >
           {EXTREMES_COPY.emptyState}
+        </p>
+      ) : null}
+
+      <EventMapComparison
+        crop={activeCrop}
+        onStateChange={onStateChange}
+        rows={anomalySummaries}
+        selectedState={selectedState}
+      />
+
+      <AnomalySummaryChart rows={cropRows} />
+
+      <details className="rounded-xl border border-rule bg-paper p-4 sm:p-5">
+        <summary className="cursor-pointer font-semibold text-ink focus-visible:ring-2 focus-visible:ring-focus">
+          Exact state × crop values · {anomalySummaries.length.toLocaleString("en-US")} rows
+        </summary>
+        <div className="mt-4 border-t border-rule pt-4">
+          <AnomalyTable rows={anomalySummaries} />
         </div>
-      ) : (
-        <>
-          <AnomalySummaryChart eventId={activeEvent} rows={filteredRows} />
-          <AnomalyTable rows={filteredRows} />
-        </>
-      )}
+      </details>
 
       {sources.length > 0 ? <SourceNotes sources={sources} /> : null}
     </section>
   );
 }
 
-function CaveatCards({ eventId }: { readonly eventId: ExtremeEventId }) {
+function ComparisonGuide() {
   return (
     <section
-      aria-label="Task 3 soil moisture caveats"
+      aria-label="How to read the extreme-event comparison"
       className="grid gap-3 md:grid-cols-3"
     >
-      <article className="rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-          z-score
-        </h3>
-        <p className="mt-2 text-sm leading-6 text-slate-700">
-          {EXTREMES_COPY.zScoreCaveat}
+      <article className="rounded-xl border border-rule bg-paper p-4">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-sky-800">
+          Color · magnitude
         </p>
+        <p className="mt-2 text-sm leading-6 text-ink">{EXTREMES_COPY.zScoreCaveat}</p>
       </article>
-      <article className="rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-          NIG P(drought)
-        </h3>
-        <p className="mt-2 text-sm leading-6 text-slate-700">
-          {EXTREMES_COPY.nigCaveat}
+      <article className="rounded-xl border border-rule bg-paper p-4">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-800">
+          Detail · posterior context
         </p>
+        <p className="mt-2 text-sm leading-6 text-ink">{EXTREMES_COPY.nigCaveat}</p>
       </article>
-      <article className="rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-          Interpretation
-        </h3>
-        <p className="mt-2 text-sm leading-6 text-slate-700">
-          {EXTREME_EVENT_DETAILS[eventId].interpretation}
+      <article className="rounded-xl border border-rule bg-paper p-4">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">
+          Comparison rule
         </p>
+        <p className="mt-2 text-sm leading-6 text-ink">{EXTREMES_COPY.comparisonCaveat}</p>
       </article>
     </section>
   );
@@ -172,63 +164,32 @@ function SourceNotes({
   readonly sources: readonly DataPointSource[];
 }) {
   return (
-    <section
-      aria-label="Task 3 source notes"
-      className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm"
-    >
-      <h3 className="text-base font-semibold text-slate-950">Source notes</h3>
-      <div className="mt-3 grid gap-3 md:grid-cols-2">
+    <details className="rounded-xl border border-rule bg-paper p-4 sm:p-5">
+      <summary className="cursor-pointer font-semibold text-ink focus-visible:ring-2 focus-visible:ring-focus">
+        Sources and limitations · {sources.length}
+      </summary>
+      <div className="mt-4 grid gap-3 border-t border-rule pt-4 md:grid-cols-2">
         {sources.map((source) => (
-          <article
-            className="rounded-lg border border-slate-100 bg-slate-50 p-3 text-sm"
-            key={`${source.sourceId}-${source.path ?? ""}`}
-          >
-            <h4 className="font-semibold text-slate-950">
-              {source.label ?? source.sourceId}
-            </h4>
+          <article className="rounded-lg border border-rule bg-muted/30 p-3 text-sm" key={`${source.sourceId}-${source.path ?? ""}`}>
+            <h3 className="font-semibold text-ink">{source.label ?? source.sourceId}</h3>
             {source.path ? (
-              <p className="mt-2 break-all font-mono text-xs leading-5 text-slate-600">
+              <p className="mt-2 break-all font-mono text-xs leading-5 text-muted-foreground">
                 {source.path}
               </p>
             ) : null}
-            <div className="mt-3 flex flex-wrap gap-2 text-xs font-medium text-slate-700">
-              {source.rowCount !== undefined ? (
-                <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5">
-                  {formatCount(source.rowCount)} rows
-                </span>
-              ) : null}
-              {source.dateStamp ? (
-                <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5">
-                  {source.dateStamp}
-                </span>
-              ) : null}
+            <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
+              {source.rowCount !== undefined ? <span>{formatCount(source.rowCount)} rows</span> : null}
+              {source.dateStamp ? <span>· {source.dateStamp}</span> : null}
             </div>
-            <p className="mt-3 text-xs leading-5 text-slate-600">
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">
               Denominator: {source.denominator ?? EXTREMES_COPY.denominatorFallback}
             </p>
-            {source.caveat ? (
-              <p className="mt-3 text-sm leading-6 text-slate-700">
-                {source.caveat}
-              </p>
-            ) : null}
+            {source.caveat ? <p className="mt-2 text-sm leading-6 text-ink">{source.caveat}</p> : null}
           </article>
         ))}
       </div>
-    </section>
+    </details>
   );
-}
-
-function getStateOptions(
-  rows: readonly AnomalyStateCropSummary[],
-  selectedState: string | undefined
-): readonly string[] {
-  const states = new Set(rows.map((row) => row.state).filter(Boolean));
-
-  if (selectedState) {
-    states.add(selectedState);
-  }
-
-  return [...states].sort((left, right) => left.localeCompare(right));
 }
 
 function collectSources(
@@ -239,7 +200,6 @@ function collectSources(
 
   for (const row of rows) {
     const key = `${row.source.sourceId}-${row.source.path ?? ""}`;
-
     if (!seen.has(key)) {
       seen.add(key);
       sources.push(row.source);
@@ -247,14 +207,4 @@ function collectSources(
   }
 
   return sources;
-}
-
-function optionalCrop(value: string): CropId | undefined {
-  return optionalText(value) as CropId | undefined;
-}
-
-function optionalText(value: string): string | undefined {
-  const trimmed = value.trim();
-
-  return trimmed ? trimmed : undefined;
 }

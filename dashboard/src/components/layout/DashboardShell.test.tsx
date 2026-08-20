@@ -339,152 +339,114 @@ describe("DashboardShell", () => {
     mockNavigation.searchParams = new URLSearchParams();
   });
 
-  it("integrates the map and all four source-backed task tabs", () => {
-    mockNavigation.searchParams = new URLSearchParams(
-      "view=analyst&crop=corn"
-    );
-
+  it("opens directly into the Explore workspace under the GeoCrop brand", () => {
     render(<DashboardShell data={dashboardData} />);
 
-    expect(
-      screen.getByRole("heading", { name: "GeoCrop Interactive Dashboard" })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("region", { name: "Dashboard filters" })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("region", { name: "Corn Belt map surface" })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "GeoCrop" })).toBeInTheDocument();
+    expect(screen.getByText("U.S. Corn Belt")).toBeInTheDocument();
+    expect(screen.queryByText("Narrative Atlas")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Story" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Explore" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Dashboard filters" }))
+      .not.toBeInTheDocument();
 
     const tablist = screen.getByRole("tablist", { name: "Research tasks" });
     expect(within(tablist).getAllByRole("tab")).toHaveLength(4);
-    for (const tabName of ["Phenology", "Rotation", "Extremes", "Prediction"]) {
-      expect(within(tablist).getByRole("tab", { name: tabName }))
-        .toBeInTheDocument();
-    }
-    expect(screen.getByRole("tabpanel")).toHaveAttribute(
-      "id",
-      "tabpanel-phenology"
-    );
-    expect(
-      within(tablist).getByRole("tab", { name: "Phenology" })
-    ).toHaveAttribute("aria-controls", "tabpanel-phenology");
+    expect(within(tablist).getByRole("tab", { name: "Phenology" }))
+      .toHaveAttribute("aria-selected", "true");
 
-    expect(
-      screen.getByRole("heading", { name: "Task 1 phenology" })
-    ).toBeInTheDocument();
+    const hsgpHeading = screen.getByRole("heading", { name: "Task 1 phenology" });
+    expect(hsgpHeading).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Task 2 rotation" }))
+      .not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Task 3 soil moisture extremes" }))
+      .not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Task 4 prediction diagnostics" }))
+      .not.toBeInTheDocument();
+
     expect(screen.getByText("Task 1 model evaluation")).toBeInTheDocument();
     expect(
       screen.getByText(
         "Phenology model metrics are scoped to the exported Task 1 evaluation artifact."
       )
     ).toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Data load status" }))
+      .toHaveTextContent("Task 4 split summary");
+  });
+
+  it("ignores retired Story URLs while preserving their task-scoped evidence", () => {
+    mockNavigation.searchParams = new URLSearchParams(
+      "view=story&tab=extremes&mapLayer=soil-moisture-anomaly&state=Illinois&crop=corn&event=midwest_flood_2019&selectedEntity=state:IL"
+    );
+
+    render(<DashboardShell data={dashboardData} />);
+
+    expect(
+      screen.getByRole("heading", { name: "Task 3 soil moisture extremes" })
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Story" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Explore" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Task 1 phenology" }))
+      .not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Dashboard filters" }))
+      .not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Corn Belt map surface" }))
+      .not.toBeInTheDocument();
+
+    const tablist = screen.getByRole("tablist", { name: "Research tasks" });
+    expect(within(tablist).getAllByRole("tab")).toHaveLength(4);
+    expect(within(tablist).getByRole("tab", { name: "Extremes" }))
+      .toHaveAttribute("aria-selected", "true");
 
     fireEvent.click(within(tablist).getByRole("tab", { name: "Rotation" }));
-    expect(
-      screen.getByRole("heading", { name: "Task 2 rotation" })
-    ).toBeInTheDocument();
-    expect(screen.getAllByText("Task 2 areal statistics by class").length)
-      .toBeGreaterThan(0);
-    expect(mockNavigation.replace).toHaveBeenLastCalledWith(
-      expect.stringContaining("view=analyst"),
-      { scroll: false }
-    );
+
+    expect(screen.getByRole("heading", { name: "Task 2 rotation" }))
+      .toBeInTheDocument();
+    expect(screen.getByRole("region", {
+      name: "Corn Belt map surface"
+    })).toBeInTheDocument();
+    expect(screen.queryByLabelText("Map evidence layer")).not.toBeInTheDocument();
     expect(mockNavigation.replace).toHaveBeenLastCalledWith(
       expect.stringContaining("tab=rotation"),
       { scroll: false }
     );
-    expect(screen.getByRole("tabpanel")).toHaveAttribute(
-      "id",
-      "tabpanel-rotation"
-    );
-
-    fireEvent.click(within(tablist).getByRole("tab", { name: "Extremes" }));
-    expect(
-      screen.getByRole("heading", { name: "Task 3 soil moisture extremes" })
-    ).toBeInTheDocument();
-    expect(
-      screen.getAllByText("Task 3 Midwest flood 2019 anomaly statistics").length
-    ).toBeGreaterThan(0);
-
-    fireEvent.click(within(tablist).getByRole("tab", { name: "Prediction" }));
-    expect(
-      screen.getByRole("heading", { name: "Task 4 prediction diagnostics" })
-    ).toBeInTheDocument();
-    expect(screen.getAllByText("Task 4 test metrics").length)
-      .toBeGreaterThan(0);
-    expect(
-      screen.getByText("Held-out prediction performance for the scoped Task 4 model artifact.")
-    ).toBeInTheDocument();
+    const [nextUrl] = mockNavigation.replace.mock.lastCall ?? [];
+    expect(nextUrl).not.toContain("view=");
   });
 
-  it("restores representative URL filters, writes URL updates, and surfaces data errors", () => {
+  it("warns when a removed legacy map layer is normalized to safe measured evidence", () => {
     mockNavigation.searchParams = new URLSearchParams(
-      "tab=extremes&mapLayer=soil-moisture-anomaly&state=Illinois&crop=corn&event=midwest_flood_2019&selectedEntity=state:IL"
+      "tab=rotation&mapLayer=crop-prediction"
     );
 
     render(<DashboardShell data={dashboardData} />);
 
-    expect(
-      screen.getByRole("heading", { name: "Task 3 soil moisture extremes" })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("status", { name: "Data load status" })
-    ).toHaveTextContent("Task 4 split summary");
-    expect(screen.getByText("Source artifact was not found."))
-      .toBeInTheDocument();
-
-    const filters = screen.getByRole("region", { name: "Dashboard filters" });
-    expect(within(filters).getByLabelText("Map layer")).toHaveValue(
-      "soil-moisture-anomaly"
-    );
-    expect(within(filters).getByLabelText("State")).toHaveValue("ILLINOIS");
-    expect(within(filters).getByLabelText("Selected entity")).toHaveValue(
-      "state:IL"
-    );
-
-    fireEvent.change(within(filters).getByLabelText("Crop"), {
-      target: { value: "soybean" }
-    });
-
-    expect(mockNavigation.replace).toHaveBeenLastCalledWith(
-      expect.stringContaining("crop=soybean"),
-      { scroll: false }
-    );
-    expect(mockNavigation.replace).toHaveBeenLastCalledWith(
-      expect.stringContaining("tab=extremes"),
-      { scroll: false }
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Select Iowa" }));
-
-    expect(mockNavigation.replace).toHaveBeenLastCalledWith(
-      expect.stringContaining("selectedEntity=state%3AIA"),
-      { scroll: false }
-    );
-    expect(within(filters).getByLabelText("Selected entity")).toHaveValue(
-      "state:IA"
-    );
+    expect(screen.getByRole("status", { name: "URL compatibility notice" }))
+      .toHaveTextContent(
+        "The legacy mapLayer \"crop-prediction\" is no longer supported; using measured regular rotation share."
+      );
+    expect(screen.getByRole("region", { name: "Corn Belt map surface" }))
+      .toHaveTextContent("Measured share of valid classified cropland pixels");
   });
 
-  it("opens the NAFSI winning paper reference from the hero KPI", () => {
+  it("opens the paper drawer with neutral verified copy", () => {
     render(<DashboardShell data={dashboardData} />);
 
     const paperButton = screen.getByRole("button", {
-      name: "NAFSI 2025 winning paper"
+      name: "Open GeoCrop research paper"
     });
-
-    expect(screen.queryByText("Held-out diagnostics")).not.toBeInTheDocument();
+    expect(screen.queryByText(/winning paper/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/first-place/i)).not.toBeInTheDocument();
 
     fireEvent.click(paperButton);
 
     const dialog = screen.getByRole("dialog", {
-      name: "NAFSI 2025 winning paper"
+      name: "GeoCrop research paper"
     });
     const paperPath = "/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf";
 
     expect(
-      within(dialog).getByTitle("NAFSI 2025 winning paper PDF")
+      within(dialog).getByTitle("GeoCrop research paper PDF")
     ).toHaveAttribute("src", paperPath);
     expect(within(dialog).getByRole("link", { name: "Open PDF" }))
       .toHaveAttribute("href", paperPath);

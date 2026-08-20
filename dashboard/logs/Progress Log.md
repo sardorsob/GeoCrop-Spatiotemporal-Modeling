@@ -4,6 +4,483 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-08-19 — TASK-024 evidence density polish
+
+**Work performed:**
+
+- Rebuilt the dated Rotation composition as one responsive field/summary group:
+  exactly 100 cells at left and three exact class cards stacked at right on wide
+  screens, with a natural mobile stack.
+- Kept exact percentages, pixel counts, area, source/date, class definitions,
+  and the valid-cropland denominator in the visible composition.
+- Replaced the Extremes crop dropdown with five direct `aria-pressed` buttons.
+  The controlled crop callback and URL path are unchanged; long labels remain
+  intact, and the final option fills the unused mobile row.
+- Synchronized README, handoff, architecture, patterns, decisions, overview,
+  progress, and session context to the Explore-only final state.
+
+**Verification:**
+
+- Test-first red confirmed the old composition structure and crop combobox
+  before implementation; focused Rotation/Extremes checks passed afterward.
+- Full gate passed: 15 files / 67 tests, TypeScript, ESLint, Webpack production
+  build, zero-vulnerability high audit, workflow validation, and required-
+  artifact validation.
+- Browser Use confirmed the live Rotation and Extremes tasks at 1440 and 320 px:
+  100 cells, balanced stacked summaries, five direct crop buttons, 44 px minimum
+  targets, intact long labels, and exact document-width containment.
+
+**Blockers / cuts:**
+
+- No automatic map-click scroll was added because the user withdrew it.
+- No year selector was added because the dated aggregate Rotation artifact has
+  no truthful year-by-year map result.
+- Merge remains deferred for the user's final review.
+
+**AI tools used:**
+
+- Superpowers TDD and verification-before-completion, Ponytail minimal-scope
+  review, and Browser Use responsive visual smoke.
+
+---
+
+## 2026-08-19 — TASK-023 Explore-only GeoCrop shell
+
+**Work performed:**
+
+- Made the existing Explore workspace the only route composition and empty-URL
+  default, while retaining all four task tabs and their local evidence controls.
+- Removed the Story opening, act composition/navigation, mode toggle, `view`
+  domain state, and retired-mode serialization. Legacy `view` parameters are
+  ignored on read and removed on the next state update without losing supported
+  task/filter or unrelated query state.
+- Changed the compact product identity to `GeoCrop` with `U.S. Corn Belt`
+  context and retained the paper action, artifact badges, sources, caveats, and
+  evidence panels.
+- Deleted three now-unused Story-only primitives and their obsolete tests;
+  retained the shared evidence figure and caption primitives.
+
+**Verification:**
+
+- Test-first red confirmed the old Story shell and `view` URL behavior before
+  implementation; focused regression coverage passed after the deletion.
+- Full gate passed: 15 files / 66 tests, TypeScript, ESLint, Webpack production
+  build, workflow status validation, and required-artifact validation.
+- Browser Use confirmed the live default route at 800 and emulated 320 px:
+  GeoCrop / U.S. Corn Belt, paper action, four task tabs, no mode links, and
+  document width equal to viewport width at 320 px.
+
+**Blockers / cuts:**
+
+- No blocker. Merge remains deferred for the user's final review.
+
+**AI tools used:**
+
+- Superpowers TDD and verification-before-completion, Ponytail deletion-first
+  scope control, and Browser Use responsive smoke.
+
+---
+
+## 2026-08-19 — Post-review follow-up planning
+
+**Work performed:**
+
+- Captured the user's live-review choice to keep Explore and remove Story as
+  `TASK-023`, including removal of mode URL state and the Narrative Atlas name.
+- Captured Rotation composition and Extremes crop-control density polish as
+  `TASK-024`.
+- Recorded two explicit cuts: no map-click auto-scroll because the user withdrew
+  it, and no year selector because the shipped Rotation map has no truthful
+  year-by-year evidence artifact.
+- Kept the branch unmerged. Work remains sequential with one verified commit per
+  task before the user's final review.
+
+**Verification:**
+
+- Planning artifacts reviewed against the live feedback and current component
+  boundaries. No production code changed in this planning step.
+
+**Blockers / cuts:**
+
+- Merge is intentionally deferred.
+
+**AI tools used:**
+
+- Superpowers bounded brainstorming and Ponytail deletion-first scope control.
+
+---
+
+## 2026-08-19 — TASK-022 Story / Explore integration and final handoff
+
+**Work performed:**
+
+- Made Story the empty-URL default and composed all four source-backed task
+  panels in authored order under a data-bearing scale introduction and act
+  navigator. The HSGP comparator appears before the only Rotation map.
+- Built the sibling Explore workspace from the same `TaskPanel` dispatcher,
+  rendering one active task, relevant local controls, and exact/source paths.
+- Removed the universal overview map and deleted the v1 global
+  `CompactFilterBar` six-control wall.
+- Added `view` URL state, v1 analytical-link inference, explicit Story
+  round-tripping for non-default state, stable unrelated-param preservation,
+  and visible safe normalization for retired map layers.
+- Kept the paper as a neutral `GeoCrop research paper` drawer with embedded,
+  open, and download paths; removed unverified award/year presentation.
+- Tightened mode, paper, and map-grain controls to the 44 px touch minimum.
+- Updated README, project/task status, handoff, architecture/pattern/decision
+  memory, overview, and session notes after the implementation checks passed.
+- Triaged newly published npm advisories and applied npm's lockfile-only update
+  within existing manifest ranges; no feature package was added.
+
+**Verification:**
+
+- Focused integration/state/map/story suite: 4 files, 21 tests passed.
+- Full suite: 15 files, 68 tests passed.
+- `npm run typecheck` and `npm run lint` passed.
+- Clean-install `npm run build -- --webpack` passed with Next.js 16.3.1.
+- `npm audit --audit-level=high` reported zero vulnerabilities.
+- Browser Use passed Story at 1440/320 px and Explore at 390/320 px: document
+  width equaled viewport, no global filter wall, no negative-size warning, one
+  task-scoped Rotation map, visible legacy warning, and no visible control below
+  44 px at 390 px. Reduced-motion override matched; paper keyboard activation
+  opened the titled dialog.
+- Automated map coverage retains pointer preview, keyboard pin, Escape/reset,
+  county exact-value, and no-data paths.
+
+**Blockers / cuts:**
+
+- Managed sandbox Turbopack cannot bind its internal CSS helper port; the
+  equivalent production build used Webpack. No source/build failure remains.
+- Deployment, Playwright E2E, backend, generated imagery, runtime raster delivery,
+  and unsupported geographic prediction remain outside scope.
+
+**AI tools used:**
+
+- Superpowers execution/TDD/verification, Ponytail scope review, web data
+  visualization/cartography guidance, Browser Use, and dependency-finding triage.
+
+---
+
+## 2026-08-19 — TASK-021 model-evidence and rotation-regime conclusion
+
+**Work performed:**
+
+- Opened Act IV with a data-bearing source braid: CDL 30 m / 19 features, NDVI
+  250 m / 15 features, and SMAP 9 km / 4 features feeding the 38-feature,
+  four-class LightGBM model.
+- Rebuilt ablation around stable A–D configuration ids and explicit references:
+  NDVI and SMAP each compare with CDL, while the full model compares with
+  CDL+NDVI; alternative branch lifts are never presented as additive.
+- Grouped all 38 real SHAP rows into CDL, NDVI, SMAP, or Other/context on one
+  magnitude scale; expanded CDL name routing after real-data inspection and
+  retained unknown feature names rather than dropping or forcing them.
+- Rebuilt the confusion matrix from its exported dimension, removing the false
+  fifth/oats row for the real four-class result, printing count plus safe row
+  share, and directly annotating the two corn/soy directions and combined count.
+- Reframed rotation performance as the closing evidence: 95.5% monoculture,
+  87.4% regular, and 70.9% irregular accuracy with denominators, supporting F1,
+  a 24.6-point gap, and a non-causal comparison caveat.
+- Added visible concurrent-season, class-balanced 2023 test, 1,000-pixel SHAP,
+  native-resolution/common-grid, and no-geographic-layer limitations.
+- Repaired a matrix-driven mobile min-content leak and one long source-path
+  overflow while keeping the matrix itself intentionally scrollable.
+
+**Verification:**
+
+- TDD red: 6 of 7 focused tests failed against the v1 sorted tables.
+- Focused green: 1 file and 7 tests passed.
+- Checker full suite: 15 files and 65 tests passed.
+- `npm run typecheck`, `npm run lint -- --quiet`, both workflow validators, and
+  `git diff --check` passed.
+- Browser Use verified four real ablations, all 38 SHAP rows, four confusion
+  classes, and no page overflow at desktop. At 320px, document width equaled
+  viewport width and the 608px matrix stayed inside a 254px internal scroller.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- Final Story/Explore composition, removal of the v1 universal map/filter wall,
+  mode routing, and whole-app handoff remain owned by `TASK-022`.
+- No prediction map, pre-plant claim, fifth class, hidden SHAP row, generated
+  image, new dependency, or causal regime claim was added.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- Web data-visualization and statistical uncertainty guidance
+- Browser Use desktop/mobile visual inspection
+
+---
+
+## 2026-08-19 — TASK-020 paired flood and drought evidence chapter
+
+**Work performed:**
+
+- Replaced single-event switching with matched 2019 flood and 2022 drought
+  state frames driven by the same crop, projection, extent, legend, and one
+  crop-wide symmetric mean-z domain.
+- Added one shared hover/focus preview and click/keyboard pin; pinned evidence
+  reports exact event, state, crop, signed mean z, NIG posterior-predictive
+  percentile, pixel-week denominator, source, and limitation for both events.
+- Made missing state × crop combinations and missing NIG values explicit rather
+  than substituting another event/crop or treating missingness as zero.
+- Reframed the paper semantics so mean z owns map magnitude/direction and NIG is
+  a distinct posterior context, explicitly not a confidence interval around z.
+- Added paired weighted comparison anchors and moved the complete exact table,
+  now including Event, behind a keyboard-focusable Explore disclosure.
+- Scoped the shell integration test to the overview-map region now that the
+  chapter contains two additional legitimate “Select Iowa” controls.
+
+**Verification:**
+
+- TDD red: all 5 initial TASK-020 comparison tests failed against the v1
+  single-event layout.
+- Focused green: 1 file and 7 tests passed, including absent NIG with present z
+  and external state selection replacing a local map pin.
+- Checker full suite: 15 files and 64 tests passed.
+- `npm run typecheck`, `npm run lint -- --quiet`, and `git diff --check` passed.
+- Browser Use confirmed identical `−1.3373` to `+1.3373` domains with real data
+  at 1280px; at 320px both 288px map frames stacked and document overflow was
+  false.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- Final Story/Explore route wiring and removal/recomposition of the v1 universal
+  map/filter shell remain owned by `TASK-022`.
+- No new dependency, generated image, interpolated event value, invented
+  geographic grain, or decorative animation was added.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- Cartographic/geovisualization and statistical uncertainty guidance
+- Browser Use desktop/mobile visual inspection
+
+---
+
+## 2026-08-19 — TASK-019 rotation memory chapter
+
+**Work performed:**
+
+- Reordered Task 2 around rule → composition → measured geography rather than
+  leading with methodology and KPI cards.
+- Added three ten-year crop-code strips with a visible “schematic, not observed”
+  label on every example and neutral irregular-class language.
+- Replaced separate class cards with a largest-remainder 100-cell field tied to
+  the dated 27.36% / 3.90% / 68.74% artifact and 2,084,112-pixel denominator.
+- Rebuilt geographic evidence as responsive state-or-county ranking rows with
+  within-grain competition ranks, equal-rank handling, prefix-safe map pin
+  matching, and a pinned exact-share/denominator detail.
+- Added a composition slot for the shared Task 2 map so final integration can
+  place it after the class result without cloning cartographic logic.
+- Added a discrete sensitivity selector containing complete exported rows only
+  and visibly separated the sensitivity experiment from the dated class result.
+
+**Verification:**
+
+- TDD red: all 5 story/composition/geography/sensitivity tests failed against
+  the v1 card/table/caveat layout.
+- Focused green: 1 file and 5 tests passed.
+- Checker full suite: 15 files and 60 tests passed.
+- `npm run typecheck`, `npm run lint`, and `git diff --check` passed.
+- Browser Use confirmed readable sequence strips and composition at desktop and
+  320px; the mobile document width equaled its viewport with no overflow.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- The shared map remains one component from `TASK-017`; final Story/Explore
+  insertion and URL state wiring are owned by `TASK-022`.
+- No continuous threshold slider, invented sequence sample, mixed-grain rank,
+  new dependency, or generated image was added.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- Cartographic/geovisualization and statistical uncertainty guidance
+- Browser Use desktop/mobile visual inspection
+
+---
+
+## 2026-08-19 — TASK-018 paper-faithful HSGP comparator
+
+**Work performed:**
+
+- Replaced the single selected-crop chart with vertically aligned corn,
+  soybean, and winter-wheat rows in Story.
+- Matched the paper notebook's figure semantics: posterior 5–95% and 25–75%
+  fills, posterior mean, empirical spatial Q25/Q75 boundaries, crop colors, and
+  crop-specific growth-stage windows.
+- Added direct modeled peak timing/value, month context, and an explicit note
+  that the shared 0.50–1.00 NDVI axis is focused rather than zero-based.
+- Replaced the permanent chart brush with one shared compact Explore disclosure;
+  crop focus never removes the other two comparison rows.
+- Reframed model metrics as a responsive three-crop table and retained named
+  empty, fallback-figure, source, denominator, and caveat paths.
+- Added a safe initial Recharts dimension for SSR/container startup and removed
+  obsolete brush-index code.
+
+**Verification:**
+
+- TDD red: 4 of 5 comparator tests failed against v1's single-crop chart; the
+  season helper test passed independently.
+- Focused green: 2 files and 9 tests passed.
+- Checker full suite: 15 files and 57 tests passed.
+- `npm run typecheck`, `npm run lint`, and `git diff --check` passed.
+- Browser Use confirmed nested uncertainty and stage readability at 800px and
+  320px; the 320px document width equaled the viewport with no horizontal
+  overflow.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- Final Story/Explore route wiring and whole-app mobile smoke remain owned by
+  `TASK-022`; this task verified both modes directly at component level.
+- No dependency, generated image, animation system, raw-observation layer, or
+  separate per-crop controller was added.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- Statistical uncertainty and missingness visualization guidance
+- Browser Use desktop/mobile visual inspection
+
+---
+
+## 2026-08-19 — TASK-017 honest Task 2/3 evidence map
+
+**Work performed:**
+
+- Replaced the ten-state hardcoded category registry with source-backed numeric
+  Task 2 and Task 3 evidence.
+- Cropped the installed Albers atlas geometry to all 13 canonical study states
+  and added Task 2 county geometry joined by five-digit GEOID.
+- Added a sequential regular-share ramp, one fixed crop-specific diverging
+  event domain centered on zero, and a separate neutral no-data fill.
+- Added a bounded evidence lens with value, unit, rank, denominator, artifact
+  path/date, and caveat, plus a complete legend and exact-value list.
+- Unified hover/focus preview and click/Enter/Space/tap pin behavior; Escape and
+  the visible reset clear the same state.
+- Removed Task 4 map offerings and visibly normalizes unsupported legacy layer
+  IDs to the measured Task 2 regular-share layer.
+
+**Verification:**
+
+- TDD red: focused tests failed against the v1 nationwide pseudo-data map and
+  missing study geometry/lens modules.
+- Focused green: 2 files and 8 tests passed.
+- Checker full suite: 15 files and 57 tests passed.
+- `npm run typecheck`, `npm run lint`, and `git diff --check` passed.
+- Cartographic checks covered rate normalization, projection/extent, fixed
+  comparable anomaly endpoints, neutral no-data, 13 state identities, and
+  county GEOID integrity.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- County detail remains an aggregate polygon view and explicitly rejects
+  pixel/field precision.
+- The app-level data wiring and final mobile/browser visual smoke remain owned
+  by `TASK-022`; this task verified the shared map component directly.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- GeoAI cartography/geovisualization and web geospatial specialist guidance
+
+---
+
+## 2026-08-19 — TASK-016 scientific evidence contracts
+
+**Work performed:**
+
+- Replaced row-order phenology output with deterministic crop + DOY grouping.
+- Matched the paper notebook's across-year empirical mean workflow for Q25/Q75,
+  retained posterior IQR and 90% intervals, and ignored missing contributors
+  rather than turning them into zero.
+- Canonicalized all 13 study states to USPS/FIPS identities, normalized county
+  GEOIDs to five digits, and removed non-study `outside` rows from geographic
+  evidence.
+- Added typed Task 2 rotation and Task 3 event-map selectors with numeric
+  values, ranks, denominators, source metadata, and one crop-specific domain
+  shared across flood and drought.
+- Added compile-time guard coverage proving Task 4 cannot be passed to either
+  geographic selector.
+
+**Verification:**
+
+- TDD red: duplicate-DOY, canonical geography, and missing-selector assertions
+  failed against the v1 normalization path.
+- Focused green: 2 files and 11 tests passed.
+- Checker full suite: 14 files and 52 tests passed.
+- `npm run typecheck`, `npm run lint`, and `git diff --check` passed.
+- Data-quality pass reconciled the implementation with the paper notebook's
+  `groupby("doy").mean()` empirical interval workflow and raw artifact grains.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- No Task 4 geography selector or synthetic raster/pixel evidence was added.
+- Loader/source registration remained unchanged because all required artifacts
+  were already present and correctly registered.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- Data-quality and analytical-validation guidance
+
+---
+
+## 2026-08-19 — TASK-015 Narrative Atlas visual grammar
+
+**Work performed:**
+
+- Created a reusable four-act navigator, act header, figure frame, evidence
+  caption, and server-rendered Story/Explore switch.
+- Extended the existing Tailwind v4 theme with explicit crop, anomaly, focus,
+  neutral, ink, paper, field, and rule roles.
+- Reworked the top bar around the Narrative Atlas identity while preserving
+  artifact health indicators and existing task data.
+- Added keyboard focus, 320 px continuation, and reduced-motion rules without
+  adding a package or generated asset.
+
+**Verification:**
+
+- TDD red: the focused story-primitives suite failed on missing modules.
+- Focused green: 1 file and 4 tests passed.
+- Checker full suite: 13 files and 48 tests passed.
+- `npm run typecheck`, `npm run lint`, and `git diff --check` passed.
+- Ponytail review: `Lean already. Ship.`
+
+**Blockers / cuts:**
+
+- Task-specific charts, maps, selectors, and data were intentionally untouched;
+  their work begins in `TASK-016`–`TASK-021`.
+- No imagery, motion library, design-system package, or duplicate UI stack was
+  introduced.
+
+**AI tools and skills used:**
+
+- Codex
+- Superpowers execution, TDD, and verification workflow
+- Ponytail implementation and simplification review
+- Web data-visualization composition and mobile guidance
+
+---
+
 ## 2026-08-19 — Narrative Atlas mockups, v2 scope, and task graph
 
 **Work performed:**

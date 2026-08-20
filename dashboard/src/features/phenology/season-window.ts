@@ -57,26 +57,6 @@ export function filterRowsByWindow<T extends { readonly dayOfYear: number }>(
   return rows.filter((row) => row.dayOfYear >= window.startDay && row.dayOfYear <= window.endDay);
 }
 
-export function findBrushIndexes<T extends { readonly dayOfYear: number }>(
-  rows: readonly T[],
-  window: SeasonWindow
-): { startIndex: number; endIndex: number } {
-  if (rows.length === 0) return { startIndex: 0, endIndex: 0 };
-
-  const startIndex = findFirstIndexAtOrAfter(rows, window.startDay);
-  const endIndex = findLastIndexAtOrBefore(rows, window.endDay);
-
-  if (startIndex === -1) {
-    const lastIndex = rows.length - 1;
-    return { startIndex: lastIndex, endIndex: lastIndex };
-  }
-
-  if (endIndex === -1) return { startIndex: 0, endIndex: 0 };
-  if (startIndex > endIndex) return { startIndex, endIndex: startIndex };
-
-  return { startIndex, endIndex };
-}
-
 export function getSeasonWindowPreset(
   id: SeasonWindowPresetId,
   bounds: SeasonWindow
@@ -92,22 +72,4 @@ export function getSeasonWindowPreset(
 
 function clampDay(dayOfYear: number, bounds: SeasonWindow): number {
   return Math.min(bounds.endDay, Math.max(bounds.startDay, Math.round(dayOfYear)));
-}
-
-function findFirstIndexAtOrAfter<T extends { readonly dayOfYear: number }>(
-  rows: readonly T[],
-  dayOfYear: number
-): number {
-  return rows.findIndex((row) => row.dayOfYear >= dayOfYear);
-}
-
-function findLastIndexAtOrBefore<T extends { readonly dayOfYear: number }>(
-  rows: readonly T[],
-  dayOfYear: number
-): number {
-  for (let index = rows.length - 1; index >= 0; index -= 1) {
-    if (rows[index].dayOfYear <= dayOfYear) return index;
-  }
-
-  return -1;
 }

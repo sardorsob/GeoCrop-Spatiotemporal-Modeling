@@ -3,15 +3,17 @@ import type { CropId, RotationRegimeId } from "@/lib/data/types";
 export const predictionCopy = {
   title: "Task 4 prediction diagnostics",
   summary:
-    "Held-out crop prediction metrics, ablation comparisons, SHAP feature ranking, and rotation-regime checks.",
+    "Follow crop history, seasonal greenness, and soil moisture into the model—then inspect what they add, where the model confuses crops, and when history makes the next crop more legible.",
   emptyState:
-    "No Task 4 prediction diagnostics are available yet. Confirm the Task 4 normalized artifacts loaded before using this panel.",
+    "No Task 4 prediction diagnostics are available yet. Confirm the Task 4 normalized artifacts loaded before using this chapter.",
   missingMetrics:
     "Headline test metrics are unavailable in the normalized Task 4 data.",
+  ablationBranchCaveat:
+    "NDVI and SMAP configurations are separate branches from the same CDL baseline; their lifts are not additive. The full model is compared back to CDL + NDVI.",
   cornSoyCaveat:
-    "Corn and soybean classes remain the primary confusion pair; compare both off-diagonal directions before interpreting aggregate accuracy.",
-  irregularRegimeCaveat:
-    "Irregular rotation strata have fewer evaluation pixels and mixed crop histories, so treat those scores as directional diagnostics rather than standalone model quality.",
+    "Corn and soybean are the dominant cross-confusion pair. Counts and row shares remain printed so the comparison does not depend on color or hover.",
+  regimeCaveat:
+    "These strata have unequal denominators and different crop histories. The gap describes this evaluation; it does not prove that a rotation regime causes accuracy.",
   confusionFallback:
     "Confusion counts are unavailable in the normalized test metrics. Use the documented fallback figure for matrix review.",
   confusionFallbackPath: "../artifacts/figures/task4/task4_test_confusion_matrix.png"
@@ -43,6 +45,11 @@ export function formatPercent(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
 }
 
+export function formatPercentagePointDelta(value: number): string {
+  const sign = value < 0 ? "−" : "+";
+  return `${sign}${Math.abs(value).toFixed(2)} pp`;
+}
+
 export function formatCount(value: number): string {
   return new Intl.NumberFormat("en-US").format(value);
 }
@@ -59,7 +66,7 @@ export function formatFeatureLabel(feature: string): string {
     .map((word, index) => {
       const lower = word.toLowerCase();
 
-      if (lower === "ndvi" || lower === "shap") {
+      if (["cdl", "ndvi", "shap", "smap"].includes(lower)) {
         return lower.toUpperCase();
       }
 

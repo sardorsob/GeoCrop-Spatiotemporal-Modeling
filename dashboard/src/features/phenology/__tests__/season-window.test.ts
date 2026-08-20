@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import {
   clampSeasonWindow,
   filterRowsByWindow,
-  findBrushIndexes,
   getSeasonBounds,
   getSeasonWindowPreset
 } from "../season-window";
@@ -29,11 +28,10 @@ describe("season window helpers", () => {
     });
   });
 
-  it("filters rows and maps custom windows to brush indexes", () => {
+  it("filters rows to a sparse shared custom window", () => {
     const window = { startDay: 120, endDay: 180 };
 
     expect(filterRowsByWindow(rows, window)).toEqual([{ dayOfYear: 160, label: "peak" }]);
-    expect(findBrushIndexes(rows, window)).toEqual({ startIndex: 1, endIndex: 1 });
   });
 
   it("creates fixed phenology presets within the available season", () => {

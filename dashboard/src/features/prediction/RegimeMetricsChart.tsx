@@ -1,4 +1,4 @@
-import type { DataPointSource, RegimeMetric, RotationRegimeId } from "@/lib/data/types";
+import type { RegimeMetric, RotationRegimeId } from "@/lib/data/types";
 
 import { formatCount, formatPercent, predictionCopy, regimeLabels } from "./prediction-copy";
 
@@ -6,79 +6,82 @@ interface RegimeMetricsChartProps {
   readonly metrics: readonly RegimeMetric[];
 }
 
-const regimeOrder: Readonly<Record<RotationRegimeId, number>> = {
-  regular: 0,
-  monoculture: 1,
-  irregular: 2
-};
+const regimeOrder: readonly RotationRegimeId[] = ["monoculture", "regular", "irregular"];
 
 export function RegimeMetricsChart({ metrics }: RegimeMetricsChartProps) {
   if (metrics.length === 0) {
     return (
-      <section className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
-        <h3 className="text-base font-semibold text-slate-950">Rotation regime metrics</h3>
-        <p className="mt-2 text-sm text-slate-600">No regime-stratified metrics are available.</p>
+      <section className="rounded-xl border border-rule bg-paper p-4 sm:p-5">
+        <h3 className="font-display text-xl font-semibold text-ink">Rotation regime accuracy</h3>
+        <p className="mt-2 text-sm text-muted-foreground">No regime-stratified metrics are available.</p>
       </section>
     );
   }
 
-  const sortedMetrics = [...metrics].sort(
-    (left, right) => regimeOrder[left.rotationRegime] - regimeOrder[right.rotationRegime]
-  );
+  const metricsByRegime = new Map(metrics.map((metric) => [metric.rotationRegime, metric]));
+  const sortedMetrics = regimeOrder.flatMap((regime) => {
+    const metric = metricsByRegime.get(regime);
+    return metric ? [metric] : [];
+  });
+  const highest = sortedMetrics[0];
+  const lowest = sortedMetrics.at(-1);
+  const gap = highest && lowest ? (highest.overallAccuracy - lowest.overallAccuracy) * 100 : undefined;
   const source = sortedMetrics[0]?.source;
 
   return (
-    <section className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+    <section
+      aria-label="Rotation regime accuracy"
+      className="min-w-0 overflow-hidden rounded-xl border border-ink bg-ink text-paper"
+    >
+      <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.5fr)] lg:items-end">
         <div>
-          <h3 className="text-base font-semibold text-slate-950">Rotation regime metrics</h3>
-          <p className="mt-1 text-sm text-slate-600">{predictionCopy.irregularRegimeCaveat}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-paper/60">
+            Closing evidence
+          </p>
+          <h3 className="mt-1 font-display text-2xl font-semibold">
+            The land is easiest to predict where crop history repeats.
+          </h3>
+          {gap !== undefined ? (
+            <p className="mt-3 font-mono text-lg font-semibold tabular-nums text-corn">
+              {gap.toFixed(1)} percentage-point gap
+            </p>
+          ) : null}
+          <p className="mt-2 text-sm leading-6 text-paper/70">{predictionCopy.regimeCaveat}</p>
         </div>
-        <SourcePill source={source} />
+
+        <div className="grid gap-3 sm:grid-cols-3">
+          {sortedMetrics.map((metric) => (
+            <article
+              aria-label={`${regimeLabels[metric.rotationRegime]} accuracy ${formatPercent(metric.overallAccuracy)}`}
+              className="rounded-lg border border-paper/20 bg-paper/10 p-4"
+              key={metric.rotationRegime}
+            >
+              <h4 className="font-semibold">{regimeLabels[metric.rotationRegime]}</h4>
+              <p className="mt-2 font-mono text-3xl font-semibold tabular-nums">
+                {formatPercent(metric.overallAccuracy)}
+              </p>
+              <p className="mt-1 text-xs text-paper/60">{formatCount(metric.nPixels)} pixels</p>
+              <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-paper/15 pt-3 text-xs">
+                <div>
+                  <dt className="text-paper/55">Corn F1</dt>
+                  <dd className="mt-0.5 font-mono tabular-nums">{formatPercent(metric.f1Corn)}</dd>
+                </div>
+                <div>
+                  <dt className="text-paper/55">Soy F1</dt>
+                  <dd className="mt-0.5 font-mono tabular-nums">{formatPercent(metric.f1Soybean)}</dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+        </div>
       </div>
 
-      <div className="mt-4 overflow-x-auto">
-        <table aria-label="Rotation regime metrics" className="min-w-[42rem] w-full border-collapse text-sm">
-          <thead>
-            <tr className="border-b border-slate-200 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-              <th className="py-2 pr-3" scope="col">Regime</th>
-              <th className="px-3 py-2" scope="col">Pixels</th>
-              <th className="px-3 py-2" scope="col">Overall accuracy</th>
-              <th className="px-3 py-2" scope="col">Macro F1</th>
-              <th className="px-3 py-2" scope="col">Corn F1</th>
-              <th className="px-3 py-2" scope="col">Soybean F1</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {sortedMetrics.map((metric) => (
-              <tr key={metric.rotationRegime}>
-                <th className="py-3 pr-3 text-left font-semibold text-slate-900" scope="row">
-                  {regimeLabels[metric.rotationRegime]}
-                </th>
-                <td className="px-3 py-3 text-slate-700">{formatCount(metric.nPixels)}</td>
-                <td className="px-3 py-3 text-slate-700">{formatPercent(metric.overallAccuracy)}</td>
-                <td className="px-3 py-3 font-semibold text-slate-950">
-                  {formatPercent(metric.macroF1)}
-                </td>
-                <td className="px-3 py-3 text-slate-700">{formatPercent(metric.f1Corn)}</td>
-                <td className="px-3 py-3 text-slate-700">{formatPercent(metric.f1Soybean)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {source ? (
+        <div className="border-t border-paper/15 px-4 py-3 text-xs leading-5 text-paper/60 sm:px-5">
+          <span className="font-semibold text-paper">{source.label ?? source.sourceId}</span>
+          {source.path ? <span className="ml-2 break-all font-mono">{source.path}</span> : null}
+        </div>
+      ) : null}
     </section>
-  );
-}
-
-function SourcePill({ source }: { readonly source?: DataPointSource }) {
-  if (!source) {
-    return null;
-  }
-
-  return (
-    <p className="shrink-0 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
-      {source.label ?? source.sourceId}
-    </p>
   );
 }

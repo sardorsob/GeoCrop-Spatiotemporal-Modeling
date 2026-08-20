@@ -16,6 +16,108 @@ TBD
 
 ---
 
+## Schematic Before Measured Evidence
+
+**Use when:** A scientific classification needs a visual teaching example, but
+the example is not itself an observed or reconstructed sample.
+
+**Rule:** Label every teaching strip as schematic at the point of use, then move
+from rule to source-backed composition to measured geography. Keep descriptive
+class language neutral. If a sensitivity export uses different thresholds than
+the reported result, present only its complete discrete rows and explicitly
+separate the two sources.
+
+**Example:**
+
+```text
+Task 2 uses ten-year C/S/W/O strips to teach regular, monoculture, and irregular;
+a dated 100-cell field reports 27.36/3.90/68.74%; state/county ranks use measured
+regular share; the sensitivity select contains only exported threshold pairs.
+```
+
+---
+
+## Aligned Uncertainty Small Multiples
+
+**Use when:** Several related model series must be compared by shape, timing,
+and uncertainty rather than inspected one at a time.
+
+**Rule:** Keep every subject visible on one shared axis grammar; render the
+widest posterior interval first, the IQR above it, and the mean above both.
+Use empirical quartile boundaries as lines so observational spread cannot be
+mistaken for posterior uncertainty. Put peak values, scale truncation, and
+domain-specific stages in the reading path, and apply one shared Explore window
+to every panel.
+
+**Example:**
+
+```text
+Task 1 stacks corn, soybean, and winter wheat on the same 0.50–1.00 NDVI range.
+Each row shows posterior 5–95%, posterior 25–75%, posterior mean, empirical
+Q25/Q75, the modeled peak, and the paper notebook's crop-stage windows.
+```
+
+---
+
+## Honest Shared-Domain Evidence Maps
+
+**Use when:** Two task views map normalized regional values and must remain
+comparable across events or geographic grains.
+
+**Rule:** Feed polygon fills only from typed numeric selectors, keep no-data
+outside the ramp, use an area-appropriate projection, and expose the exact
+value/denominator/source beside the map. For paired diverging maps, derive one
+domain across both panels and center it on the meaningful zero.
+
+**Example:**
+
+```text
+Task 2 maps percent regular with a sequential ramp at state or county grain;
+Task 3 maps state mean z-score for flood or drought using the same crop-specific
+[-maxAbs, +maxAbs] domain. Undefined rows render neutral gray, never the low bin.
+```
+
+---
+
+## Aggregate At The Evidence Grain Before Rendering
+
+**Use when:** Exported chart rows contain repeated display keys because time,
+posterior grids, rounding, or another hidden dimension is finer than the visual
+grain.
+
+**Rule:** Group by the explicit evidence key before building chart rows. Average
+defined interval/value contributors according to the paper workflow, sum true
+count denominators, sort the output key, and preserve every uncertainty level.
+Never let map insertion order or a last-write-wins object decide the result.
+
+**Example:**
+
+```text
+Task 1 groups rows by crop + integer DOY, averages empirical Q25/Q75 across
+years and rounded posterior duplicates, sums empirical pixel counts, and keeps
+posterior IQR plus 90% bounds.
+```
+
+---
+
+## Semantic Evidence Figure Primitives
+
+**Use when:** Several analytical tasks need a consistent evidence hierarchy
+without sharing one monolithic page component.
+
+**Rule:** Compose small semantic primitives for figure naming and
+source/denominator/caveat captions. Keep the figure body task-owned and
+data-bound; keep essential controls and destinations in the accessibility tree.
+
+**Example:**
+
+```text
+Wrap a task-owned chart in `FigureFrame`, pass `EvidenceCaption` with its source
+and denominator, and place the figure inside its task panel.
+```
+
+---
+
 ## Manual Scaffold Preservation
 
 **Use when:** Adding framework scaffold files into a folder that already contains workflow artifacts.
@@ -156,16 +258,24 @@ Rotation accepts `selectedEntity`; extremes accepts `selectedEvent`, `selectedCr
 
 ---
 
-## Test-Stable Accessibility Tree Under Redesign
+## Semantically Stable Accessibility Tree Under Redesign
 
-**Use when:** Replacing a previously shipped UI without rewriting the existing test suite.
+**Use when:** Replacing a shipped UI while preserving equivalent access for
+assistive technology and non-pointer users.
 
-**Rule:** Preserve the accessible-name surface (heading text, `role="region"` aria-labels, `getByLabelText` targets, exact-string assertions) even when the visual layer is fully replaced. Use `Card asChild` + `<section aria-label="...">` wrappers, hidden `<h1 className="sr-only">` elements, and styled native `<select>` / `<input>` with proper `<label>` association so existing `getByText` and `getByLabelText` matchers keep working.
+**Rule:** Preserve the semantic contract—one page identity, named navigation,
+linked tabs/panels, visible labels, titled figures/dialogs, live status, keyboard
+activation, and focus visibility—while updating stale names and tests to the
+approved design. Do not retain obsolete hidden headings or global regions only
+to satisfy an old assertion.
 
 **Example:**
 
 ```text
-`DashboardShell` keeps a hidden `<h1>GeoCrop Interactive Dashboard</h1>` for the integration test, wraps the filters card with `<section aria-label="Dashboard filters">`, wraps the map card with `<section aria-label="Corn Belt map surface">`, and exposes each state path on the choropleth with `role="button"` + `aria-label="Select ${name}"` to keep the prior tablist/region/button assertions green.
+`TopBar` exposes the GeoCrop / U.S. Corn Belt page identity and paper action.
+`DashboardShell` uses a named task tablist and tabpanel. `UsChoropleth` paths
+remain keyboard-activatable, and the paper sheet has a title, description, and
+fallback links.
 ```
 
 ---
@@ -179,7 +289,9 @@ Rotation accepts `selectedEntity`; extremes accepts `selectedEvent`, `selectedCr
 **Example:**
 
 ```text
-`UsChoropleth` accepts `{ values, colorScale, selectedState, onSelect, format }`. `MapPanel` maps categorical layer values (legend index) to a discrete color from the layer's legend, with a soft slate for `undefined` (no data).
+`UsChoropleth` accepts measured evidence rows plus a numeric color scale.
+`MapPanel` selects regular-share or event-anomaly evidence, prints the complete
+numeric domain and units, and uses paper gray only for `undefined` no-data.
 ```
 
 ---
@@ -254,14 +366,124 @@ Rotation accepts `selectedEntity`; extremes accepts `selectedEvent`, `selectedCr
 
 ---
 
-## Lucide Overlay Chevron For Styled Native Selects
+## Evidence Field With A Stacked Summary Rail
 
-**Use when:** A styled native `<select>` needs a custom chevron without using an inline `data:image/svg+xml` URL in Tailwind classes.
+**Use when:** A visual composition field leaves unused wide-screen space while
+its exact class summaries sit in a detached row below.
 
-**Rule:** Wrap the `<select>` in a `relative` container, add `appearance-none` + right padding, and absolutely-position a Lucide `<ChevronDown />` over the right edge with `pointer-events-none`. Avoids Lightning CSS parser warnings on data-URL backgrounds at build time.
+**Rule:** At wide widths, place the visual field and its exact summaries in one
+named group with a proportional two-column layout; stack the summary cards in a
+single rail. At narrow widths, stack field then summaries without changing DOM
+meaning, counts, or evidence values.
 
 **Example:**
 
 ```text
-`NativeSelect` in `CompactFilterBar` is a small helper: `<div className="relative"><select className={SELECT_CLASS} {...props} /><ChevronDown className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-slate-400" /></div>`.
+`RotationClassChart` keeps exactly 100 allocated cells at left and three exact
+class cards at right. The same wrapper becomes one column below the large
+breakpoint; source date, denominator, pixels, area, and definitions remain.
+```
+
+---
+
+## Direct Buttons For A Small Finite Comparison Set
+
+**Use when:** A selector has roughly five stable options and the surrounding
+card has enough space to expose them without a dropdown.
+
+**Rule:** Render one 44 px minimum button per option inside a named `role=group`,
+mark the active option with `aria-pressed`, and retain the existing controlled
+callback. Use responsive columns and let the final odd option span unused mobile
+columns rather than leaving a visible hole.
+
+**Example:**
+
+```text
+`ExtremesPanel` exposes Corn, Soybean, Winter wheat, Oats, and Other cropland as
+direct buttons; all five map to the same URL-backed crop callback used before.
+```
+
+---
+
+## Matched Frames For Opposing Spatial Events
+
+**Use when:** Two dated events must be compared without allowing scale, crop, or
+geographic framing to manufacture a difference.
+
+**Rule:** Compute one domain from all values for the active comparison variable,
+make it symmetric around the meaningful midpoint, and pass that exact domain to
+both maps. Keep the crop, projection, extent, legend, no-data fill, and pin state
+shared. Put uncertainty or posterior context in a differently labeled detail
+channel rather than adding it to the magnitude color.
+
+**Example:**
+
+```text
+`EventMapComparison` calls `selectEventMapEvidence` once per Task 3 event. The
+selector derives the same crop-wide `[-maxAbs, +maxAbs]` mean-z domain for each;
+both maps highlight one pinned state, while their cards separately report NIG
+posterior percentile and pixel-week denominator.
+```
+
+---
+
+## Branch-Aware Ablation Story
+
+**Use when:** An experiment contains alternative feature branches plus a full
+model, and array order or a simple sorted leaderboard would imply false
+additivity.
+
+**Rule:** Identify configurations by their stable source id, attach each derived
+delta to an explicit reference configuration, and print that reference beside
+the delta. Preserve the absolute metric and feature count. Never sum lifts from
+alternative branches.
+
+**Example:**
+
+```text
+`AblationChart` orders A–D by `ablationId`: B (CDL+NDVI) and C (CDL+SMAP)
+are each compared with A (CDL), while D (full) is compared with B. The visible
+labels are `+1.74 pp vs CDL`, `+0.07 pp vs CDL`, and `−0.07 pp vs CDL + NDVI`.
+```
+
+---
+
+## One Task Dispatcher, One Evidence Workspace
+
+**Use when:** A research website has several evidence tasks that share one shell
+but require task-local controls and figures.
+
+**Rule:** Put task data, controls, figures, sources, and limitations in one
+task-specific component. Let a shell-level dispatcher render only the active
+task from URL-backed state. Do not duplicate chart or map implementations in a
+second presentation mode unless users have approved a distinct need.
+
+**Example:**
+
+```text
+`DashboardShell.TaskPanel` dispatches `PhenologyPanel`, `RotationPanel`,
+`ExtremesPanel`, or `PredictionPanel` from `state.tab`. Rotation receives the
+measured `MapPanel` through its geography figure slot.
+```
+
+---
+
+## Retire A Mode Parameter Without Breaking Shared Analytics
+
+**Use when:** A rejected presentation mode is removed from a URL-backed
+dashboard that already has shared task and filter links.
+
+**Rule:** Stop parsing and serializing the retired mode, but keep its parameter
+in the update helper's deletion list. Ignore old mode values on read, preserve
+valid task/filter and unrelated query state, and remove the retired parameter on
+the next state update. Unsupported evidence values still normalize with a
+visible warning.
+
+**Example:**
+
+```text
+`?view=story&tab=extremes&crop=corn` opens the Extremes task with Corn selected.
+The next task/filter update removes `view=story`.
+`mapLayer=crop-prediction` becomes measured regular-rotation share and emits a
+compatibility notice.
 ```

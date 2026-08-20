@@ -19,7 +19,7 @@ describe("dashboard URL state", () => {
   it("parses all supported query params into normalized dashboard state", () => {
     const result = parseDashboardUrlState(
       new URLSearchParams(
-        "tab=extremes&mapLayer=soil-moisture-anomaly&state=ia&crop=corn&event=midwest_flood_2019&rotationRegime=regular&selectedEntity=county%3A19001&lng=-93.62&lat=42.03&zoom=6.5"
+        "view=story&tab=extremes&mapLayer=soil-moisture-anomaly&state=ia&crop=corn&event=midwest_flood_2019&rotationRegime=regular&selectedEntity=county%3A19001&lng=-93.62&lat=42.03&zoom=6.5"
       )
     );
 
@@ -43,7 +43,7 @@ describe("dashboard URL state", () => {
     const query = serializeDashboardUrlState({
       ...DEFAULT_DASHBOARD_FILTER_STATE,
       tab: "prediction",
-      mapLayer: "crop-prediction",
+      mapLayer: "soil-moisture-anomaly",
       state: "IA",
       crop: "soybean",
       selectedEntity: "county:19001",
@@ -54,14 +54,44 @@ describe("dashboard URL state", () => {
     });
 
     expect(query).toBe(
-      "tab=prediction&mapLayer=crop-prediction&state=IA&crop=soybean&selectedEntity=county%3A19001&lng=-93.62&lat=42.03&zoom=6.5"
+      "tab=prediction&mapLayer=soil-moisture-anomaly&state=IA&crop=soybean&selectedEntity=county%3A19001&lng=-93.62&lat=42.03&zoom=6.5"
     );
+  });
+
+  it("preserves valid task context from legacy analytical URLs", () => {
+    const result = parseDashboardUrlState(
+      new URLSearchParams("tab=extremes&state=ia&crop=corn")
+    );
+
+    expect(result.warnings).toEqual([]);
+    expect(result.state).toMatchObject({
+      tab: "extremes",
+      state: "IA",
+      crop: "corn"
+    });
+  });
+
+  it("normalizes removed legacy map layers to measured evidence with a warning", () => {
+    const result = parseDashboardUrlState(
+      new URLSearchParams("tab=prediction&mapLayer=crop-prediction")
+    );
+
+    expect(result.state).toMatchObject({
+      tab: "prediction",
+      mapLayer: "rotation-regular-probability"
+    });
+    expect(result.warnings).toContainEqual({
+      param: "mapLayer",
+      value: "crop-prediction",
+      message:
+        "The legacy mapLayer \"crop-prediction\" is no longer supported; using measured regular rotation share."
+    });
   });
 
   it("normalizes invalid params to defaults or omissions with warnings", () => {
     const result = parseDashboardUrlState(
       new URLSearchParams(
-        "tab=bad&mapLayer=also-bad&state=%20&crop=rice&event=storm&rotationRegime=chaotic&selectedEntity=%20&lng=999&lat=42&zoom=-1"
+        "view=bad&tab=bad&mapLayer=also-bad&state=%20&crop=rice&event=storm&rotationRegime=chaotic&selectedEntity=%20&lng=999&lat=42&zoom=-1"
       )
     );
 
@@ -75,7 +105,8 @@ describe("dashboard URL state", () => {
       {
         param: "mapLayer",
         value: "also-bad",
-        message: "Invalid mapLayer \"also-bad\"; using default \"rotation-class\"."
+        message:
+          "Invalid mapLayer \"also-bad\"; using default \"rotation-regular-probability\"."
       },
       {
         param: "state",
@@ -117,13 +148,15 @@ describe("dashboard URL state", () => {
 
   it("preserves unrelated URL params when updating through the helper", () => {
     const updated = updateDashboardUrlSearchParams(
-      new URLSearchParams("utm=class&tab=rotation&page=2"),
+      new URLSearchParams("utm=class&view=story&tab=rotation&page=2"),
       {
         ...DEFAULT_DASHBOARD_FILTER_STATE,
         crop: "winter_wheat"
       }
     );
 
-    expect(updated.toString()).toBe("utm=class&page=2&crop=winter_wheat");
+    expect(updated.toString()).toBe(
+      "utm=class&page=2&crop=winter_wheat"
+    );
   });
 });

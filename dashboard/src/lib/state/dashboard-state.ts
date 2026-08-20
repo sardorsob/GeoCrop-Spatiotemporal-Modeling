@@ -37,6 +37,11 @@ export const MAP_LAYER_IDS = [
   "prediction-agreement"
 ] as const satisfies readonly MapLayerId[];
 
+export const SUPPORTED_MAP_LAYER_IDS = [
+  "rotation-regular-probability",
+  "soil-moisture-anomaly"
+] as const satisfies readonly MapLayerId[];
+
 export const CROP_IDS = [
   "corn",
   "soybean",
@@ -58,7 +63,7 @@ export const ROTATION_REGIME_IDS = [
 
 export const DEFAULT_DASHBOARD_FILTER_STATE: DashboardFilterState = {
   tab: "phenology",
-  mapLayer: "rotation-class"
+  mapLayer: "rotation-regular-probability"
 };
 
 export const DASHBOARD_TAB_OPTIONS: readonly DashboardOption<DashboardTab>[] = [
@@ -102,6 +107,10 @@ export function isDashboardTab(value: string): value is DashboardTab {
   return includesString(DASHBOARD_TABS, value);
 }
 
+export function isSupportedMapLayerId(value: string): value is MapLayerId {
+  return includesString(SUPPORTED_MAP_LAYER_IDS, value);
+}
+
 export function isMapLayerId(value: string): value is MapLayerId {
   return includesString(MAP_LAYER_IDS, value);
 }
@@ -131,6 +140,10 @@ export function normalizeDashboardFilterState(
   return {
     ...DEFAULT_DASHBOARD_FILTER_STATE,
     ...state,
+    mapLayer:
+      state.mapLayer && isSupportedMapLayerId(state.mapLayer)
+        ? state.mapLayer
+        : DEFAULT_DASHBOARD_FILTER_STATE.mapLayer,
     state: normalizeOptionalText(state.state)?.toUpperCase(),
     selectedEntity: normalizeOptionalText(state.selectedEntity),
     mapView: normalizeMapView(state.mapView)

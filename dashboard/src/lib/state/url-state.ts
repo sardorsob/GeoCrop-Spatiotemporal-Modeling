@@ -6,6 +6,7 @@ import {
   isExtremeEventId,
   isMapLayerId,
   isRotationRegimeId,
+  isSupportedMapLayerId,
   normalizeDashboardFilterState
 } from "./dashboard-state";
 
@@ -26,6 +27,7 @@ type DraftDashboardFilterState = {
 };
 
 const QUERY_PARAM_ORDER = [
+  "view",
   "tab",
   "mapLayer",
   "state",
@@ -151,8 +153,18 @@ function parseMapLayer(
     return;
   }
 
-  if (isMapLayerId(value)) {
+  if (isSupportedMapLayerId(value)) {
     state.mapLayer = value;
+    return;
+  }
+
+  if (isMapLayerId(value)) {
+    state.mapLayer = DEFAULT_DASHBOARD_FILTER_STATE.mapLayer;
+    warnings.push({
+      param: "mapLayer",
+      value,
+      message: `The legacy mapLayer "${value}" is no longer supported; using measured regular rotation share.`
+    });
     return;
   }
 

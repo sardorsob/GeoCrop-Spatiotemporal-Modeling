@@ -102,3 +102,131 @@ missing framework or service.
 **Impact:** Implementation can start with visual grammar and evidence contracts
 in parallel after mockup/spec review. Backend, database, auth, and new map/chart
 libraries remain outside scope.
+
+## 2026-08-19 — Separate Task 3 anomaly magnitude from NIG posterior context
+
+**Context:** Task 3 exports both state × crop mean standardized anomalies and an
+NIG posterior-predictive percentile. Presenting the latter as generic confidence
+or using it in the same color encoding would misstate the paper's model.
+
+**Decision:** Hold crop, projection, extent, and a symmetric mean-z color domain
+constant across the 2019 flood and 2022 drought frames. Show NIG only in pinned
+details and summaries, labeled as a posterior-predictive percentile: near zero
+is the dry tail and near one is the wet tail. It is not a confidence interval
+around mean z.
+
+**Reason:** A stable visual frame makes wet/dry magnitude comparable while the
+separate label preserves what the NIG quantity actually measures under a short
+baseline.
+
+**Impact:** One pin drives both maps. Missing event/state/crop or NIG values stay
+no-data, and the complete event × state × crop table is an Explore disclosure.
+
+## 2026-08-19 — Make Task 4 a diagnostic conclusion, not a forecast map
+
+**Context:** Task 4 combines three feature sources at different native scales,
+evaluates alternative ablations, computes SHAP on a 1,000-pixel subsample, and
+reports four-class test and rotation-regime results. Its NDVI and SMAP features
+include the concurrent growing season, and browser-safe geographic aggregates
+are not exported.
+
+**Decision:** Tell Act IV from feature sources to model behavior to error mode to
+regime context. Treat CDL+NDVI and CDL+SMAP as alternative branches from CDL,
+compare the full model to CDL+NDVI, retain every SHAP row in a source family,
+and render only the four confusion classes present in the matrix. Do not add a
+prediction choropleth or call this a pre-plant forecast.
+
+**Reason:** This mirrors the experiment rather than manufacturing an additive
+feature story, a fifth class, geographic precision, or operational timing the
+artifacts do not support.
+
+**Impact:** The close names the 95.5% / 87.4% / 70.9% regime accuracies and their
+unequal denominators, while class balance, SHAP sample, SMAP 9 km resolution,
+the common ~557 m grid, and concurrent-season timing stay adjacent.
+
+## 2026-08-19 — Normalize v1 analytics into Explore
+
+**Context:** Story needed the empty URL, but existing tab/filter links still had
+to restore a useful analytical experience. Several v1 map-layer ids no longer
+represented supported numeric evidence.
+
+**Decision:** `/` opens Story. If `view` is absent and at least one valid legacy
+analytical parameter parses, infer Explore and preserve its task/filter context.
+Recognized retired layers normalize to measured regular-rotation share with a
+visible compatibility notice. Explicit `view` always wins.
+
+**Reason:** This preserves useful shared links without allowing old placeholder
+layers to masquerade as research evidence or sacrificing the first-visit story.
+
+**Impact:** `DashboardFilterState` owns `view`; serialization writes explicit
+Story when non-default analytics are present; unrelated query parameters remain
+untouched.
+
+## 2026-08-19 — Keep maps inside the task that owns them
+
+**Context:** The v1 universal map and six-control wall made geography look like
+the organizing principle for every result and pushed the HSGP evidence down the
+page.
+
+**Decision:** Delete the global `CompactFilterBar`, remove the universal map,
+and inject the measured regular-share map only into Rotation. Extremes keeps its
+own paired maps; Phenology and Prediction have no map.
+
+**Reason:** Controls and maps should appear only where their data grain and
+research question support them.
+
+**Impact:** Story presents all four shared task components in order, with HSGP
+first. Explore renders one task component and its local controls at a time.
+
+## 2026-08-19 — Patch the audited graph without adding feature scope
+
+**Context:** The final live npm audit reported newly published high-severity
+advisories against the previously locked Next/PostCSS toolchain even though no
+dependency was added by the redesign.
+
+**Decision:** Run npm's lockfile-only remediation within existing manifest
+ranges, then clean-install and re-run the complete gates. This resolved to
+Next.js 16.3.1 and patched transitive versions with zero reported vulnerabilities.
+
+**Reason:** The required audit gate should close on the exact deliverable graph,
+but a forced major upgrade or unrelated dependency sweep would exceed scope.
+
+**Impact:** `package.json` is unchanged, `package-lock.json` carries the patched
+graph, and tests/typecheck/lint/build were repeated against the clean install.
+
+## 2026-08-19 — Retire Story and make GeoCrop Explore-only
+
+**Context:** During live review, the user approved the Explore workspace but
+rejected the duplicated Story surface and the `Narrative Atlas` product name.
+
+**Decision:** Make `/` open Explore directly, remove Story composition and mode
+controls, remove `view` from domain state, and identify the product as GeoCrop
+with U.S. Corn Belt context. Ignore old `view` values while preserving supported
+task/filter state, then delete the retired parameter on the next update.
+
+**Reason:** Maintaining a second rejected surface would duplicate presentation
+logic without adding user value. The approved task workspace already provides
+the desired layout, evidence, and interactivity.
+
+**Impact:** This supersedes the earlier default-Story and `view` decisions.
+Three Story-only primitives were deleted; all four evidence tasks, the paper,
+sources, caveats, and compatible analytical links remain.
+
+## 2026-08-19 — Fill evidence whitespace without inventing behavior
+
+**Context:** Live review identified unused space beside the Rotation 100-cell
+composition and an unnecessarily hidden five-option crop selector in Extremes.
+The same review withdrew map-click auto-scroll and found no need to force a year
+control.
+
+**Decision:** Pair the 100-cell field with a stacked exact-summary rail at wide
+widths and expose the five crop options as direct pressed buttons. Keep the
+mobile fallbacks stacked, preserve every scientific value, and add neither
+auto-scroll nor a year selector.
+
+**Reason:** These changes increase density and discoverability using existing
+evidence and callbacks. The Rotation artifact is a dated aggregate result and
+does not support a truthful year-by-year map control.
+
+**Impact:** The visual layout changes without changing calculations, URL crop
+state, map behavior, dependencies, or data claims.

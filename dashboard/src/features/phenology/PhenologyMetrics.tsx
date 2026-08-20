@@ -1,68 +1,91 @@
-import { TrendingUp } from "lucide-react";
+import { Activity } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import type { CropId, PhenologyModelEvaluation } from "@/lib/data/types";
 
-import { CROP_LABELS, PHENOLOGY_COPY } from "./phenology-copy";
+import { CROP_LABELS, PHENOLOGY_COPY, PHENOLOGY_CROPS } from "./phenology-copy";
 
 export interface PhenologyMetricsProps {
-  readonly crop: CropId;
-  readonly metric?: PhenologyModelEvaluation;
+  readonly metrics: readonly PhenologyModelEvaluation[];
+  readonly focusedCrop?: CropId;
 }
 
-export function PhenologyMetrics({ crop, metric }: PhenologyMetricsProps) {
+export function PhenologyMetrics({ focusedCrop, metrics }: PhenologyMetricsProps) {
+  const byCrop = new Map(metrics.map((metric) => [metric.crop, metric]));
+
   return (
     <Card>
-      <section aria-label={PHENOLOGY_COPY.metricsRegionLabel} className="px-5 py-5">
-        <div className="flex flex-wrap items-end justify-between gap-2">
+      <section aria-label={PHENOLOGY_COPY.metricsRegionLabel} className="px-4 py-4 sm:px-5">
+        <div className="flex items-start gap-3">
+          <span className="rounded-full border border-field/30 bg-field/10 p-2 text-field-dark">
+            <Activity aria-hidden="true" className="size-4" />
+          </span>
           <div>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="size-4 text-emerald-600" />
-              <h3 className="text-base font-semibold text-slate-900">HSGP model metrics</h3>
-            </div>
-            <p className="mt-0.5 text-sm text-slate-500">{CROP_LABELS[crop]}</p>
+            <h3 className="font-semibold text-ink">HSGP model fit, crop by crop</h3>
+            <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
+              Lower error is better; coverage reports the share captured by each posterior interval.
+            </p>
           </div>
-          {metric && (
-            <p className="text-sm font-medium text-slate-700">{`${formatCount(metric.nObservations)} observations`}</p>
-          )}
         </div>
 
-        {metric ? (
-          <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
-            <MetricTile label="RMSE" value={formatMetric(metric.rmse)} tone="emerald" />
-            <MetricTile label="MAE" value={formatMetric(metric.mae)} tone="emerald" />
-            <MetricTile label="Coverage 50" value={formatPercent(metric.coverage50)} tone="sky" />
-            <MetricTile label="Coverage 90" value={formatPercent(metric.coverage90)} tone="sky" />
-            <MetricTile label="Mean CRPS" value={formatMetric(metric.meanCrps)} tone="violet" />
-          </div>
-        ) : (
-          <div className="mt-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm font-medium text-slate-700">
-            No HSGP model metrics for {CROP_LABELS[crop]}.
-          </div>
-        )}
+        <table className="mt-4 w-full table-fixed border-collapse text-left text-xs sm:text-sm">
+          <thead className="border-b border-rule text-[10px] uppercase tracking-[0.12em] text-muted-foreground sm:text-xs">
+            <tr>
+              <th className="w-[31%] pb-2 pr-2 font-semibold">Crop</th>
+              <th className="pb-2 pr-2 font-semibold">RMSE</th>
+              <th className="pb-2 pr-2 font-semibold">Coverage 90</th>
+              <th className="hidden pb-2 pr-2 font-semibold sm:table-cell">MAE</th>
+              <th className="hidden pb-2 pr-2 font-semibold md:table-cell">Coverage 50</th>
+              <th className="hidden pb-2 font-semibold lg:table-cell">Mean CRPS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {PHENOLOGY_CROPS.map((crop) => (
+              <MetricRow
+                key={crop}
+                crop={crop}
+                focused={focusedCrop === crop}
+                metric={byCrop.get(crop)}
+              />
+            ))}
+          </tbody>
+        </table>
       </section>
     </Card>
   );
 }
 
-const toneClasses = {
-  emerald: "from-emerald-50 to-white border-emerald-100",
-  sky: "from-sky-50 to-white border-sky-100",
-  violet: "from-violet-50 to-white border-violet-100"
-} as const;
+function MetricRow({
+  crop,
+  focused,
+  metric
+}: {
+  readonly crop: (typeof PHENOLOGY_CROPS)[number];
+  readonly focused: boolean;
+  readonly metric?: PhenologyModelEvaluation;
+}) {
+  const cellClass = "border-b border-rule/70 py-3 pr-2 tabular-nums last:border-b-0";
 
-const toneLabelClasses = {
-  emerald: "text-emerald-700",
-  sky: "text-sky-700",
-  violet: "text-violet-700"
-} as const;
-
-function MetricTile({ label, value, tone }: { label: string; value: string; tone: keyof typeof toneClasses }) {
   return (
-    <div className={`rounded-xl border bg-gradient-to-br px-4 py-3 ${toneClasses[tone]}`}>
-      <p className={`text-xs font-semibold uppercase tracking-widest ${toneLabelClasses[tone]}`}>{label}</p>
-      <p className="mt-1.5 text-2xl font-bold tracking-tight text-slate-900">{value}</p>
-    </div>
+    <tr className={focused ? "bg-field/5" : undefined}>
+      <th className={`${cellClass} font-semibold text-ink`} scope="row">
+        <span className="block leading-tight">{CROP_LABELS[crop]}</span>
+        <span className="mt-0.5 block text-[10px] font-normal text-muted-foreground sm:text-xs">
+          {metric ? `${formatCount(metric.nObservations)} obs.` : "No metrics"}
+        </span>
+      </th>
+      <td className={cellClass}>{metric ? formatMetric(metric.rmse) : "—"}</td>
+      <td className={cellClass}>{metric ? formatPercent(metric.coverage90) : "—"}</td>
+      <td className={`${cellClass} hidden sm:table-cell`}>
+        {metric ? formatMetric(metric.mae) : "—"}
+      </td>
+      <td className={`${cellClass} hidden md:table-cell`}>
+        {metric ? formatPercent(metric.coverage50) : "—"}
+      </td>
+      <td className={`${cellClass} hidden lg:table-cell`}>
+        {metric ? formatMetric(metric.meanCrps) : "—"}
+      </td>
+    </tr>
   );
 }
 
@@ -75,7 +98,10 @@ function formatMetric(value: number): string {
 
 function formatPercent(value: number): string {
   const percent = Math.abs(value) <= 1 ? value * 100 : value;
-  return `${percent.toLocaleString("en-US", { maximumFractionDigits: 1, minimumFractionDigits: 1 })}%`;
+  return `${percent.toLocaleString("en-US", {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: 1
+  })}%`;
 }
 
 function formatCount(value: number): string {

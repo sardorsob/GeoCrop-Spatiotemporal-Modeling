@@ -1,47 +1,49 @@
 # Handoff Notes
 
-Use this for session-to-session handoff before final `HANDOVER.md`.
+Use this for session-to-session continuity. The polished delivery summary is in
+`HANDOVER.md`.
 
 ## Current State
 
-- The delivered v1 dashboard is intact. Website redesign v2 is in mockup/spec
-  review; no implementation has started.
-- `docs/intake.md` contains the redesign request, evidence audit, three product
-  directions, provisional creative direction, success criteria, and open
-  decisions.
-- Selected working direction: Narrative Atlas with a Chaptered Evidence Canvas
-  in Story and an Evidence Lab in Explore, using the four-act paper spine and a
-  “field notebook meets satellite atlas” visual language.
-- `docs/design/2026-08-19-narrative-atlas-mockups.md` records three layout
-  directions and the desktop/mobile wireframes. The HSGP comparator leads Act I;
-  maps lead only rotation and extremes.
-- `docs/superpowers/specs/2026-08-19-geocrop-website-redesign-design.md` and the
-  rewritten `SCOPE.md` define the review-ready v2 contract.
-- `TASKS.md` preserves 15 completed v1 tasks and adds eight pending v2 tasks,
-  `TASK-015`–`TASK-022`.
-- High-priority evidence defects are documented: the hardcoded 10-state map and
-  the HSGP chart's lossy row shaping/missing uncertainty bands.
-- Temporary live-review screenshots were stored under `/tmp` only. The local dev
-  server was stopped after inspection.
+- GeoCrop is implemented through `TASK-024` on
+  `codex/narrative-atlas-v2`, one task commit at a time.
+- Explore is the only/default product surface and renders one shareable task
+  workspace with task-local controls. Story and `view` state are removed.
+- HSGP is the default task. The measured regular-share map lives only inside Rotation;
+  Extremes owns its paired maps; Prediction has no unsupported geography.
+- Legacy mode URLs preserve valid task/filter state and shed `view` on update.
+  Retired map layers surface a visible warning and normalize to measured share.
+- Rotation uses a wide field-plus-stacked-summary composition; Extremes uses
+  five direct 44 px crop buttons and no crop dropdown.
+- The global `CompactFilterBar` and universal overview map are gone.
+- Paper copy is neutral and the unrelated source repository link is not exposed.
+- The exact dependency graph is clean-installed from the patched lockfile and
+  reports zero vulnerabilities at the high audit level.
+
+## Verification Snapshot
+
+- 15 test files / 67 tests passed.
+- Typecheck and lint passed.
+- Webpack production build passed with Next.js 16.3.1.
+- Workflow status and artifact validators passed.
+- Browser Use passed 1440 and 320 px composition, containment, and touch checks. The
+  desktop/mobile screenshots were temporary under `/private/tmp` and are not
+  committed.
 
 ## Next Best Action
 
-Ask the user to review the mockup comparison and selected Atlas + Lab detail.
-If no revision is requested, begin `TASK-015` and `TASK-016` as independent
-lanes. Do not start any v2 task before that review signal.
+Ask the user to review the completed Explore experience. Do not merge until the
+user approves. Configure Vercel only with explicit deployment authorization.
 
-## Known Risks
+## Boundaries To Preserve
 
-- Rotation percentages conflict between the root README and dated source
-  artifacts; use the artifacts only after explicit reconciliation.
-- NeurIPS 2024, NAFSI 2025, and Spring 2026 labels and the award claim need a
-  source-backed chronology. The paper source's repository link appears unrelated.
-- Do not map a metric at county/pixel grain unless that task has a prepared,
-  browser-safe artifact at that grain.
-- Preserve essential evidence outside hover and provide keyboard/touch and
-  reduced-motion equivalents.
-- `memory/architecture.md`, `memory/patterns.md`, README, and final `HANDOVER.md`
-  still describe the implemented v1 and must change only with reviewed v2 code,
-  not during design planning.
-- Do not generate imagery for dashboard design; use code-native, data-derived
-  visual forms and browser screenshots.
+- Do not reintroduce global controls or a map-first shell.
+- Do not describe Task 4 as a pre-plant forecast or irregular rotation as poor
+  management.
+- Do not map a task beyond its artifact-supported geographic grain.
+- Keep sources, dates, denominators, uncertainty, and limitations adjacent to
+  qualified claims.
+- Do not add generated imagery, backend services, notebook execution, or new
+  map/chart dependencies without a scope update.
+- A managed sandbox may require `npm run build -- --webpack` because Turbopack's
+  CSS helper cannot bind an internal port there.

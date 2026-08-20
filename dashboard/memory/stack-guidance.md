@@ -4,15 +4,16 @@
 
 ## Status
 
-Stack direction selected during intake-to-scope on 2026-06-02 and retained for
-the Narrative Atlas v2 redesign on 2026-08-19. The redesign changes evidence
-contracts, composition, and interaction; it does not require a new framework,
-backend, or dependency. Treat this as the default unless canonical scope changes
-through the workflow.
+Stack direction selected during intake-to-scope on 2026-06-02 and retained
+through the completed Narrative Atlas v2 redesign on 2026-08-19. The redesign
+changed evidence contracts, composition, and interaction without a new
+framework, backend, or feature dependency. Treat this as the delivered default
+unless canonical scope changes through the workflow.
 
 ## Stack Summary
 
-- Framework: Next.js 16 with React 19 and TypeScript 5.9.
+- Framework: Next.js 16.3.1 with React 19 and TypeScript 5.9. Patched transitive
+  versions are locked by `package-lock.json`.
 - Hosting: Vercel.
 - Styling: Tailwind CSS v4 with `@theme` design tokens in
   `src/app/globals.css`, `class-variance-authority` for variant composition,
@@ -70,7 +71,9 @@ Recommended file ownership:
 - `src/components/story/`: shared act headings, navigation, figure framing,
   evidence captions, and Story/Explore switching. Do not put task-specific data
   transforms here.
-- `src/components/filters/`: dashboard filter UI.
+- `src/components/filters/`: reserved for genuinely shared task-local filter
+  primitives only. The global `CompactFilterBar` was deleted; do not recreate a
+  universal filter wall.
 - `src/components/map/`: projected geography, task-specific map composition,
   evidence lens, and geometry helpers. `UsChoropleth` remains the rendering
   primitive; map values must come from typed selectors rather than a fallback

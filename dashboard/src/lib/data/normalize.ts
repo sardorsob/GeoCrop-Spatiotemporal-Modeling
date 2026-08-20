@@ -1,4 +1,4 @@
-import { parseRequiredDashboardNumber } from "../format/number";
+import { parseDashboardNumber, parseRequiredDashboardNumber } from "../format/number";
 import type {
   AblationResult,
   AnomalyStateCropSummary,
@@ -6,7 +6,6 @@ import type {
   CropId,
   DataPointSource,
   ExtremeEventId,
-  GeographyKind,
   MarkovTransition,
   PhenologyModelEvaluation,
   PhenologyPoint,
@@ -20,6 +19,7 @@ import type {
   RotationRegimeId,
   RotationThresholdSensitivity,
   ShapFeature,
+  StudyStateCode,
   SourceNote
 } from "./types";
 import type {
@@ -101,7 +101,7 @@ export function normalizeDashboardData(artifacts: readonly LoadedArtifact[]): No
       classSummaries: normalizeRotationClassSummaries(arealStatsByClass),
       geographySummaries: [
         ...normalizeRotationGeoSummaries(arealStatsByCounty, "county"),
-        ...normalizeRotationGeoSummaries(arealStatsByRegion, "region")
+        ...normalizeRotationGeoSummaries(arealStatsByRegion, "state")
       ],
       markovTransitions: normalizeMarkovTransitions(markovTransitions),
       thresholdSensitivity: normalizeThresholdSensitivity(thresholdSensitivity)
@@ -158,14 +158,20 @@ function normalizePosteriorPhenology(artifact: LoadedCsvArtifact | undefined): r
     return [];
   }
 
-  return groupPhenologyRows(artifact, (row): PhenologyPoint => ({
-    dayOfYear: readNumber(row, ["day_of_year", "doy"]),
-    posteriorMean: readNumber(row, ["posterior_mean"]),
-    posteriorIqr25: readNumber(row, ["posterior_iqr_25"]),
-    posteriorIqr75: readNumber(row, ["posterior_iqr_75"]),
-    credibleInterval05: readNumber(row, ["credible_interval_05", "ci_05"]),
-    credibleInterval95: readNumber(row, ["credible_interval_95", "ci_95"])
-  }));
+  return groupPhenologyRows(artifact, (row): PhenologyPoint | undefined => {
+    const dayOfYear = readOptionalNumber(row, ["day_of_year", "doy"]);
+
+    return dayOfYear === undefined
+      ? undefined
+      : {
+          dayOfYear,
+          posteriorMean: readOptionalNumber(row, ["posterior_mean"]),
+          posteriorIqr25: readOptionalNumber(row, ["posterior_iqr_25"]),
+          posteriorIqr75: readOptionalNumber(row, ["posterior_iqr_75"]),
+          credibleInterval05: readOptionalNumber(row, ["credible_interval_05", "ci_05"]),
+          credibleInterval95: readOptionalNumber(row, ["credible_interval_95", "ci_95"])
+        };
+  });
 }
 
 function normalizeEmpiricalPhenology(artifact: LoadedCsvArtifact | undefined): readonly PhenologySeries[] {
@@ -173,40 +179,89 @@ function normalizeEmpiricalPhenology(artifact: LoadedCsvArtifact | undefined): r
     return [];
   }
 
-  return groupPhenologyRows(artifact, (row): PhenologyPoint => ({
-    dayOfYear: readNumber(row, ["day_of_year", "doy"]),
-    empiricalMeanNdvi: readNumber(row, ["empirical_mean_ndvi", "mean_ndvi"]),
-    empiricalQ25Ndvi: readNumber(row, ["empirical_q25_ndvi", "q25_ndvi"]),
-    empiricalQ75Ndvi: readNumber(row, ["empirical_q75_ndvi", "q75_ndvi"]),
-    nPixels: readNumber(row, ["n_pixels"])
-  }));
+  return groupPhenologyRows(artifact, (row): PhenologyPoint | undefined => {
+    const dayOfYear = readOptionalNumber(row, ["day_of_year", "doy"]);
+
+    return dayOfYear === undefined
+      ? undefined
+      : {
+          dayOfYear,
+          empiricalMeanNdvi: readOptionalNumber(row, ["empirical_mean_ndvi", "mean_ndvi"]),
+          empiricalQ25Ndvi: readOptionalNumber(row, ["empirical_q25_ndvi", "q25_ndvi"]),
+          empiricalQ75Ndvi: readOptionalNumber(row, ["empirical_q75_ndvi", "q75_ndvi"]),
+          nPixels: readOptionalNumber(row, ["n_pixels"])
+        };
+  });
 }
 
 function groupPhenologyRows(
   artifact: LoadedCsvArtifact,
-  mapPoint: (row: RawArtifactRow) => PhenologyPoint
+  mapPoint: (row: RawArtifactRow) => PhenologyPoint | undefined
 ): readonly PhenologySeries[] {
-  const grouped = new Map<CropId, PhenologyPoint[]>();
+  const grouped = new Map<CropId, Map<number, PhenologyPoint[]>>();
 
   for (const row of artifact.rows) {
     const crop = normalizeCrop(readString(row, ["crop"]));
+    const point = mapPoint(row);
 
-    if (!crop) {
+    if (!crop || !point) {
       continue;
     }
 
-    const points = grouped.get(crop) ?? [];
-    points.push(mapPoint(row));
-    grouped.set(crop, points);
+    const cropPoints = grouped.get(crop) ?? new Map<number, PhenologyPoint[]>();
+    const dayPoints = cropPoints.get(point.dayOfYear) ?? [];
+    dayPoints.push(point);
+    cropPoints.set(point.dayOfYear, dayPoints);
+    grouped.set(crop, cropPoints);
   }
 
   const source = toDataPointSource(artifact);
 
-  return [...grouped.entries()].map(([crop, points]) => ({
+  return [...grouped.entries()].map(([crop, pointsByDay]) => ({
     crop,
-    points,
+    points: [...pointsByDay.entries()]
+      .sort(([left], [right]) => left - right)
+      .map(([dayOfYear, points]) => aggregatePhenologyPoints(dayOfYear, points)),
     source
   }));
+}
+
+function aggregatePhenologyPoints(
+  dayOfYear: number,
+  points: readonly PhenologyPoint[]
+): PhenologyPoint {
+  const aggregated = {
+    dayOfYear,
+    posteriorMean: meanDefined(points.map((point) => point.posteriorMean)),
+    posteriorIqr25: meanDefined(points.map((point) => point.posteriorIqr25)),
+    posteriorIqr75: meanDefined(points.map((point) => point.posteriorIqr75)),
+    credibleInterval05: meanDefined(points.map((point) => point.credibleInterval05)),
+    credibleInterval95: meanDefined(points.map((point) => point.credibleInterval95)),
+    empiricalMeanNdvi: meanDefined(points.map((point) => point.empiricalMeanNdvi)),
+    empiricalQ25Ndvi: meanDefined(points.map((point) => point.empiricalQ25Ndvi)),
+    empiricalQ75Ndvi: meanDefined(points.map((point) => point.empiricalQ75Ndvi)),
+    nPixels: sumDefined(points.map((point) => point.nPixels))
+  };
+
+  return Object.fromEntries(
+    Object.entries(aggregated).filter(([, value]) => value !== undefined)
+  ) as unknown as PhenologyPoint;
+}
+
+function meanDefined(values: readonly (number | undefined)[]): number | undefined {
+  const defined = values.filter((value): value is number => value !== undefined);
+
+  return defined.length > 0
+    ? defined.reduce((sum, value) => sum + value, 0) / defined.length
+    : undefined;
+}
+
+function sumDefined(values: readonly (number | undefined)[]): number | undefined {
+  const defined = values.filter((value): value is number => value !== undefined);
+
+  return defined.length > 0
+    ? defined.reduce((sum, value) => sum + value, 0)
+    : undefined;
 }
 
 function normalizeRotationClassSummaries(
@@ -239,7 +294,7 @@ function normalizeRotationClassSummaries(
 
 function normalizeRotationGeoSummaries(
   artifact: LoadedCsvArtifact | undefined,
-  geographyKind: GeographyKind
+  geographyKind: "state" | "county"
 ): readonly RotationGeoSummary[] {
   if (!artifact) {
     return [];
@@ -247,22 +302,44 @@ function normalizeRotationGeoSummaries(
 
   const source = toDataPointSource(artifact);
 
-  return artifact.rows.map((row) => {
+  return artifact.rows.flatMap((row) => {
     const geographyName = readString(row, ["geography_name", "NAMELSAD", "region"]);
-    const geographyId = readString(row, ["geography_id", "GEOID", "region"]) ?? geographyName ?? "";
+    const rawGeographyId = readString(row, ["geography_id", "GEOID", "region"]);
+    const rawStateFips = readString(row, ["state_fips", "STATEFP"]);
+    const state =
+      geographyKind === "state"
+        ? getStudyStateByName(geographyName ?? rawGeographyId)
+        : getStudyStateByFips(rawStateFips ?? rawGeographyId?.slice(0, 2));
 
-    return {
-      geographyId,
-      geographyName: geographyName ?? geographyId,
-      geographyKind,
-      stateFips: readString(row, ["state_fips", "STATEFP"]),
-      countyFips: readString(row, ["county_fips", "COUNTYFP"]),
-      nPixels: readNumber(row, ["n_pixels", "N_pixels"]),
-      pctRegular: readNumber(row, ["pct_regular"]),
-      pctMonoculture: readNumber(row, ["pct_monoculture"]),
-      pctIrregular: readNumber(row, ["pct_irregular"]),
-      source
-    };
+    if (!state) {
+      return [];
+    }
+
+    const stateFips = state.fips;
+    const countyFips =
+      geographyKind === "county"
+        ? (readString(row, ["county_fips", "COUNTYFP"]) ?? rawGeographyId?.slice(-3))?.padStart(3, "0")
+        : undefined;
+    const geographyId =
+      geographyKind === "state"
+        ? state.code
+        : (rawGeographyId ?? `${stateFips}${countyFips ?? ""}`).padStart(5, "0");
+
+    return [
+      {
+        geographyId,
+        geographyName: geographyKind === "state" ? state.name : (geographyName ?? geographyId),
+        geographyKind,
+        stateCode: state.code,
+        stateFips,
+        countyFips,
+        nPixels: readNumber(row, ["n_pixels", "N_pixels"]),
+        pctRegular: readNumber(row, ["pct_regular"]),
+        pctMonoculture: readNumber(row, ["pct_monoculture"]),
+        pctIrregular: readNumber(row, ["pct_irregular"]),
+        source
+      }
+    ];
   });
 }
 
@@ -336,15 +413,17 @@ function normalizeAnomalySummaries(
   return artifact.rows.flatMap((row) => {
     const crop = normalizeCrop(readString(row, ["crop"]));
     const eventId = normalizeEventId(readString(row, ["event_id"])) ?? fallbackEventId;
+    const state = getStudyStateByName(readString(row, ["state"]));
 
-    if (!crop || !eventId) {
+    if (!crop || !eventId || !state) {
       return [];
     }
 
     return [
       {
         eventId,
-        state: readString(row, ["state"]) ?? "",
+        state: state.name,
+        stateCode: state.code,
         crop,
         meanZ: readNumber(row, ["mean_z"]),
         maxZ: readNumber(row, ["max_z"]),
@@ -502,6 +581,10 @@ function readNumber(row: RawArtifactRow, aliases: RowValueAlias): number {
   return parseRequiredDashboardNumber(readString(row, aliases));
 }
 
+function readOptionalNumber(row: RawArtifactRow, aliases: RowValueAlias): number | undefined {
+  return parseDashboardNumber(readString(row, aliases));
+}
+
 function readString(row: RawArtifactRow, aliases: RowValueAlias): string | undefined {
   const exactAlias = aliases.find((alias) => row[alias] !== undefined);
 
@@ -585,6 +668,40 @@ function normalizeEventId(value: string | undefined): ExtremeEventId | undefined
     default:
       return undefined;
   }
+}
+
+const STUDY_STATES = [
+  { code: "IL", name: "Illinois", fips: "17" },
+  { code: "IN", name: "Indiana", fips: "18" },
+  { code: "IA", name: "Iowa", fips: "19" },
+  { code: "KS", name: "Kansas", fips: "20" },
+  { code: "KY", name: "Kentucky", fips: "21" },
+  { code: "MI", name: "Michigan", fips: "26" },
+  { code: "MN", name: "Minnesota", fips: "27" },
+  { code: "MO", name: "Missouri", fips: "29" },
+  { code: "NE", name: "Nebraska", fips: "31" },
+  { code: "ND", name: "North Dakota", fips: "38" },
+  { code: "OH", name: "Ohio", fips: "39" },
+  { code: "SD", name: "South Dakota", fips: "46" },
+  { code: "WI", name: "Wisconsin", fips: "55" }
+] as const satisfies readonly {
+  readonly code: StudyStateCode;
+  readonly name: string;
+  readonly fips: string;
+}[];
+
+function getStudyStateByName(value: string | undefined): (typeof STUDY_STATES)[number] | undefined {
+  const normalized = value?.trim().toLowerCase().replace(/_/g, " ");
+
+  return STUDY_STATES.find(
+    (state) => state.name.toLowerCase() === normalized || state.code.toLowerCase() === normalized
+  );
+}
+
+function getStudyStateByFips(value: string | undefined): (typeof STUDY_STATES)[number] | undefined {
+  const fips = value?.trim().padStart(2, "0");
+
+  return STUDY_STATES.find((state) => state.fips === fips);
 }
 
 function eventIdFromSourceId(sourceId: ArtifactSourceId): ExtremeEventId | undefined {
