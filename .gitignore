@@ -26,6 +26,7 @@ ENV/
 
 # ── Local AI / editor tooling (do not commit) ─────────────────────────────
 .claude/
+.serena/
 
 # ── Internal project context (not for submission) ─────────────────────────
 context/
