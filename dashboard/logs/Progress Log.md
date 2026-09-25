@@ -1140,3 +1140,20 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 ### TASK-026 root QA acceptance
 
 Accepted the title/path/test diff, current PDF hashes, archive bytes against Git HEAD, active documentation links, and the rendered title page. Pages 2–10 are identical to prior accepted renders. TASK-026 is done. The main paper is `Reading_the_Corn_Belt.pdf`; the older PDF, TeX, and bibliography are versioned under `context/archive/`.
+
+### 2026-09-24 — TASK-026 paper reader follow-up
+
+Confirmed that the previous commit already connects the Paper action, embedded
+viewer, Open PDF, and Download PDF to `/papers/Reading_the_Corn_Belt.pdf`.
+Corrected the stale PDF path/title in README and synchronized PROJECT's accepted
+task status. No runtime or dependency changes were necessary.
+
+Verification: `npm run build -- --webpack` and all four DashboardShell tests
+passed. Codex browser interaction opened the current titled reader and confirmed
+its three destinations. The local production PDF endpoint returned HTTP 200,
+Content-Type `application/pdf`, and the exact 299,271-byte, 10-page manuscript
+(SHA-256 `5662b09a424608f29421fb529d3e81e74374a4fc2f1ca293a5f0bf7b51de94f1`).
+The obsolete public PDF endpoint returned 404. The in-app browser did not render
+PDF page content, so document identity was verified directly from the HTTP bytes.
+
+AI tools: Codex, browser control, shell verification. No push or deployment.

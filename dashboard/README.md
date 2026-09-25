@@ -13,8 +13,8 @@ research tasks across the U.S. Corn Belt.
   state-grain flood/drought anomaly maps. Task 1 and Task 4 remain chart-led.
 - **Evidence:** visible source paths, artifact dates, denominators, uncertainty,
   method caveats, limitations, and named missing-data states.
-- **Paper:** a neutral `GeoCrop research paper` drawer with embedded reading,
-  open, and download actions.
+- **Paper:** the `Reading the Corn Belt` drawer shows the current 10-page
+  manuscript, with embedded reading, open, and download actions.
 - **Compatibility:** old `view=story` / `view=explore` parameters are ignored
   and removed on the next state update while valid task/filter context remains;
   retired map layers show a warning and use measured regular-rotation share.
@@ -55,6 +55,11 @@ Latest QA on 2026-08-19 after `TASK-024`:
   summary rail balance at wide width; all five Extremes crop buttons remain
   intact at 320 px with 44 px minimum targets and no document overflow.
 
+Paper-reader recheck on 2026-09-24 after `TASK-026`: the production build and
+all four shell tests passed. Browser interaction confirmed the current reader
+title and PDF targets. The PDF endpoint returned HTTP 200 with bytes identical
+to the canonical 10-page manuscript; the old public filename returned 404.
+
 ## Tech Stack
 
 - Next.js 16.3.1, React 19, TypeScript 5.9, Tailwind CSS v4.
@@ -68,7 +73,10 @@ Latest QA on 2026-08-19 after `TASK-024`:
 
 - Parent `../artifacts/tables/` CSV/JSON files are the result authority.
 - The paper PDF is served from
-  `public/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf`.
+  `public/papers/Reading_the_Corn_Belt.pdf`. The embedded viewer, Open PDF,
+  and Download PDF all use `/papers/Reading_the_Corn_Belt.pdf`.
+  Keep this file synchronized with `../Reading_the_Corn_Belt.pdf` when
+  regenerating the manuscript. The earlier paper is in `../context/archive/`.
 - Large Parquet and GeoTIFF artifacts are not shipped to the browser.
 - The target host is Vercel; project settings are not configured in this repo.
 

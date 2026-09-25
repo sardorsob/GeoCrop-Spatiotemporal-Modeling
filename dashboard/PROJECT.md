@@ -47,7 +47,7 @@ branch remains intentionally unmerged while the reviewer performs the final chec
 | Explore-only shell | done | `TASK-023` removes Story runtime/mode state, preserves legacy task/filter URLs, and changes the product identity to GeoCrop / U.S. Corn Belt |
 | Evidence density polish | done | `TASK-024` balances Rotation composition and replaces the Extremes crop dropdown with five direct buttons |
 | Revised paper asset | done | `TASK-025` serves the reviewed 10-page revision at the existing reader URL; original PDF archived |
-| Paper title and filename | in-review | `TASK-026` names the reader Reading the Corn Belt and serves the verified final PDF at `/papers/Reading_the_Corn_Belt.pdf` |
+| Paper title and filename | done | `TASK-026` names the reader Reading the Corn Belt and serves the verified final PDF at `/papers/Reading_the_Corn_Belt.pdf` |
 | Task 1 HSGP comparator | done | Explore aligns corn, soybean, and winter wheat with nested posterior intervals, empirical spatial IQR, paper growth stages, direct peaks, an explicit focused NDVI scale, and one shared compact season window |
 | Act II rotation memory | done | Schematic decade strips lead into a dated 100-cell composition, measured within-grain geography ranking/map slot, and discrete source-only threshold sensitivity |
 | Act III paired extremes | done | Matched 2019 flood and 2022 drought state maps share crop and mean-z scale; one state pin exposes event-specific NIG posterior context, denominator, source, and no-data honestly |
@@ -88,8 +88,8 @@ branch remains intentionally unmerged while the reviewer performs the final chec
 ## Last Session
 
 - **Date:** 2026-09-24
-- **What was done:** Handed off `TASK-026`: updated the reader title, labels, PDF path, tests, and current source/archive references; verified the final public PDF matches the canonical manuscript and removed the obsolete filename.
-- **What's next:** Independent QA of `TASK-026`. Prior dashboard review/merge decisions are unchanged.
+- **What was done:** Accepted `TASK-026` and rechecked the production app: clicking Paper opens Reading the Corn Belt, all reader actions target the current PDF, and the HTTP response matches the canonical 10-page manuscript. Corrected the remaining stale README path.
+- **What's next:** Final user review. Prior dashboard review/merge decisions are unchanged.
 - **Blockers:** None. No push, merge, or deployment was performed.
 
 ## Environment
