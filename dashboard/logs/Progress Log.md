@@ -4,6 +4,52 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-09-24 — TASK-026 Reading the Corn Belt identity
+
+**Work performed:**
+
+- Updated the existing paper reader to `Reading the Corn Belt`, with the subtitle
+  `Crop History, Vegetation Timing, and Soil Moisture`. The iframe, open action,
+  and download action now target `/papers/Reading_the_Corn_Belt.pdf`.
+- Updated current project and memory references to
+  `artifacts/reports/Reading_the_Corn_Belt.tex` and the original PDF/TeX in
+  `context/archive/NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.{pdf,tex}`.
+  These paths supersede the earlier naming and archive locations recorded below.
+- Kept the existing reader implementation and added no dependency or redirect.
+- Copied the accepted canonical PDF to the new public filename and removed the
+  obsolete public filename. The canonical and served files share SHA-256
+  `5662b09a424608f29421fb529d3e81e74374a4fc2f1ca293a5f0bf7b51de94f1`.
+
+**Verification:**
+
+- The updated reader test failed on the previous accessible title before the
+  implementation changed, then all four shell tests passed. The full suite also
+  passes: 15 files, 67 tests.
+- TypeScript, ESLint, task-status validation, and required-artifact validation pass.
+- Final asset checks pass: 10 pages, 299,271 bytes, strict parsing, correct title
+  and metadata, and the correct repository hyperlink. Only GoTo/URI links and a
+  benign page-fit opening destination are present; no executable or embedded
+  content was found.
+- Original archive PDF SHA-256 remains
+  `30243856db0c0d0dda4fa5a42cd5597521de3e04c2f67df7d3e55eaf62b9db33`.
+  The archived TeX exists with SHA-256
+  `709b19932800203d6b0c9fff4074bb454c9e6d72de017973f8acbb9e9e286582`.
+- TASK-026 is in-review. The manuscript owner accepted the canonical rendering;
+  no app code changed after the green frontend checks.
+
+**Blockers / cuts:**
+
+- No blocker remains. The public rename followed canonical confirmation, and
+  Builder made no commit.
+- No new UI behavior or dependency was needed.
+
+**AI tools used:**
+
+- Codex Builder, Ponytail minimal implementation, Superpowers TDD, and local
+  verification commands.
+
+---
+
 ## 2026-09-24 — TASK-025 revised paper PDF handoff
 
 **User follow-up:** Added a clickable repository URL beneath the abstract, rebuilt the ten-page paper, and synchronized the current PDF copies (SHA-256 `a11541d1cd17c85d750352fe8d6f4a63b57da107d35eb60ead6fe863114090b1`). Link placement, PDF bounds, unchanged original archive, and scoped diff checked; no application code changed.
@@ -1089,3 +1135,8 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 **AI tools used:**
 
 - Codex
+
+
+### TASK-026 root QA acceptance
+
+Accepted the title/path/test diff, current PDF hashes, archive bytes against Git HEAD, active documentation links, and the rendered title page. Pages 2–10 are identical to prior accepted renders. TASK-026 is done. The main paper is `Reading_the_Corn_Belt.pdf`; the older PDF, TeX, and bibliography are versioned under `context/archive/`.

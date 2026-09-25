@@ -9,7 +9,7 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 26 | 26 | 0 | 0 | 0 | 0 | 0 |
+| 27 | 27 | 0 | 0 | 0 | 0 | 0 |
 
 `TASK-015` through `TASK-022` are the completed Narrative Atlas v2 graph.
 `TASK-023` and `TASK-024` are the approved post-review simplification and
@@ -17,6 +17,7 @@ density-polish tasks. They were executed sequentially with one verified task com
 at a time.
 
 `TASK-025` is the authorized PDF-only handoff from the revised research manuscript.
+`TASK-026` applies the approved paper title and filename and records its relocated archive.
 
 ---
 
@@ -1694,4 +1695,65 @@ at a time.
   - 2026-09-24: Added the authorized asset-only handoff after reading the dashboard contracts; dependencies TASK-013 and TASK-024 are done.
   - 2026-09-24: Started Builder verification; replacement is deferred until final manuscript confirmation.
   - 2026-09-24: Received final canonical path/hash, verified the archive and PDF structure, replaced the served file, and handed off for QA.
+- Status: done
+
+---
+
+## TASK-026
+
+- Feature group: Research Paper Identity
+- Title: Name the current paper Reading the Corn Belt
+- Depends on: TASK-025
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-026
+  - Integration status: done
+- Design source:
+  - User request to meaningfully rename the current paper and archive the older PDF and TeX under `context/archive/`.
+- User value: The paper reader identifies the current manuscript and downloads it under a meaningful filename.
+- User flow:
+  - User opens Reading the Corn Belt and reads, opens, or downloads `Reading_the_Corn_Belt.pdf`.
+- Functional notes:
+  - Update the existing title, accessible reader labels, subtitle, and all PDF references.
+  - Use `/papers/Reading_the_Corn_Belt.pdf`; replace the old public filename only after the manuscript owner confirms final bytes.
+  - Link current documentation to `../artifacts/reports/Reading_the_Corn_Belt.tex` and the original PDF/TeX in `../context/archive/`.
+  - No redirects, dependencies, or new UI features.
+- Edge cases:
+  - Do not publish unconfirmed PDF bytes or retain the older public filename after the approved rename.
+  - Preserve the original archive unchanged and retain only standard non-executable PDF links/opening view.
+- Test cases:
+  1. The existing reader test opens the named dialog and verifies iframe, open, and download targets.
+  2. Typecheck and lint pass after the label/path changes.
+  3. The new public PDF hash matches the final canonical PDF; the original PDF and TeX archives exist.
+  4. Workflow statuses and required artifacts remain valid.
+- Files to create/modify:
+  - `src/components/layout/DashboardShell.tsx`
+  - `src/components/layout/DashboardShell.test.tsx`
+  - `public/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf` (rename)
+  - `public/papers/Reading_the_Corn_Belt.pdf`
+  - `PROJECT.md`
+  - `TASKS.md`
+  - `memory/patterns.md`
+  - `memory/decisions.md`
+  - `logs/Progress Log.md`
+- Acceptance criteria:
+  - [x] Reader labels and PDF URLs use the approved title and basename.
+  - [x] Current-source and historical-archive paths are documented accurately.
+  - [x] New public PDF matches the final canonical hash and the old public filename is absent.
+  - [x] PDF structure, repository link, and original archive checks pass.
+  - [x] Reader tests, typecheck, lint, and workflow checks pass.
+  - [x] No dependencies, redirects, or UI features were added.
+- QA notes:
+  - Reader red/green 2026-09-24: The existing test failed on the old accessible title, then passed after the approved title/path update. All four shell tests and the full suite (15 files, 67 tests), TypeScript, ESLint, workflow checks, and diff hygiene pass.
+  - Builder handoff 2026-09-24: Copied the final named manuscript to `public/papers/Reading_the_Corn_Belt.pdf` and removed the obsolete public filename as the authorized rename. Canonical and served SHA-256 match: `5662b09a424608f29421fb529d3e81e74374a4fc2f1ca293a5f0bf7b51de94f1`; 299,271 bytes and 10 pages.
+  - Strict parsing confirms the title/metadata and repository hyperlink. PDF inspection found only internal GoTo and URI actions, plus a benign page-fit opening destination; no executable or embedded content. The original archive PDF hash remains `30243856db0c0d0dda4fa5a42cd5597521de3e04c2f67df7d3e55eaf62b9db33`; archived TeX exists with SHA-256 `709b19932800203d6b0c9fff4074bb454c9e6d72de017973f8acbb9e9e286582`.
+  - Source/archive paths exist. The manuscript owner accepted the final rendering before this byte-identical copy. No code changed after green frontend checks. Ready for independent QA; Builder made no commit and has not marked the task done.
+  - Root QA: inspected the reader/test diff, independently verified all three current PDF hashes and all archived files against Git HEAD, checked active documentation links and page bounds, and accepted the rendered title page. Pages 2–10 are identical to the prior accepted renders; task approved.
+- Attempts: 1
+- Max attempts: 3
+- Attempt log:
+  - 2026-09-24: Added the authorized naming follow-up; TASK-025 is done.
+  - 2026-09-24: Started by updating the existing reader test before implementation; asset replacement waits for final PDF confirmation.
+  - 2026-09-24: Received final PDF/hash, completed the public rename, verified the PDF and archive, and handed off for QA.
 - Status: done

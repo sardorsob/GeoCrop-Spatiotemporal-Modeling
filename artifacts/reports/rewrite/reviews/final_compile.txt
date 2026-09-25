@@ -1,5 +1,5 @@
- because "geocrop_revised.aux" changed ...
-(geocrop_revised.tex
+ because "Reading_the_Corn_Belt.aux" changed ...
+(Reading_the_Corn_Belt.tex
 LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2022-02-24> (article.cls
 Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
@@ -16,18 +16,18 @@ For additional information on amsmath, use the `?' option.
 (pd1enc.def) (intcalc.sty) (etexcmds.sty) (puenc.def) (url.sty) (bitset.sty
 (bigintcalc.sty)) (atbegshi-ltx.sty)) (hxetex.def (stringenc.sty)
 (rerunfilecheck.sty (atveryend-ltx.sty) (uniquecounter.sty)))
-(l3backend-xetex.def) (geocrop_revised.aux) (ts1cmr.fd)
+(l3backend-xetex.def) (Reading_the_Corn_Belt.aux) (ts1cmr.fd)
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
 (mt-cmr.cfg) (nameref.sty (refcount.sty) (gettitlestring.sty))
-(geocrop_revised.out) (geocrop_revised.out) (ot1lmr.fd) (omllmm.fd) (omslmsy.fd
-) (omxlmex.fd) (umsa.fd) (mt-msa.cfg) (umsb.fd) (mt-msb.cfg) (t1lmtt.fd)
-[1] (rewrite/sections/phenology_rotation [2] [3]) (rewrite/sections/moisture
-[4] [5]) (rewrite/sections/classification [6] [7]) [8] [9] (geocrop_revised.bbl
-) [10] (geocrop_revised.aux) )
-Output written on geocrop_revised.xdv (10 pages, 51696 bytes).
-Transcript written on geocrop_revised.log.
+(Reading_the_Corn_Belt.out) (Reading_the_Corn_Belt.out) (ot1lmr.fd) (omllmm.fd)
+(omslmsy.fd) (omxlmex.fd) (umsa.fd) (mt-msa.cfg) (umsb.fd) (mt-msb.cfg)
+(t1lmtt.fd) [1] (rewrite/sections/phenology_rotation [2] [3])
+(rewrite/sections/moisture [4] [5]) (rewrite/sections/classification [6]
+[7]) [8] [9] (Reading_the_Corn_Belt.bbl) [10] (Reading_the_Corn_Belt.aux) )
+Output written on Reading_the_Corn_Belt.xdv (10 pages, 51672 bytes).
+Transcript written on Reading_the_Corn_Belt.log.
 note: Running xdvipdfmx ...
-[1][2][3][4][5][6][7][8][9][10]299469 bytes written
-note: Writing `/Users/sobirov/Workspace/Projects/GeoCrop-Spatiotemporal-Modeling/artifacts/reports/build/geocrop_revised.pdf` (292.4501953125 KiB)
+[1][2][3][4][5][6][7][8][9][10]299271 bytes written
+note: Writing `/Users/sobirov/Workspace/Projects/GeoCrop-Spatiotemporal-Modeling/artifacts/reports/build/Reading_the_Corn_Belt.pdf` (292.2568359375 KiB)
 note: Skipped writing 3 intermediate files (use --keep-intermediates to keep them)

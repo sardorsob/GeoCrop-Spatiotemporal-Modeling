@@ -1,5 +1,5 @@
-Crop history, vegetation timing, and soil moisture
-across the U.S. Corn Belt
+Reading the Corn Belt
+Crop History, Vegetation Timing, and Soil Moisture
 Diego Osborn Sardor Sobirov Ivan Xie Kyle Choi
 Halıcıoğlu Data Science Institute, UC San Diego
 Abstract

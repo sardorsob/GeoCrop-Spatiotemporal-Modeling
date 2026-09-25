@@ -58,9 +58,9 @@ const TAB_META: Record<
 };
 
 const PAPER_REFERENCE = {
-  title: "GeoCrop research paper",
-  fileName: "NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf",
-  href: "/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf"
+  title: "Reading the Corn Belt",
+  fileName: "Reading_the_Corn_Belt.pdf",
+  href: "/papers/Reading_the_Corn_Belt.pdf"
 } as const;
 
 export function DashboardShell({ data }: DashboardShellProps) {
@@ -288,7 +288,7 @@ function PaperReferenceAction() {
     <Sheet>
       <SheetTrigger asChild>
         <Button
-          aria-label="Open GeoCrop research paper"
+          aria-label={`Open ${PAPER_REFERENCE.title}`}
           className="min-h-11 min-w-11 shrink-0"
           size="sm"
           type="button"
@@ -305,8 +305,8 @@ function PaperReferenceAction() {
         <SheetHeader>
           <SheetTitle>{PAPER_REFERENCE.title}</SheetTitle>
           <SheetDescription>
-            Predictive Modeling for Agricultural Resilience. Open the PDF in a new
-            tab, download it, or read it directly in the embedded viewer.
+            Crop History, Vegetation Timing, and Soil Moisture. Open the PDF in a
+            new tab, download it, or read it directly in the embedded viewer.
           </SheetDescription>
         </SheetHeader>
         <div className="flex flex-wrap gap-2 border-b border-rule px-6 py-3">

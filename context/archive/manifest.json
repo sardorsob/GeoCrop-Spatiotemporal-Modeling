@@ -1,0 +1,14 @@
+{
+  "NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.pdf": {
+    "sha256": "30243856db0c0d0dda4fa5a42cd5597521de3e04c2f67df7d3e55eaf62b9db33",
+    "previous_path": "artifacts/reports/archive/NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.pdf"
+  },
+  "NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.tex": {
+    "sha256": "709b19932800203d6b0c9fff4074bb454c9e6d72de017973f8acbb9e9e286582",
+    "previous_path": "artifacts/reports/neurips_2024.tex"
+  },
+  "references.bib": {
+    "sha256": "2dde7f2a314920ab62681796c9232eabb52dcc4218981749f136345ddbfdc57b",
+    "previous_path": "artifacts/reports/references.bib"
+  }
+}

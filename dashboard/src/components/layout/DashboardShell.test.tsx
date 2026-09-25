@@ -429,11 +429,11 @@ describe("DashboardShell", () => {
       .toHaveTextContent("Measured share of valid classified cropland pixels");
   });
 
-  it("opens the paper drawer with neutral verified copy", () => {
+  it("opens Reading the Corn Belt with matching PDF actions", () => {
     render(<DashboardShell data={dashboardData} />);
 
     const paperButton = screen.getByRole("button", {
-      name: "Open GeoCrop research paper"
+      name: "Open Reading the Corn Belt"
     });
     expect(screen.queryByText(/winning paper/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/first-place/i)).not.toBeInTheDocument();
@@ -441,16 +441,18 @@ describe("DashboardShell", () => {
     fireEvent.click(paperButton);
 
     const dialog = screen.getByRole("dialog", {
-      name: "GeoCrop research paper"
+      name: "Reading the Corn Belt"
     });
-    const paperPath = "/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf";
+    const paperPath = "/papers/Reading_the_Corn_Belt.pdf";
 
     expect(
-      within(dialog).getByTitle("GeoCrop research paper PDF")
+      within(dialog).getByTitle("Reading the Corn Belt PDF")
     ).toHaveAttribute("src", paperPath);
     expect(within(dialog).getByRole("link", { name: "Open PDF" }))
       .toHaveAttribute("href", paperPath);
     expect(within(dialog).getByRole("link", { name: "Download PDF" }))
-      .toHaveAttribute("download", "NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf");
+      .toHaveAttribute("href", paperPath);
+    expect(within(dialog).getByRole("link", { name: "Download PDF" }))
+      .toHaveAttribute("download", "Reading_the_Corn_Belt.pdf");
   });
 });

@@ -333,7 +333,7 @@ numeric domain and units, and uses paper gray only for `undefined` no-data.
 **Example:**
 
 ```text
-`DashboardShell.PaperReferenceCard` opens a Sheet with `<iframe src="/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf">`, plus Open PDF and Download PDF anchor actions.
+`DashboardShell.PaperReferenceAction` opens a Sheet with `<iframe src="/papers/Reading_the_Corn_Belt.pdf">`, plus Open PDF and Download PDF anchor actions. The canonical source is `artifacts/reports/Reading_the_Corn_Belt.tex`; the original PDF and TeX are retained in `context/archive/` as `NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.{pdf,tex}`.
 ```
 
 ---

@@ -1,16 +1,16 @@
 {
   "pages": 10,
   "original_pages": 23,
-  "extracted_words": 4247,
+  "extracted_words": 4246,
   "original_extracted_words": 9167,
-  "sha256": "a11541d1cd17c85d750352fe8d6f4a63b57da107d35eb60ead6fe863114090b1",
+  "sha256": "5662b09a424608f29421fb529d3e81e74374a4fc2f1ca293a5f0bf7b51de94f1",
   "original_sha256": "30243856db0c0d0dda4fa5a42cd5597521de3e04c2f67df7d3e55eaf62b9db33",
   "figure_source_hashes_checked": 7,
   "correct_repository_link": true,
   "unresolved_text_markers": false,
   "annotation_bounds_valid": true,
-  "canonical_path": "artifacts/reports/geocrop_revised.pdf",
-  "archive_path": "artifacts/reports/archive/NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.pdf",
+  "canonical_path": "Reading_the_Corn_Belt.pdf",
+  "archive_path": "context/archive/NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.pdf",
   "compiler": "Tectonic 0.17.0",
   "compiler_exit_code": 0,
   "final_pass_warnings": 0,
@@ -30,8 +30,11 @@
   "dashboard_reader_checks": {
     "typecheck": "passed (Builder)",
     "lint": "passed (Builder)",
-    "reader_tests": 4
+    "reader_tests": 4,
+    "full_tests": 67
   },
   "repository_link_below_abstract": true,
-  "followup_render_check": "Pages1and10 visually inspected; pages2\u20139 identical to previously inspected renders"
+  "followup_render_check": "Retitled first page visually inspected; pages 2\u201310 identical to the previously inspected renders",
+  "source_path": "artifacts/reports/Reading_the_Corn_Belt.tex",
+  "paper_title": "Reading the Corn Belt: Crop History, Vegetation Timing, and Soil Moisture"
 }

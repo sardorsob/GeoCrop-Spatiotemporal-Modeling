@@ -241,3 +241,13 @@ state, map behavior, dependencies, or data claims.
 **Reason:** Existing iframe/open/download links continue to work while the historical paper remains recoverable.
 
 **Impact:** TASK-025 changes the PDF and workflow records only. Frontend code, dependencies, and analysis outputs remain unchanged.
+
+## 2026-09-24 — Give the current manuscript a meaningful title and filename
+
+**Context:** The user requested a named current paper and a clear archive for the earlier PDF and TeX.
+
+**Decision:** TASK-026 supersedes the prior filename-preservation choice. The reader title is `Reading the Corn Belt`, with subtitle `Crop History, Vegetation Timing, and Soil Moisture`, and the public asset is `/papers/Reading_the_Corn_Belt.pdf`. The canonical source is `artifacts/reports/Reading_the_Corn_Belt.tex`. The original PDF and TeX are retained in `context/archive/` as `NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.{pdf,tex}`.
+
+**Reason:** The current manuscript has a recognizable identity while the older source and rendered paper remain recoverable together.
+
+**Impact:** Update only reader copy, asset references, the existing test, and workflow records. No redirect, dependency, or new reader behavior is introduced. Builder has prepared this record for independent QA.

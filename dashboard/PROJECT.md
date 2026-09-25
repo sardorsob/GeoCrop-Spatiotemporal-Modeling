@@ -21,8 +21,9 @@ branch remains intentionally unmerged while the reviewer performs the final chec
 
 - `docs/intake.md` - source input for dashboard scope
 - `../README.md` - GeoCrop project overview and artifact inventory
-- `../artifacts/reports/geocrop_revised.tex` - current paper source
-- `../artifacts/reports/neurips_2024.tex` - historical paper source
+- `../artifacts/reports/Reading_the_Corn_Belt.tex` - current paper source
+- `../context/archive/NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.tex` - historical paper source
+- `../context/archive/NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.pdf` - historical paper PDF
 - `../artifacts/tables/` - source result tables
 - `../artifacts/figures/` - figure and map assets
 - `SCOPE.md` - canonical scope after intake
@@ -46,6 +47,7 @@ branch remains intentionally unmerged while the reviewer performs the final chec
 | Explore-only shell | done | `TASK-023` removes Story runtime/mode state, preserves legacy task/filter URLs, and changes the product identity to GeoCrop / U.S. Corn Belt |
 | Evidence density polish | done | `TASK-024` balances Rotation composition and replaces the Extremes crop dropdown with five direct buttons |
 | Revised paper asset | done | `TASK-025` serves the reviewed 10-page revision at the existing reader URL; original PDF archived |
+| Paper title and filename | in-review | `TASK-026` names the reader Reading the Corn Belt and serves the verified final PDF at `/papers/Reading_the_Corn_Belt.pdf` |
 | Task 1 HSGP comparator | done | Explore aligns corn, soybean, and winter wheat with nested posterior intervals, empirical spatial IQR, paper growth stages, direct peaks, an explicit focused NDVI scale, and one shared compact season window |
 | Act II rotation memory | done | Schematic decade strips lead into a dated 100-cell composition, measured within-grain geography ranking/map slot, and discrete source-only threshold sensitivity |
 | Act III paired extremes | done | Matched 2019 flood and 2022 drought state maps share crop and mean-z scale; one state pin exposes event-specific NIG posterior context, denominator, source, and no-data honestly |
@@ -81,13 +83,14 @@ branch remains intentionally unmerged while the reviewer performs the final chec
 - 2026-08-19: Accept npm's lockfile-only, manifest-range-preserving security remediation so the final audit resolves to Next.js 16.3.1 and zero reported vulnerabilities without adding a feature dependency.
 - 2026-08-19: After live review, retire Story rather than maintain a rejected second surface. Explore becomes the empty-URL product, and the header identity becomes GeoCrop with Corn Belt context.
 - 2026-08-19: Use existing Rotation and Extremes data more compactly: wide Rotation composition becomes field plus stacked summaries, and Extremes uses five direct crop buttons. Do not add the withdrawn auto-scroll or an unsupported year selector.
+- 2026-09-24: Name the current paper Reading the Corn Belt: Crop History, Vegetation Timing, and Soil Moisture. Use `Reading_the_Corn_Belt` for the current PDF/TeX basename and archive the older PDF/TeX under `context/archive/`. TASK-026 supersedes the prior public filename without a redirect.
 
 ## Last Session
 
 - **Date:** 2026-09-24
-- **What was done:** Completed `TASK-025`: synchronized the reviewed 10-page manuscript, preserved the original archive, and verified the existing paper-reader contract. No app code changed.
-- **What's next:** Author reading of the revised paper. Prior dashboard review/merge decisions are unchanged.
-- **Blockers:** No paper-delivery blocker. No push, merge, or deployment was performed.
+- **What was done:** Handed off `TASK-026`: updated the reader title, labels, PDF path, tests, and current source/archive references; verified the final public PDF matches the canonical manuscript and removed the obsolete filename.
+- **What's next:** Independent QA of `TASK-026`. Prior dashboard review/merge decisions are unchanged.
+- **Blockers:** None. No push, merge, or deployment was performed.
 
 ## Environment
 
