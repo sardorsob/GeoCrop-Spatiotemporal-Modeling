@@ -16,9 +16,11 @@ The curated bibliography contains 11 unique keys, all cited. Corrected the HSGP 
 
 - Tectonic 0.17.0 completed with exit 0. The final pass had no warnings, undefined citations/references, or overfull/underfull boxes; its excerpt is `reviews/final_compile.txt`.
 - Inspected every rendered page. Final pages 1–3 were byte-identical to already inspected renderings; pages 4–10 were reinspected after final pagination. No clipping, unreadable legend, stray empty page, or orphan reference remained.
-- PDF: 10 pages; 4,245 extracted words versus the original 23 pages and 9,167 words. Five figures and two tables retain all four analyses.
+- PDF: 10 pages; 4,247 extracted words versus the original 23 pages and 9,167 words. Five figures and two tables retain all four analyses.
 - Verified all seven figure-source SHA-256 entries, the correct repository hyperlink, link rectangles within page boundaries, and no unresolved draft markers.
 - Original PDF archive preserves its prior hash. Canonical, root, and dashboard current PDF copies match. No models or analysis artifacts were changed.
 - Dashboard Builder reported passing typecheck, lint, four existing reader tests, and workflow checks. Root independently checked the byte-identical PDF handoff and scoped diff; asset-only acceptance introduces no application changes.
 
 Known scientific limits are explicit in the paper and HANDOVER. They are not unresolved editing defects and were not silently repaired by rewriting.
+
+User follow-up: added the clickable full GitHub URL directly beneath the abstract, tightened unused title spacing to retain ten pages, rebuilt with no final-pass warnings, checked page-one link placement and page ten, and confirmed pages 2–9 match the previously inspected renders. Current root/dashboard copies and text extraction are synchronized; verification.json contains the new hash.

@@ -6,6 +6,8 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ## 2026-09-24 — TASK-025 revised paper PDF handoff
 
+**User follow-up:** Added a clickable repository URL beneath the abstract, rebuilt the ten-page paper, and synchronized the current PDF copies (SHA-256 `a11541d1cd17c85d750352fe8d6f4a63b57da107d35eb60ead6fe863114090b1`). Link placement, PDF bounds, unchanged original archive, and scoped diff checked; no application code changed.
+
 **Work performed:**
 
 - Read the dashboard workflow, scope, task, and memory contracts and added the

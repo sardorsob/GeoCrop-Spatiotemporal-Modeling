@@ -4,7 +4,7 @@ The rewrite is ready for the author's final reading. The current PDF is `artifac
 
 ## Delivered
 
-- 10 pages including references, down from 23; 4,245 extracted words, down from 9,167 (53.7% reduction using the same PDF extractor).
+- 10 pages including references, down from 23; 4,247 extracted words, down from 9,167 (53.7% reduction using the same PDF extractor).
 - Purpose-led sections pairing each method with its result and interpretation; repeated background, derivations, state tables, and peripheral diagnostics removed from the main narrative.
 - Five figures regenerated from saved artifacts; two tables; 11 unique, cited bibliography entries.
 - Original PDF archived unchanged; original LaTeX and bibliography retained. Current root and dashboard filenames preserved.

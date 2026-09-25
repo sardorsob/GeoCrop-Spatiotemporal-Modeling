@@ -1,9 +1,9 @@
 {
   "pages": 10,
   "original_pages": 23,
-  "extracted_words": 4245,
+  "extracted_words": 4247,
   "original_extracted_words": 9167,
-  "sha256": "96b2e7bd1473bdbeb59e32d1e737bb6fa8a7cb0468f583c69be689fe27f694d6",
+  "sha256": "a11541d1cd17c85d750352fe8d6f4a63b57da107d35eb60ead6fe863114090b1",
   "original_sha256": "30243856db0c0d0dda4fa5a42cd5597521de3e04c2f67df7d3e55eaf62b9db33",
   "figure_source_hashes_checked": 7,
   "correct_repository_link": true,
@@ -31,5 +31,7 @@
     "typecheck": "passed (Builder)",
     "lint": "passed (Builder)",
     "reader_tests": 4
-  }
+  },
+  "repository_link_below_abstract": true,
+  "followup_render_check": "Pages1and10 visually inspected; pages2\u20139 identical to previously inspected renders"
 }

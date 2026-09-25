@@ -16,6 +16,7 @@ NDVI improved accuracy over crop history by 1.74 percentage points, while SMAP a
 These results support seasonal vegetation as a useful complement to crop history. Their inter-
 pretation is bounded by regional aggregation, retrospective reference periods, and unresolved
 feature-construction diﬀerences between training and test data.
+GitHub: https://github.com/sardorsob/GeoCrop-Spatiotemporal-Modeling
 1 Introduction
 An annual crop map records what grew where. A vegetation time series adds when the canopy
 developed, and soil moisture describes part of the environment in which it grew. Reading these

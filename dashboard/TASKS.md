@@ -1687,6 +1687,7 @@ at a time.
   - Passed TypeScript, ESLint, all four DashboardShell tests, task-status validation, and required-artifact validation. No app code or dependencies changed. Canonical rendering was approved by the manuscript owner before this byte-identical copy; frontend checks did not need repeating after the asset replacement.
   - Ready for independent QA; Builder has not marked this task done or committed changes.
   - QA 2026-09-24: Root independently verified all three current PDF hashes, the unchanged original archive, the corrected link, page bounds, and scoped diff; all ten canonical pages were visually inspected. Accepted as an asset-only handoff. Frontend test evidence from Builder remains applicable because no app code changed.
+  - User follow-up QA: added the repository link beneath the abstract and regenerated the paper. Current canonical/served SHA-256 is `a11541d1cd17c85d750352fe8d6f4a63b57da107d35eb60ead6fe863114090b1`; 10 pages, 299,469 bytes. Link target and page bounds verified; existing reader URL and app code unchanged.
 - Attempts: 1
 - Max attempts: 3
 - Attempt log:

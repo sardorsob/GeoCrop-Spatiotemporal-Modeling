@@ -21,13 +21,13 @@ For additional information on amsmath, use the `?' option.
 *geometry* detected driver: xetex
 (mt-cmr.cfg) (nameref.sty (refcount.sty) (gettitlestring.sty))
 (geocrop_revised.out) (geocrop_revised.out) (ot1lmr.fd) (omllmm.fd) (omslmsy.fd
-) (omxlmex.fd) (umsa.fd) (mt-msa.cfg) (umsb.fd) (mt-msb.cfg) [1] (t1lmtt.fd)
-(rewrite/sections/phenology_rotation [2] [3]) (rewrite/sections/moisture
+) (omxlmex.fd) (umsa.fd) (mt-msa.cfg) (umsb.fd) (mt-msb.cfg) (t1lmtt.fd)
+[1] (rewrite/sections/phenology_rotation [2] [3]) (rewrite/sections/moisture
 [4] [5]) (rewrite/sections/classification [6] [7]) [8] [9] (geocrop_revised.bbl
 ) [10] (geocrop_revised.aux) )
-Output written on geocrop_revised.xdv (10 pages, 51412 bytes).
+Output written on geocrop_revised.xdv (10 pages, 51696 bytes).
 Transcript written on geocrop_revised.log.
 note: Running xdvipdfmx ...
-[1][2][3][4][5][6][7][8][9][10]299099 bytes written
-note: Writing `/Users/sobirov/Workspace/Projects/GeoCrop-Spatiotemporal-Modeling/artifacts/reports/build/geocrop_revised.pdf` (292.0888671875 KiB)
+[1][2][3][4][5][6][7][8][9][10]299469 bytes written
+note: Writing `/Users/sobirov/Workspace/Projects/GeoCrop-Spatiotemporal-Modeling/artifacts/reports/build/geocrop_revised.pdf` (292.4501953125 KiB)
 note: Skipped writing 3 intermediate files (use --keep-intermediates to keep them)
