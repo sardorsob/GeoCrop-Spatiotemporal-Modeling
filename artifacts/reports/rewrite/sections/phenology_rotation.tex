@@ -1,0 +1,29 @@
+\section{Seasonal crop signatures}
+\label{sec:phenology}
+
+We first compared seasonal NDVI curves to see which aspects of vegetation timing distinguish the crop classes. Corn and soybean can reach similar peak greenness, so their timing and seasonal shape may be more useful than peak magnitude alone. Winter wheat provides an earlier seasonal contrast.
+
+For each available year from 2008 to 2025, we joined weekly NDVI to that year's CDL labels and calculated the spatial mean for corn, soybean, and winter wheat (CDL codes 1, 5, and 24). We converted the weekly dates to day of year (DOY) and pooled the resulting observations by crop. Each model used 535 weekly spatial means. Annual CDL masks let a cell's crop group change from year to year.
+
+We fitted a separate Hilbert space Gaussian process (HSGP) to each crop to obtain a smooth seasonal curve. This approximation represents the Gaussian process with a finite set of basis functions \citep{riutort2023hsgp}. Our implementation used 25 basis functions, a squared-exponential covariance, and normally distributed residuals. Variational inference estimated an approximate posterior distribution. The model pools years without estimating a separate seasonal curve for each year, so its main use here is to describe the average seasonal pattern. Predictive bands include the model's residual variation among weekly regional means.
+
+The fitted corn curve peaks at DOY~204 with NDVI~0.930, while soybean peaks at DOY~226 with NDVI~0.938 (Figure~\ref{fig:phenology}). Their peak magnitudes are close, but soybean's modeled peak occurs 22 days later. Winter wheat peaks earlier, at DOY~147 and NDVI~0.804. These contrasts indicate why a sequence of seasonal observations can contain information that a single peak value misses. They describe the observed spring-to-autumn window; the analysis does not cover winter wheat's preceding autumn establishment.
+
+In-sample root mean squared error was 0.0194 for corn, 0.0183 for soybean, and 0.0232 for winter wheat. The 90\% posterior predictive intervals contained 90.09--91.21\% of the weekly spatial means used for fitting. These checks describe fit to regional averages; they do not establish calibration on unseen years or precision about individual fields.
+
+\phenologyfigure
+
+\section{Crop-history patterns}
+\label{sec:rotation}
+
+We next examined how often annual crop labels follow a repeated corn--soybean sequence. Comparing multi-year CDL sequences is an established approach to describing rotation patterns \citep{sahajpal2014recruit}. Here we used a transparent rule to distinguish repeated alternation, persistent single-crop histories, and other sequences over 2015--2024. Cells entered the analysis if corn or soybean appeared in at least five of the ten years, leaving 2,084,112 eligible cells.
+
+The rule combines three views of the sequence. The alternation score is the fraction of adjacent-year pairs that switch between corn and soybean, counting only pairs in which both years have one of those labels. Pairs involving other labels are excluded from this denominator. Pattern distance counts mismatched years against the closer of two fixed templates: corn--soybean alternation starting with corn, or starting with soybean. Other crop labels count as mismatches. The longest run and the largest single-crop share identify persistent cropping.
+
+Classification applies the monoculture rule first: a cell receives that label if one crop appears for at least seven consecutive years or occupies at least eight of the ten years. Among the remaining cells, regular rotation requires an alternation score of at least 0.70, no more than three template mismatches, and at least seven corn-or-soybean years. All other eligible cells are labeled irregular. The five-year eligibility threshold therefore defines the population being described, while the seven-year requirement belongs to the stricter regular-rotation rule.
+
+We applied a $3\times3$ majority filter to the class map to reduce isolated labels while preserving the eligible footprint. In the saved smoothed map, regular rotation accounts for 27.36\% of eligible cells, monoculture for 3.90\%, and irregular histories for 68.74\% (Figure~\ref{fig:rotation}). These shares describe the classified analysis grid. Its recorded cell spacing is approximately 556.7~m, so the map and derived areas cannot be interpreted as a field inventory or as native-resolution CDL acreage estimates. Smoothing can also change a cell's label relative to its own sequence.
+
+Before spatial smoothing, the primary rule labels 28.15\% of cells as regular. Lowering the alternation threshold to 0.50 and allowing six template mismatches raises this share to 60.33\%, with eligibility, the seven-year corn-or-soybean requirement, and the monoculture rule unchanged. These are raw classifications of the same eligible cells. An irregular label can include a repeated multi-crop sequence, an interruption in corn--soybean alternation, or errors in annual labels; it does not establish poor management.
+
+\rotationfigure

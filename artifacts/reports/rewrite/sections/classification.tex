@@ -1,0 +1,103 @@
+\section{Crop classification from history and seasonal observations}
+\label{sec:classification}
+
+\subsection{What seasonal observations add}
+
+We tested whether current-season NDVI and soil moisture improve crop
+classification beyond the information in preceding crop labels.
+The target was the current year's CDL class: corn (code~1), soybean (5),
+winter wheat (24), or Other. Other combines the remaining selected CDL codes
+(0--61), including code~0. The experiment used concurrent observations
+through late season; forecasting before planting would require an earlier
+observation cutoff and a separate evaluation.
+
+The classification mask retained cells with selected CDL codes (0--61) in
+at least three years during 2013--2022, separately from the rotation
+analysis's corn--soybean eligibility rule. Each sample represented a grid
+cell in one year. The full model used 38
+features: 19 from CDL history, 15 from NDVI, and four from SMAP. CDL features
+summarized up to ten preceding years through five annual lags, corn--soybean
+transition counts, crop frequencies, time since each crop, sequence metrics,
+and $3\times3$ neighborhood summaries. NDVI features described the current
+season's level, amplitude, peak and green-up timing, rate of green-up, and
+early-, middle-, and late-season means. Four additional NDVI summaries
+described historical peak magnitude and timing. These features were calculated
+directly from the weekly observations. SMAP supplied spring and growing-season
+means plus fractions of weeks above an 80th-percentile or below a
+20th-percentile reference.
+
+We fitted a LightGBM classifier \citep{ke2017lightgbm} with a maximum of 500
+boosting rounds, learning rate 0.05, maximum tree depth seven, and 63 leaves.
+Training used 4.5 million samples from 2013--2021; the 2013--2014 rows retained
+missing SMAP inputs because that record begins in 2015. The 2022 validation set
+controlled early stopping after 50 rounds without improvement and supported
+the feature-group comparison. The full model was then evaluated on 2023.
+Sampling selected 125,000 observations from each class per year, giving
+500,000 observations in each held-out year. Accuracy therefore measures
+agreement with CDL on a balanced sample. Estimating regional map accuracy
+would require area-weighted evaluation. Macro F1 averages the four
+class-specific F1 scores with equal weight.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lrrr}
+\hline
+Features & Number & Accuracy (\%) & Macro F1 \\
+\hline
+CDL history & 19 & 80.59 & 0.8080 \\
+CDL + NDVI & 34 & \textbf{82.33} & \textbf{0.8245} \\
+CDL + SMAP & 23 & 80.66 & 0.8086 \\
+CDL + NDVI + SMAP & 38 & 82.26 & 0.8239 \\
+\hline
+\end{tabular}
+\caption{Feature-group comparison on the balanced 2022 validation sample
+($n=500{,}000$). All configurations used the same training and validation
+years. These are validation results, not comparisons on the 2023 test set.}
+\label{tab:ablation}
+\end{table}
+
+NDVI produced the largest improvement over crop history
+(Table~\ref{tab:ablation}): accuracy increased by 1.74 percentage points.
+Winter wheat showed the largest class-specific gain, with F1 rising from
+0.849 to 0.881. This is consistent with the earlier seasonal peak seen in
+the separate phenology analysis, although the comparison does not isolate
+which NDVI feature caused the gain. Adding SMAP to CDL alone increased
+accuracy by 0.07 percentage points. The full model scored slightly below
+CDL plus NDVI. These observed differences support NDVI's value in this
+validation year; they do not establish statistical significance or the same
+ordering in other years.
+
+\subsection{Test-year errors and crop-history patterns}
+
+The full model achieved 79.21\% accuracy and 0.7914 macro F1 in 2023
+(Figure~\ref{fig:prediction}). F1 was 0.893 for Other, 0.813 for
+winter wheat, 0.726 for corn, and 0.735 for soybean. The largest individual
+confusion was soybean classified as corn: 30,935 of the 125,000 soybean
+samples, compared with 9,894 corn samples classified as soybean. The model
+therefore retained substantial confusion between the two summer crops
+despite the additional seasonal observations.
+
+To examine performance across crop histories, the feature builder assigned
+regimes using each target year's preceding historical window. These are
+separate from the 2015--2024 rotation map. A regular history required an
+alternation score of at least 0.7 and a distance of at most three from a
+canonical corn--soybean sequence. Monoculture took precedence when the
+longest repeated-crop run reached seven years or the corn or soybean
+fraction reached 0.8; remaining histories were labeled irregular.
+
+Accuracy was 95.55\% for monoculture histories ($n=124{,}318$), 87.41\% for
+regular rotation ($n=65{,}574$), and 70.92\% for irregular histories
+($n=310{,}108$). Different class mixtures across these groups prevent a
+causal interpretation of the accuracy gaps. The regular group's high accuracy
+also masks uneven performance across classes: corn and soybean F1 scores were
+0.879 and 0.907, while four-class macro F1 was 0.559.
+
+\subsection{Interpreting the fitted model}
+
+To examine which inputs influenced the fitted model, we applied SHAP
+TreeExplainer \citep{lundberg2017shap} to a random sample of 1,000 test
+observations. Mean absolute attribution ranked the previous
+year's CDL code first, followed by mid-season NDVI, NDVI peak timing, and
+late- and early-season NDVI means. Growing-season mean soil moisture ranked
+eighth. These rankings describe the fitted model's use of its inputs.

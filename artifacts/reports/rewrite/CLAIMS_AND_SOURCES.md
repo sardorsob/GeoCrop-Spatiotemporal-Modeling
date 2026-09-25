@@ -16,5 +16,8 @@ Primary audit: ../paper_rewrite_assessment.md. Source links below are repository
 | SHAP ranks | artifacts/tables/task4/task4_shap_feature_importance.csv | descriptive attribution, not causal evidence |
 | Resilience/early warning/false-positive reduction | no direct evaluation in saved artifacts | remove as achieved results |
 | Perfectly leakage-free/deployable model | feature construction concerns in audit | remove; explain limitations |
+| 66,107 outside-state eligible cells (3.17%) | artifacts/tables/task4/task2__areal_stats_by_region__20260412.csv | explain whole-raster denominator |
+| Classifier eligibility: selected codes 0–61 in ≥3 of 2013–2022 | configs/task4_crop_mapping.yaml; src/preprocessing/task4_panel.py | distinguish from rotation population and retain code 0 scope |
+| SMAP inputs missing in 2013–2014 training rows | src/preprocessing/task4_panel.py, assemble_training_panel | state in classifier methods |
 
 External verification already completed: USDA CDL class table confirms 24/26 distinction; Nandan publisher record corrects DOI to 10.1016/j.jag.2026.105208 and authors Rohit Nandan, Varaprasad Bandaru; LightGBM is_unbalance is not a general multiclass weighting mechanism.

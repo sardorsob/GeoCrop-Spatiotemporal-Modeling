@@ -1,0 +1,129 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,array}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,citecolor=blue!45!black,urlcolor=blue!45!black,
+  pdftitle={Crop history, vegetation timing, and soil moisture across the U.S. Corn Belt},
+  pdfauthor={Diego Osborn, Sardor Sobirov, Ivan Xie, Kyle Choi}}
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.2em}
+\setlength{\emergencystretch}{1.5em}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.75}
+\setlength{\bibsep}{2pt}
+\renewcommand{\bibfont}{\small}
+\newcommand{\phenologyfigure}{%
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{rewrite/figures/phenology.pdf}
+\caption{Regional seasonal NDVI curves fitted to pooled crop--week spatial means. Lines show posterior mean curves; shading spans the 5th--95th predictive percentiles. The bands describe variation in regional means, not the spatial spread among fields. Peak labels refer to the fitted mean. The displayed window excludes winter wheat's preceding autumn growth.}
+\label{fig:phenology}
+\end{figure}}
+\newcommand{\rotationfigure}{%
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{rewrite/figures/rotation.pdf}
+\caption{Crop-history classes and their sensitivity to the rule. (a) The smoothed 2015--2024 map covers 2,084,112 eligible cells in the enclosing raster footprint, including cells outside the 13 state polygons. Spacing is 556.7\,m (NAD83 / Conus Albers, EPSG:5070); gray marks excluded cells. (b) The regular share before smoothing changes with the alternation and template-distance thresholds. The outlined cell marks the primary rule. Eligibility and monoculture settings remain fixed.}
+\label{fig:rotation}
+\end{figure}}
+\title{Crop history, vegetation timing, and soil moisture\\across the U.S. Corn Belt}
+\author{Diego Osborn \quad Sardor Sobirov \quad Ivan Xie \quad Kyle Choi\\[3pt]
+\small Hal{\i}c{\i}o{\u g}lu Data Science Institute, UC San Diego}
+\date{}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Annual crop maps, seasonal vegetation, and soil moisture describe different parts of an agricultural landscape. We examined their roles in a region covering 13 U.S. Corn Belt states through four complementary analyses. Smoothed regional NDVI curves separated winter wheat's early peak from the later peaks of corn and soybean. A rule-based analysis of ten-year crop histories labeled 27.36\% of 2.08 million eligible grid cells as regular corn--soybean rotation, with substantial sensitivity to the rule's thresholds. Weekly moisture percentiles described broadly wet conditions in the selected 2019 window and more geographically uneven dryness in 2022. Finally, a classifier combining crop history with concurrent seasonal observations achieved 79.21\% agreement with CDL labels on a balanced 2023 test sample. In the 2022 validation comparison, NDVI improved accuracy over crop history by 1.74 percentage points, while SMAP added little. These results support seasonal vegetation as a useful complement to crop history. Their interpretation is bounded by regional aggregation, retrospective reference periods, and unresolved feature-construction differences between training and test data.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+An annual crop map records what grew where. A vegetation time series adds when the canopy developed, and soil moisture describes part of the environment in which it grew. Reading these sources together can help distinguish persistent crop patterns from seasonal changes. The practical question is which information each source adds, and how much that addition improves crop mapping.
+
+Previous studies have used MODIS vegetation time series to distinguish crop types \citep{wardlow2007modis} and historical crop maps to predict subsequent planting \citep{zhang2019cropprediction}. Our project brings these two perspectives together with soil-moisture summaries. It examines four questions: how seasonal vegetation differs among crops, how often corn--soybean histories follow a repeated sequence, where surface moisture departs from its seasonal reference, and whether current-season observations improve classification beyond crop history.
+
+The first three analyses describe regional patterns; the fourth tests how seasonal observations add to classification based on crop history. Agricultural resilience motivates the work, but the study does not measure yield losses, recovery, or the effects of management decisions.
+
+\section{Data and study design}
+\label{sec:data}
+The study covers Illinois, Indiana, Iowa, Kansas, Kentucky, Michigan, Minnesota, Missouri, Nebraska, North Dakota, Ohio, South Dakota, and Wisconsin. We used three data streams: annual USDA Cropland Data Layer (CDL) labels, weekly MODIS normalized difference vegetation index (NDVI) composites, and weekly SMAP Level-4 surface soil moisture. CDL supplies the crop categories \citep{cdl_cropscape}; NDVI summarizes canopy greenness \citep{modis_vi_userguide}; and SMAP L4 combines observations with a land-surface model to estimate moisture \citep{reichle2017smap}. NDVI and SMAP composites were accessed through CropSmart.
+
+The analyses use different time windows (Table~\ref{tab:design}). For vegetation, the workflow retains approximately day of year 100--310, covering spring through autumn. Moisture references use matching ISO weeks for the selected event windows. Crop masks follow annual CDL labels, except where the classifier uses a fixed eligible footprint and balances the target classes during sampling.
+
+Raster downloads use a buffered rectangle enclosing the study states. Whole-raster summaries therefore include eligible cells outside their boundaries: the rotation output assigns 66,107 of its 2,084,112 cells (3.17\%) to \texttt{outside\_configured\_states}. We retain that footprint for the overall rotation shares and restrict named-state moisture summaries to their assigned state groups.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.20\linewidth}>{\raggedright\arraybackslash}p{0.31\linewidth}>{\raggedright\arraybackslash}p{0.40\linewidth}}
+\toprule
+Analysis & Time window & Unit and main output \\
+\midrule
+Seasonal signatures & 2008--2025, available weeks & Crop--week regional means; one pooled curve per crop \\
+Crop histories & 2015--2024 & Eligible grid cell; rule-based sequence class \\
+Moisture conditions & Reference: 2015--2021; events: Apr--Jul 2019 and Jun--Aug 2022 & Cell--week scores; state--crop summaries \\
+Crop classification & Train: 2013--2021; validation: 2022; test: 2023 & Balanced cell--year sample; current-year CDL class \\
+\bottomrule
+\end{tabular}
+\caption{Analysis windows and units. The classifier uses preceding crop history and current-season observations; the event analysis includes 2019 in its reference period.}
+\label{tab:design}
+\end{table}
+
+The processing workflow requests rasters in NAD83 / Conus Albers (EPSG:5070), stores them as indexed tables, and joins sources by grid coordinates. Source resolution and analysis spacing must be distinguished. Historical CDL is commonly described at 30\,m, the MODIS vegetation product at 250\,m, and SMAP L4 at 9\,km. The saved rotation raster records 556.7\,m spacing on a $4096\times2960$ grid. That spacing is verified for this output. Resampling cannot create finer independent moisture information. Missing metadata for some intermediate tables also leaves complete cross-product grid alignment unverified.
+
+Figure~\ref{fig:workflow} shows how the analyses relate. CDL labels define crop groups for the vegetation and moisture summaries as well as supplying crop histories. The classifier derives its features directly from annual labels and seasonal observations. It does not ingest the fitted Gaussian-process curves, Bayesian moisture scores, or the full-period rotation map.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{rewrite/figures/workflow.pdf}
+\caption{The three data streams support descriptive analyses and a separate classification experiment. Solid arrows mark each descriptive analysis's main input; CDL also supplies its crop groupings. Dashed paths show source-derived features entering the classifier. Fitted curves and moisture scores do not feed the classifier.}
+\label{fig:workflow}
+\end{figure}
+
+\input{rewrite/sections/phenology_rotation}
+\input{rewrite/sections/moisture}
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{rewrite/figures/moisture.pdf}
+\caption{Mean moisture percentile by state and crop during the two selected windows. Each point averages posterior predictive CDF scores over the group's cell--week rows. Lower values indicate drier conditions relative to the 2015--2021 weekly reference; higher values indicate wetter conditions. The dashed line marks the reference distribution's median percentile, not an event-detection threshold. These are summaries of the sampled crop-history footprint, not area-weighted estimates of fields affected.}
+\label{fig:moisture}
+\end{figure}
+
+\input{rewrite/sections/classification}
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{rewrite/figures/prediction.pdf}
+\caption{Full-model results for the balanced 2023 test sample. (a) Confusion-matrix entries are row percentages; each CDL reference class contains 125,000 samples. Wheat denotes winter wheat (code~24); Other combines the remaining selected CDL labels. (b) Accuracy differs across regimes assigned from preceding crop history. The groups have different class mixtures, so their accuracy gaps do not isolate the effect of rotation complexity.}
+\label{fig:prediction}
+\end{figure}
+
+\section{What the combined results support}
+\label{sec:discussion}
+Seasonal NDVI has the clearest measured value for crop classification in this study. Its improvement over crop history agrees with the distinct timing seen in the regional curves, although the experiment does not identify which timing feature accounts for the gain. Crop history remains a useful baseline, but its interpretation depends on the sequence rule and the crop classes represented. The rotation sensitivity and errors by regime therefore point to the need to evaluate performance across crop histories, with class composition reported alongside accuracy.
+
+The moisture analysis serves a different purpose: it describes departures from usual seasonal conditions. The small classification gain from the selected SMAP features applies to that feature set and validation year. Evaluating moisture for crop-condition monitoring would require a defined outcome and an evaluation designed around it.
+
+\subsection{Limits of the evidence}
+Three issues matter for interpreting or extending these results. First, the units are coarser than individual fields. Regional NDVI averages hide local variability, resampled moisture cells share information, and annual CDL errors can alter apparent crop sequences. Model agreement with CDL therefore measures consistency with a reference product, not independent field accuracy. A spatially separated evaluation would be needed to assess transfer to new locations \citep{roberts2017cv}.
+
+Second, the current classifier's feature construction is not fully consistent across splits. Neighborhood summaries are built after target-class sampling, with unsampled locations filled as zero; consequently, the sampling process can influence predictors. Historical NDVI summaries also have different observation coverage in training and test construction. For SMAP, training uses historical percentile references when available, while the test builder falls back to the current row's seasonal percentiles. In addition, the fixed eligible mask uses 2013--2022 labels, including years later than some training samples. These findings warrant a common feature builder with explicit time cutoffs and a repeat evaluation before deployment. We have not measured their effect on the reported scores.
+
+Third, the moisture comparison is retrospective and uses a short reference period. The inclusion of 2019 in that reference can attenuate its anomalies. Neither event analysis has independent labels for flood extent, drought severity, or crop damage, so the scores describe unusual moisture rather than validated detection performance. A prospective study would require a reference ending before each event and outcome data suited to the intended claim.
+
+\section{Conclusion}
+Seasonal NDVI added more to classification based on crop history than the selected soil-moisture features in the reported validation comparison. The descriptive analyses help interpret these inputs while showing the limits imposed by aggregation and classification rules. The next test is to construct features consistently at explicit time cutoffs and evaluate them across years and unseen locations. Moisture monitoring needs its own crop-condition outcome and validation data.
+
+\section*{Code and reproducibility}
+Code, notebooks, and saved results are available in the \href{https://github.com/sardorsob/GeoCrop-Spatiotemporal-Modeling}{GeoCrop repository}. This revision redraws figures from saved results without refitting models. Build instructions and figure-source checksums are in \texttt{artifacts/reports/rewrite/}. Recreating the analyses also requires the downloaded input data and their spatial metadata.
+
+\raggedright
+\bibliographystyle{unsrtnat}
+\bibliography{references_revised}
+\end{document}

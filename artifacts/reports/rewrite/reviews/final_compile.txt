@@ -1,0 +1,33 @@
+ because "geocrop_revised.aux" changed ...
+(geocrop_revised.tex
+LaTeX2e <2021-11-15> patch level 1
+L3 programming layer <2022-02-24> (article.cls
+Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
+(size11.clo)) (geometry.sty (keyval.sty) (ifvtex.sty (iftex.sty))) (fontenc.sty
+(t1lmr.fd)) (lmodern.sty) (microtype.sty (etoolbox.sty) (microtype-xetex.def)
+(microtype.cfg)) (graphicx.sty (graphics.sty (trig.sty) (graphics.cfg)
+(xetex.def))) (amsmath.sty
+For additional information on amsmath, use the `?' option.
+(amstext.sty (amsgen.sty)) (amsbsy.sty) (amsopn.sty)) (amssymb.sty
+(amsfonts.sty)) (booktabs.sty) (array.sty) (natbib.sty) (caption.sty
+(caption3.sty)) (xcolor.sty (color.cfg)) (hyperref.sty (ltxcmds.sty)
+(pdftexcmds.sty (infwarerr.sty)) (kvsetkeys.sty) (kvdefinekeys.sty)
+(pdfescape.sty) (hycolor.sty) (letltxmacro.sty) (auxhook.sty) (kvoptions.sty)
+(pd1enc.def) (intcalc.sty) (etexcmds.sty) (puenc.def) (url.sty) (bitset.sty
+(bigintcalc.sty)) (atbegshi-ltx.sty)) (hxetex.def (stringenc.sty)
+(rerunfilecheck.sty (atveryend-ltx.sty) (uniquecounter.sty)))
+(l3backend-xetex.def) (geocrop_revised.aux) (ts1cmr.fd)
+*geometry* driver: auto-detecting
+*geometry* detected driver: xetex
+(mt-cmr.cfg) (nameref.sty (refcount.sty) (gettitlestring.sty))
+(geocrop_revised.out) (geocrop_revised.out) (ot1lmr.fd) (omllmm.fd) (omslmsy.fd
+) (omxlmex.fd) (umsa.fd) (mt-msa.cfg) (umsb.fd) (mt-msb.cfg) [1] (t1lmtt.fd)
+(rewrite/sections/phenology_rotation [2] [3]) (rewrite/sections/moisture
+[4] [5]) (rewrite/sections/classification [6] [7]) [8] [9] (geocrop_revised.bbl
+) [10] (geocrop_revised.aux) )
+Output written on geocrop_revised.xdv (10 pages, 51412 bytes).
+Transcript written on geocrop_revised.log.
+note: Running xdvipdfmx ...
+[1][2][3][4][5][6][7][8][9][10]299099 bytes written
+note: Writing `/Users/sobirov/Workspace/Projects/GeoCrop-Spatiotemporal-Modeling/artifacts/reports/build/geocrop_revised.pdf` (292.0888671875 KiB)
+note: Skipped writing 3 intermediate files (use --keep-intermediates to keep them)

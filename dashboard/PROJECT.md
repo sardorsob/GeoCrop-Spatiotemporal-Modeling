@@ -21,7 +21,8 @@ branch remains intentionally unmerged while the reviewer performs the final chec
 
 - `docs/intake.md` - source input for dashboard scope
 - `../README.md` - GeoCrop project overview and artifact inventory
-- `../artifacts/reports/neurips_2024.tex` - paper source
+- `../artifacts/reports/geocrop_revised.tex` - current paper source
+- `../artifacts/reports/neurips_2024.tex` - historical paper source
 - `../artifacts/tables/` - source result tables
 - `../artifacts/figures/` - figure and map assets
 - `SCOPE.md` - canonical scope after intake
@@ -44,6 +45,7 @@ branch remains intentionally unmerged while the reviewer performs the final chec
 | Website redesign v2 | done | `TASK-015`–`TASK-022` delivered the original shared grammar/evidence build; `TASK-023` later retired the rejected Story surface |
 | Explore-only shell | done | `TASK-023` removes Story runtime/mode state, preserves legacy task/filter URLs, and changes the product identity to GeoCrop / U.S. Corn Belt |
 | Evidence density polish | done | `TASK-024` balances Rotation composition and replaces the Extremes crop dropdown with five direct buttons |
+| Revised paper asset | done | `TASK-025` serves the reviewed 10-page revision at the existing reader URL; original PDF archived |
 | Task 1 HSGP comparator | done | Explore aligns corn, soybean, and winter wheat with nested posterior intervals, empirical spatial IQR, paper growth stages, direct peaks, an explicit focused NDVI scale, and one shared compact season window |
 | Act II rotation memory | done | Schematic decade strips lead into a dated 100-cell composition, measured within-grain geography ranking/map slot, and discrete source-only threshold sensitivity |
 | Act III paired extremes | done | Matched 2019 flood and 2022 drought state maps share crop and mean-z scale; one state pin exposes event-specific NIG posterior context, denominator, source, and no-data honestly |
@@ -82,10 +84,10 @@ branch remains intentionally unmerged while the reviewer performs the final chec
 
 ## Last Session
 
-- **Date:** 2026-08-19
-- **What was done:** Completed `TASK-024`: Rotation now pairs its 100-cell field with stacked exact summaries at wide widths, Extremes uses five direct crop buttons, full gates/audit passed, and 1440/320 px browser smoke confirmed composition and containment.
-- **What's next:** Keep the local server running and wait for the user's final review before merge.
-- **Blockers:** No implementation blocker. Merge is explicitly deferred pending user approval.
+- **Date:** 2026-09-24
+- **What was done:** Completed `TASK-025`: synchronized the reviewed 10-page manuscript, preserved the original archive, and verified the existing paper-reader contract. No app code changed.
+- **What's next:** Author reading of the revised paper. Prior dashboard review/merge decisions are unchanged.
+- **Blockers:** No paper-delivery blocker. No push, merge, or deployment was performed.
 
 ## Environment
 

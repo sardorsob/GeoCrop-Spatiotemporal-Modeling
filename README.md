@@ -9,10 +9,14 @@ Data Layer (CDL)**, **MODIS NDVI**, and **NASA SMAP L4 Soil Moisture** — to
 answer four progressive research questions about crop phenology, rotation
 patterns, soil moisture anomalies, and crop-type prediction.
 
-> **Read the report:**
-> For a complete description of our methodology, results, and discussion, see
-> **[`NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf`](NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf)**
-> included at the root of this repository.
+> **Read the revised paper:**
+> [Crop history, vegetation timing, and soil moisture across the U.S. Corn Belt](artifacts/reports/geocrop_revised.pdf)
+> presents all four analyses in 10 pages, including references.
+> [LaTeX source](artifacts/reports/geocrop_revised.tex),
+> [plain text](artifacts/reports/geocrop_revised.txt), and
+> [build instructions and review notes](artifacts/reports/rewrite/README.md) accompany it.
+> The [original 23-page paper](artifacts/reports/archive/NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.pdf)
+> is preserved. The root-level PDF and dashboard reader use the revised version.
 
 ---
 

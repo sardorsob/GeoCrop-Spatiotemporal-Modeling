@@ -1,0 +1,9 @@
+{
+  "artifacts/tables/task1/hsgp_posterior_phenology.csv": "96d53677aafcea231a4451acc81e26a4c8073643f1f8d97bd4842dc0af04af9f",
+  "artifacts/tables/task2/rotation_class_map_smoothed.tif": "6365aa0ba1a097ddb6b9ede27bc0a9feb8b38f86824ef4e53794bd1c68bfda66",
+  "artifacts/tables/task2/task2__threshold_sensitivity_grid.csv": "88167332239f52a5ae3c5683a4c4d0a35559af3a28df8d843f002194944a63a8",
+  "artifacts/tables/task3/task3__midwest_flood_2019__anomaly_stats_by_state_crop__20260412.csv": "e0982053fc36ead96faf1b6263bd5446426050d10db22c9571226b94803c86fa",
+  "artifacts/tables/task3/task3__plains_drought_2022__anomaly_stats_by_state_crop__20260412.csv": "dcd42de986286ee536ca4360d6bf1705c90cd13bf3910cd20becad69c25afe01",
+  "artifacts/tables/task4/task4__test_metrics__20260413.json": "b3b656bb3de6579540fe5c6feaebeb1fcd18ba484784af36c53cc6cf83aae2ea",
+  "artifacts/tables/task4/task4_regime_stratified_metrics.csv": "b0976f5fdc07766ce5250781462064fd6434f84a79bb7bf48878ebaa79d5b498"
+}

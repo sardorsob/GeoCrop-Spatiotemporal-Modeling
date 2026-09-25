@@ -9,12 +9,14 @@
 
 | Total | Done | In review | In progress | Needs fix | Blocked | Pending |
 |-------|------|-----------|-------------|-----------|---------|---------|
-| 25 | 25 | 0 | 0 | 0 | 0 | 0 |
+| 26 | 26 | 0 | 0 | 0 | 0 | 0 |
 
 `TASK-015` through `TASK-022` are the completed Narrative Atlas v2 graph.
 `TASK-023` and `TASK-024` are the approved post-review simplification and
 density-polish tasks. They were executed sequentially with one verified task commit
 at a time.
+
+`TASK-025` is the authorized PDF-only handoff from the revised research manuscript.
 
 ---
 
@@ -1631,4 +1633,64 @@ at a time.
   - 2026-08-19: Rebalanced Rotation composition, replaced the Extremes crop
     dropdown with direct buttons, synchronized handoff/context files, and passed
     automated, audit, and responsive live-browser gates without new scope.
+- Status: done
+
+---
+
+## TASK-025
+
+- Feature group: Research Paper Asset
+- Title: Synchronize the revised paper PDF at the existing reader URL
+- Depends on: TASK-013, TASK-024
+- Assigned agent: Builder
+- Contract refs:
+  - Backend owner: none
+  - Frontend owner: TASK-025
+  - Integration status: done
+- Design source:
+  - User-authorized research-paper rewrite and final dashboard PDF handoff.
+  - Existing paper-reader contract in TASK-013 and TASK-022.
+- User value: Readers can open and download the reviewed manuscript from the existing paper action.
+- User flow:
+  - User opens the research paper drawer and reads or downloads the revised PDF.
+- Functional notes:
+  - Copy the final canonical generated PDF only after manuscript QA confirms its final path and hash.
+  - Preserve `/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf`.
+  - Preserve the original manuscript in the research archive before replacement.
+  - Limit changes to the PDF and workflow records; no app code or dependency changes.
+- Edge cases:
+  - The canonical PDF is still being polished: wait for final confirmation.
+  - A different hash, malformed PDF, wrong repository link, or executable PDF action fails acceptance.
+- Test cases:
+  1. The served PDF opens structurally and has the same SHA-256 as the final canonical PDF.
+  2. The original PDF remains archived with its recorded pre-replacement SHA-256.
+  3. The revised PDF contains the correct repository URL and no JavaScript, launch, executable opening, or embedded-file actions; a standard opening-view destination is permitted.
+  4. Existing paper-reader tests confirm the stable iframe, open, and download URL.
+  5. Typecheck, lint, workflow-status validation, and required-artifact validation pass.
+- Files to create/modify:
+  - `public/papers/NAFSI_Predictive_Modeling_for_Agricultural_Resilience.pdf`
+  - `TASKS.md`
+  - `logs/Progress Log.md`
+  - `memory/decisions.md` for the durable versioning decision.
+  - `PROJECT.md` for the current paper source and delivery status.
+- Acceptance criteria:
+  - [x] Served PDF is the valid final generated manuscript and its hash matches the canonical file.
+  - [x] Existing paper URL remains unchanged and the repository URL inside the PDF is correct.
+  - [x] Original PDF is archived and its hash is recorded.
+  - [x] Structural inspection finds no executable PDF actions or embedded files.
+  - [x] Paper-reader tests, typecheck, lint, and workflow validations pass.
+  - [x] No app code or dependency changes are introduced.
+- QA notes:
+  - Builder handoff 2026-09-24: Copied the final `artifacts/reports/geocrop_revised.pdf` into the existing public path. Both files have SHA-256 `96b2e7bd1473bdbeb59e32d1e737bb6fa8a7cb0468f583c69be689fe27f694d6`; the served file is 299,099 bytes and parses strictly as an unencrypted 10-page PDF.
+  - Verified `artifacts/reports/archive/NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.pdf` retains the original SHA-256 `30243856db0c0d0dda4fa5a42cd5597521de3e04c2f67df7d3e55eaf62b9db33`.
+  - The repository hyperlink targets `https://github.com/sardorsob/GeoCrop-Spatiotemporal-Modeling`. Recursive PDF inspection found only internal GoTo and URI link actions, no JavaScript, launch, additional, remote, form, embedded-file, or rich-media actions. The catalog opening destination fits page one to the window and is not executable.
+  - Passed TypeScript, ESLint, all four DashboardShell tests, task-status validation, and required-artifact validation. No app code or dependencies changed. Canonical rendering was approved by the manuscript owner before this byte-identical copy; frontend checks did not need repeating after the asset replacement.
+  - Ready for independent QA; Builder has not marked this task done or committed changes.
+  - QA 2026-09-24: Root independently verified all three current PDF hashes, the unchanged original archive, the corrected link, page bounds, and scoped diff; all ten canonical pages were visually inspected. Accepted as an asset-only handoff. Frontend test evidence from Builder remains applicable because no app code changed.
+- Attempts: 1
+- Max attempts: 3
+- Attempt log:
+  - 2026-09-24: Added the authorized asset-only handoff after reading the dashboard contracts; dependencies TASK-013 and TASK-024 are done.
+  - 2026-09-24: Started Builder verification; replacement is deferred until final manuscript confirmation.
+  - 2026-09-24: Received final canonical path/hash, verified the archive and PDF structure, replaced the served file, and handed off for QA.
 - Status: done

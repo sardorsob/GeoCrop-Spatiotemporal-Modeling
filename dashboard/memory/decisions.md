@@ -230,3 +230,14 @@ does not support a truthful year-by-year map control.
 
 **Impact:** The visual layout changes without changing calculations, URL crop
 state, map behavior, dependencies, or data claims.
+
+
+## 2026-09-24 — Preserve the paper URL while versioning the manuscript
+
+**Context:** The research manuscript was condensed and reviewed separately from the dashboard UI.
+
+**Decision:** Serve the accepted ten-page revision at the existing PDF path and retain the original PDF in the reports archive. The canonical revised source/PDF live under `artifacts/reports/`; current copies have matching SHA-256 hashes.
+
+**Reason:** Existing iframe/open/download links continue to work while the historical paper remains recoverable.
+
+**Impact:** TASK-025 changes the PDF and workflow records only. Frontend code, dependencies, and analysis outputs remain unchanged.

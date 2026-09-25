@@ -1,0 +1,35 @@
+{
+  "pages": 10,
+  "original_pages": 23,
+  "extracted_words": 4245,
+  "original_extracted_words": 9167,
+  "sha256": "96b2e7bd1473bdbeb59e32d1e737bb6fa8a7cb0468f583c69be689fe27f694d6",
+  "original_sha256": "30243856db0c0d0dda4fa5a42cd5597521de3e04c2f67df7d3e55eaf62b9db33",
+  "figure_source_hashes_checked": 7,
+  "correct_repository_link": true,
+  "unresolved_text_markers": false,
+  "annotation_bounds_valid": true,
+  "canonical_path": "artifacts/reports/geocrop_revised.pdf",
+  "archive_path": "artifacts/reports/archive/NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.pdf",
+  "compiler": "Tectonic 0.17.0",
+  "compiler_exit_code": 0,
+  "final_pass_warnings": 0,
+  "pages_visually_inspected": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "current_copies_identical": true,
+  "dashboard_reader_checks": {
+    "typecheck": "passed (Builder)",
+    "lint": "passed (Builder)",
+    "reader_tests": 4
+  }
+}

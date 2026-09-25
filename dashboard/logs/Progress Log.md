@@ -4,6 +4,47 @@ Log real sessions. Include time, shipped work, blockers, cuts, verification, and
 
 ---
 
+## 2026-09-24 — TASK-025 revised paper PDF handoff
+
+**Work performed:**
+
+- Read the dashboard workflow, scope, task, and memory contracts and added the
+  authorized PDF-only task. The existing paper-reader URL remains the contract.
+- Recorded the original served PDF SHA-256 before replacement:
+  `30243856db0c0d0dda4fa5a42cd5597521de3e04c2f67df7d3e55eaf62b9db33`.
+- Prepared structural, link, archive, and canonical-hash checks. No app code or
+  dependencies changed.
+- After final manuscript approval, copied `artifacts/reports/geocrop_revised.pdf`
+  to the existing public paper path. Canonical and served SHA-256 both equal
+  `96b2e7bd1473bdbeb59e32d1e737bb6fa8a7cb0468f583c69be689fe27f694d6`.
+
+**Verification:**
+
+- Passed TypeScript, ESLint, all four `DashboardShell` tests, task-status
+  validation, and required-artifact validation.
+- Strict PDF parsing passes: 10 pages, 299,099 bytes, unencrypted. The original
+  archive at `artifacts/reports/archive/NAFSI_Predictive_Modeling_for_Agricultural_Resilience_original.pdf`
+  matches the recorded pre-replacement hash.
+- The repository hyperlink resolves to
+  `https://github.com/sardorsob/GeoCrop-Spatiotemporal-Modeling`. Recursive
+  inspection found only internal GoTo and URI links, with no executable actions
+  or embedded files. The standard page-one `/Fit` opening destination is benign.
+- Root QA accepted TASK-025 after independently checking current/archive hashes,
+  the scoped diff, link bounds, and the canonical ten-page rendering. Task is done;
+  this handoff preserves the approved PDF bytes exactly.
+
+**Blockers / cuts:**
+
+- No blocker remains. No commit was made by Builder.
+- No application build, dependency audit, or new UI test is needed for the
+  binary-asset-only change; the existing reader contract is covered by tests.
+
+**AI tools used:**
+
+- Codex Builder, local shell checks, and the PDF skill for structural inspection.
+
+---
+
 ## 2026-08-19 — TASK-024 evidence density polish
 
 **Work performed:**
