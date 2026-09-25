@@ -1,0 +1,66 @@
+\section{Wet and dry soil conditions}
+\label{sec:moisture}
+
+We used weekly SMAP L4 surface soil moisture to describe departures from
+usual seasonal conditions during April--July 2019 and June--August 2022,
+the two event windows selected for the flood and drought case studies.
+The analysis covered cells eligible for the crop-history analysis and
+grouped them by state and event-year CDL label. The crop strata were corn
+(1), soybean (5), winter wheat/soybean double crop (26), and oats (28).
+SMAP's native 9~km resolution sets the spatial support of the moisture
+information; assigning it to crop-grid cells does not provide independent
+moisture measurements for individual fields.
+
+For each cell and ISO week, we estimated a reference mean and sample
+standard deviation from 2015--2021, giving at most seven annual
+observations. We expressed each event observation as a departure from that
+mean in standard-deviation units, with stored $z$-scores clipped to
+$[-5,5]$. The reference includes 2019 but precedes 2022. These are therefore
+retrospective descriptions against a common reference, with different
+relationships to the two event years. Including 2019 can reduce its own
+departure from the reference; the comparison does not constitute symmetric
+held-out validation.
+
+We also fitted a Normal--Inverse-Gamma model to account for uncertainty
+in the reference mean and variance. Its conjugate update gives a
+Student-$t$ posterior predictive distribution \citep{murphy2007conjugate}.
+The prior mean was the regional mean for the corresponding week; the
+variance prior used the regional median of the cell-level baseline
+variances, with $\lambda_0=1$ and $\alpha_0=2$. We evaluated the predictive
+cumulative distribution at each observed moisture value. This moisture
+percentile approaches zero for unusually dry observations and one for
+unusually wet observations. It is not the probability that drought is
+present. The predictive scale combines moisture variability with parameter
+uncertainty; it is neither a pure measure of epistemic uncertainty nor the
+Student-$t$ standard deviation.
+
+Figure~\ref{fig:moisture} compares mean $z$-scores for corn and soybean
+across the two windows. State--crop means average the available
+pixel-weeks, and threshold fractions use the same pixel-week denominator.
+A cell observed in several weeks contributes several times, so these
+fractions describe the combined spatial and temporal extent of unusual
+conditions, rather than the share of fields affected.
+
+The 2019 means were positive for corn and soybean in every study state.
+South Dakota corn had a mean $z$-score of 1.16. In Iowa, 17.75\% of
+2,901,150 corn pixel-weeks exceeded $z=1.5$, indicating repeated or
+widespread departures above the weekly reference. This threshold measures
+relative wetness; it does not establish soil saturation or field flooding.
+
+The 2022 window showed a different pattern. Nebraska soybean had a mean
+$z$-score of $-1.05$, and 40.54\% of its 947,648 pixel-weeks fell below
+the tenth predictive percentile. North Dakota corn remained slightly
+above its reference mean ($z=0.19$), showing that the dry signal was not
+uniform across the study area. Kentucky's winter wheat/soybean double-crop
+stratum had 41.96\% of 49,543 pixel-weeks below the tenth percentile.
+That result concerns code~26 land cover and cannot be read as evidence
+about winter wheat alone. The crop groups also occupy different locations,
+so these contrasts do not isolate crop-specific responses to water stress.
+
+These summaries identify where and when surface moisture was unusual
+within the sampled crop-history population. Read alongside seasonal NDVI,
+they provide context for crop-condition monitoring. The present analysis
+does not test whether moisture anomalies precede vegetation changes or
+predict yield loss. Independent event labels would also be needed to
+measure detection accuracy or determine whether the Bayesian scoring
+reduces false positives.
